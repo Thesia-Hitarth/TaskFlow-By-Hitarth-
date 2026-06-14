@@ -2,6 +2,8 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { taskflows } from "@/lib/taskflows-data";
+import TaskflowDiagram from "@/components/taskflow/TaskflowDiagram";
+import { taskflowContent } from "@/lib/taskflow-content";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -25,6 +27,7 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function TaskflowDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const taskflow = taskflows.find((tf) => tf.slug === slug);
+  const content = taskflowContent[slug];
   
   const title = taskflow?.title || slug.charAt(0).toUpperCase() + slug.slice(1);
 
@@ -51,15 +54,21 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
           </p>
         </header>
 
-        {/* Interactive Placeholder Box */}
-        <div className="mt-10 bg-surface border border-border rounded-xl h-96 w-full flex flex-col items-center justify-center text-center px-4">
-          <p className="text-muted text-lg font-medium">
-            Interactive taskflow diagram coming in Phase 2
-          </p>
-          <p className="text-muted/60 text-sm mt-2">
-            Check back soon
-          </p>
-        </div>
+        {/* Interactive Diagram or Placeholder Box */}
+        {content ? (
+          <div className="mt-10">
+            <TaskflowDiagram content={content} />
+          </div>
+        ) : (
+          <div className="mt-10 bg-surface border border-border rounded-xl h-96 w-full flex flex-col items-center justify-center text-center px-4">
+            <p className="text-muted text-lg font-medium">
+              Interactive taskflow diagram coming in Phase 2
+            </p>
+            <p className="text-muted/60 text-sm mt-2">
+              Check back soon
+            </p>
+          </div>
+        )}
 
         {/* Back Link */}
         <div className="mt-8">
