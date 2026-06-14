@@ -101,6 +101,109 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Actively Maintained (Timeline) Section */}
+        <section className="pt-16 pb-20 px-4 sm:px-8 max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-4xl" role="img" aria-label="rocket">🚀</span>
+            <h2 className="text-3xl font-bold text-white mt-4">Actively Maintained</h2>
+            <p className="text-muted text-sm max-w-xl mx-auto mt-2 leading-relaxed">
+              We are always improving our content, adding new resources and adding features to enhance your learning experience.
+            </p>
+          </div>
+
+          <div className="relative border-l border-zinc-700 md:border-l-0 ml-4 md:ml-0">
+            {/* Central vertical line for desktop (starts at center of first dot and ends at center of last dot) */}
+            <div className="absolute left-1/2 top-6 bottom-6 w-[1px] bg-zinc-700 hidden md:block -translate-x-1/2"></div>
+
+            {/* Timeline Item 1: 25 May, 2026 */}
+            <div className="mb-12 relative md:grid md:grid-cols-2 md:gap-8 group">
+              {/* Left Side: Date (Desktop only) */}
+              <div className="hidden md:block text-right pr-8 text-muted text-sm font-medium self-center group-hover:text-white transition-colors">
+                25 May, 2026
+              </div>
+              {/* Central Circle */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-[#101010] border-2 border-zinc-700 group-hover:border-accent md:left-1/2 md:translate-x-[-7px] flex items-center justify-center transition-colors">
+                <div className="w-1.5 h-1.5 rounded-full bg-muted group-hover:bg-accent transition-colors"></div>
+              </div>
+              {/* Right Side: Content */}
+              <div className="pl-6 md:pl-8 flex flex-col justify-center">
+                <div className="md:hidden text-muted text-xs font-medium mb-1 group-hover:text-white transition-colors">
+                  25 May, 2026
+                </div>
+                <div className="text-white font-semibold text-base group-hover:text-accent transition-colors">
+                  Network Engineer, Python Guides
+                </div>
+              </div>
+            </div>
+
+            {/* Timeline Item 2: 26 Mar, 2026 */}
+            <div className="mb-12 relative md:grid md:grid-cols-2 md:gap-8 group">
+              {/* Left Side: Date (Desktop only) */}
+              <div className="hidden md:block text-right pr-8 text-muted text-sm font-medium self-center group-hover:text-white transition-colors">
+                26 Mar, 2026
+              </div>
+              {/* Central Circle */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-[#101010] border-2 border-zinc-700 group-hover:border-accent md:left-1/2 md:translate-x-[-7px] flex items-center justify-center transition-colors">
+                <div className="w-1.5 h-1.5 rounded-full bg-muted group-hover:bg-accent transition-colors"></div>
+              </div>
+              {/* Right Side: Content */}
+              <div className="pl-6 md:pl-8 flex flex-col justify-center">
+                <div className="md:hidden text-muted text-xs font-medium mb-1 group-hover:text-white transition-colors">
+                  26 Mar, 2026
+                </div>
+                <div className="text-white font-semibold text-base group-hover:text-accent transition-colors">
+                  AI Engineer Review
+                </div>
+              </div>
+            </div>
+
+            {/* Timeline Item 3: 27 Feb, 2026 */}
+            <div className="mb-12 relative md:grid md:grid-cols-2 md:gap-8 group">
+              {/* Left Side: Date (Desktop only) */}
+              <div className="hidden md:block text-right pr-8 text-muted text-sm font-medium self-center group-hover:text-white transition-colors">
+                27 Feb, 2026
+              </div>
+              {/* Central Circle */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-[#101010] border-2 border-zinc-700 group-hover:border-accent md:left-1/2 md:translate-x-[-7px] flex items-center justify-center transition-colors">
+                <div className="w-1.5 h-1.5 rounded-full bg-muted group-hover:bg-accent transition-colors"></div>
+              </div>
+              {/* Right Side: Content */}
+              <div className="pl-6 md:pl-8 flex flex-col justify-center">
+                <div className="md:hidden text-muted text-xs font-medium mb-1 group-hover:text-white transition-colors">
+                  27 Feb, 2026
+                </div>
+                <div className="text-white font-semibold text-base group-hover:text-accent transition-colors">
+                  AI in Guides
+                </div>
+              </div>
+            </div>
+
+            {/* Timeline Item 4: 31 Jan, 2026 */}
+            <div className="relative md:grid md:grid-cols-2 md:gap-8 group">
+              {/* Left Side: Date (Desktop only) */}
+              <div className="hidden md:block text-right pr-8 text-muted text-sm font-medium self-center group-hover:text-white transition-colors">
+                31 Jan, 2026
+              </div>
+              {/* Central Circle */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-[#101010] border-2 border-zinc-700 group-hover:border-accent md:left-1/2 md:translate-x-[-7px] flex items-center justify-center transition-colors">
+                <div className="w-1.5 h-1.5 rounded-full bg-muted group-hover:bg-accent transition-colors"></div>
+              </div>
+              {/* Right Side: Content */}
+              <div className="pl-6 md:pl-8 flex flex-col justify-center">
+                <div className="md:hidden text-muted text-xs font-medium mb-1 group-hover:text-white transition-colors">
+                  31 Jan, 2026
+                </div>
+                <div className="text-white font-semibold text-base group-hover:text-accent transition-colors">
+                  Reviews
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Horizontal separator line */}
+        <div className="border-t border-border max-w-4xl mx-auto"></div>
+
         {/* Section E: Community CTA */}
         <section className="py-16 px-4 sm:px-8 text-center max-w-xl mx-auto flex flex-col items-center">
           <h2 className="text-3xl font-bold text-white">Join the Community</h2>
