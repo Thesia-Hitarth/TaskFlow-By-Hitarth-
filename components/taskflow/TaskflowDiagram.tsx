@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { ReactFlow, Background, Node, Edge, NodeMouseHandler } from "@xyflow/react";
+import { ReactFlow, Background, Node, Edge, NodeMouseHandler, ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { TaskflowContent, TaskflowContentNode } from "@/lib/taskflow-content/types";
 import { useTaskflowProgress } from "@/lib/taskflow-progress";
@@ -12,18 +12,28 @@ import NodeDetailSheet from "./NodeDetailSheet";
 import TaskflowProgressBar from "./TaskflowProgressBar";
 import TaskflowLegend from "./TaskflowLegend";
 
-const nodeTypes = { milestone: MilestoneNode, subtopic: SubtopicNode };
-
 interface TaskflowDiagramProps {
   content: TaskflowContent;
 }
 
 export default function TaskflowDiagram({ content }: TaskflowDiagramProps) {
+  return (
+    <ReactFlowProvider>
+      <TaskflowDiagramInner content={content} />
+    </ReactFlowProvider>
+  );
+}
+
+function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
+  const nodeTypes = useMemo(() => ({ milestone: MilestoneNode, subtopic: SubtopicNode }), []);
   const { progress, updateStatus } = useTaskflowProgress(content.slug);
+
   const [selected, setSelected] = useState<TaskflowContentNode | null>(null);
   
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  
+  const { fitView } = useReactFlow();
 
   // Calculate layout bounds to scale container height responsively
   const { diagramWidth, diagramHeight } = useMemo(() => {
@@ -73,6 +83,16 @@ export default function TaskflowDiagram({ content }: TaskflowDiagramProps) {
     const scale = Math.min(1, containerWidth / diagramWidth);
     return diagramHeight * scale;
   }, [containerWidth, diagramWidth, diagramHeight]);
+
+  // Adjust zoom and viewport layout to fit container dimensions programmatically on resize
+  useEffect(() => {
+    if (containerWidth > 0 && calculatedHeight > 0) {
+      const timer = setTimeout(() => {
+        fitView({ padding: 0.05, minZoom: 0.1, maxZoom: 1 });
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [containerWidth, calculatedHeight, fitView]);
 
   const nodes: Node[] = useMemo(
     () =>
@@ -181,4 +201,5 @@ export default function TaskflowDiagram({ content }: TaskflowDiagramProps) {
     </div>
   );
 }
+
 

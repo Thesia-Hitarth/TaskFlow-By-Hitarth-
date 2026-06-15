@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import AuthButtons from "./AuthButtons";
 import SearchCommand from "./SearchCommand";
 import { useTheme } from "@/app/providers";
+import { Sheet, SheetTrigger, SheetContent, SheetTitle } from "./ui/sheet";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -53,12 +54,37 @@ export default function Navbar() {
           <AuthButtons />
         </div>
         <div className="sm:hidden">
-          <Button variant="ghost" size="icon" className="text-text-secondary hover:text-text-primary cursor-pointer">
-            <Menu className="h-5 w-5" />
-          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-text-secondary hover:text-text-primary cursor-pointer w-9 h-9 rounded-lg" aria-label="Open navigation menu">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="bg-surface border-border text-text-primary w-full max-w-[280px] p-6 flex flex-col gap-5 transition-colors duration-200">
+              <SheetTitle className="text-text-primary font-bold text-lg border-b border-border pb-3">
+                taskflow.sh
+              </SheetTitle>
+              <nav className="flex flex-col gap-4 mt-2">
+                <Link href="/taskflows" className="text-text-secondary hover:text-text-primary text-base font-semibold py-1.5 transition-colors">
+                  Taskflows
+                </Link>
+                <Link href="/guides" className="text-text-secondary hover:text-text-primary text-base font-semibold py-1.5 transition-colors">
+                  Guides
+                </Link>
+                <Link href="#" className="text-text-secondary hover:text-text-primary text-base font-semibold py-1.5 transition-colors">
+                  Best Practices
+                </Link>
+              </nav>
+              <div className="h-[1px] bg-border my-2" />
+              <div className="flex flex-col gap-3 mt-auto pb-4">
+                <AuthButtons />
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
   );
 }
+
 
