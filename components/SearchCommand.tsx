@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import Fuse from "fuse.js";
 import { useRouter } from "next/navigation";
 import { Search, X, Map, FileText } from "lucide-react";
@@ -8,6 +9,7 @@ import { searchIndex } from "@/lib/search-index";
 export default function SearchCommand() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   const fuse = useMemo(
@@ -20,6 +22,9 @@ export default function SearchCommand() {
     : searchIndex.slice(0, 8);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+    
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
@@ -53,7 +58,7 @@ export default function SearchCommand() {
         </kbd>
       </button>
 
-      {open && (
+      {open && mounted && createPortal(
         <div
           className="fixed inset-0 z-100 flex items-start justify-center pt-24 bg-black/40 dark:bg-black/70 backdrop-blur-xs transition-opacity duration-300"
           onClick={() => setOpen(false)}
@@ -114,7 +119,8 @@ export default function SearchCommand() {
               </span>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </>
