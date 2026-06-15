@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { LayoutDashboard, LogOut, User } from "lucide-react";
@@ -6,8 +7,16 @@ import { Button } from "./ui/button";
 
 export default function AuthButtons() {
   const { data: session, status } = useSession();
+  const [mounted, setMounted] = useState(false);
 
-  if (status === "loading") {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!mounted || status === "loading") {
     return <div className="h-9 w-20 rounded-md bg-surface animate-pulse" />;
   }
 
@@ -16,7 +25,7 @@ export default function AuthButtons() {
       <div className="flex items-center gap-3">
         <Link
           href="/dashboard"
-          className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-white transition-colors py-1.5 px-3 rounded-md hover:bg-surface"
+          className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary transition-colors py-1.5 px-3 rounded-md hover:bg-surface"
         >
           <LayoutDashboard className="h-4 w-4 text-amber-500" />
           <span className="hidden sm:inline">Dashboard</span>
@@ -46,7 +55,7 @@ export default function AuthButtons() {
   return (
     <div className="flex items-center gap-2">
       <Link href="/signin">
-        <Button variant="ghost" className="text-sm hover:bg-surface text-text-secondary hover:text-white">
+        <Button variant="ghost" className="text-sm hover:bg-surface text-text-secondary hover:text-text-primary">
           Sign In
         </Button>
       </Link>
@@ -58,3 +67,4 @@ export default function AuthButtons() {
     </div>
   );
 }
+

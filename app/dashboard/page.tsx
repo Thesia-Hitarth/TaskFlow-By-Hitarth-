@@ -48,25 +48,25 @@ export default async function DashboardPage() {
                 <GraduationCap className="h-4 w-4" />
                 Student Portal
               </div>
-              <h1 className="text-3xl font-extrabold text-white tracking-tight">
+              <h1 className="text-3xl font-extrabold text-text-primary tracking-tight">
                 Welcome back, {session.user.name ?? session.user.email}
               </h1>
-              <p className="text-sm text-muted mt-1 max-w-xl">
+              <p className="text-sm text-text-secondary mt-1 max-w-xl font-medium">
                 Continue your learning tracks and view statistics across your chosen taskflows.
               </p>
             </div>
 
             <div className="flex items-center gap-6 sm:border-l sm:border-border sm:pl-8">
               <div className="text-center sm:text-left">
-                <div className="text-3xl font-black text-white">{started.length}</div>
-                <div className="text-xs text-muted font-medium uppercase mt-0.5">Active Paths</div>
+                <div className="text-3xl font-black text-text-primary">{started.length}</div>
+                <div className="text-xs text-text-secondary font-semibold uppercase mt-0.5">Active Paths</div>
               </div>
               <div className="text-center sm:text-left">
                 <div className="text-3xl font-black text-amber-500 flex items-center gap-1.5 justify-center sm:justify-start">
                   <Trophy className="h-6 w-6 text-amber-500" />
                   {totalDoneCount}
                 </div>
-                <div className="text-xs text-muted font-medium uppercase mt-0.5">Nodes Completed</div>
+                <div className="text-xs text-text-secondary font-semibold uppercase mt-0.5">Nodes Completed</div>
               </div>
             </div>
           </div>
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
         {/* Learning Paths Section */}
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-amber-500" />
               Your Active Taskflows
             </h2>
@@ -90,10 +90,10 @@ export default async function DashboardPage() {
           {started.length === 0 ? (
             <div className="rounded-2xl border border-border bg-surface p-12 text-center shadow-lg">
               <div className="inline-flex p-3 rounded-full bg-card border border-border mb-4">
-                <LayoutDashboard className="h-6 w-6 text-muted" />
+                <LayoutDashboard className="h-6 w-6 text-text-secondary" />
               </div>
-              <h3 className="text-lg font-semibold text-white">No active learning paths</h3>
-              <p className="text-sm text-muted mt-2 max-w-md mx-auto">
+              <h3 className="text-lg font-bold text-text-primary">No active learning paths</h3>
+              <p className="text-sm text-text-secondary mt-2 max-w-md mx-auto font-medium">
                 You haven&apos;t started any taskflows yet. Choose a path from our registry to begin tracking your learning progress.
               </p>
               <Link
@@ -124,10 +124,10 @@ export default async function DashboardPage() {
                           <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 uppercase tracking-wide">
                             {meta?.type ?? "track"}
                           </span>
-                          <h3 className="text-lg font-bold text-white mt-2 group-hover:text-amber-500 transition-colors duration-200">
+                          <h3 className="text-lg font-bold text-text-primary mt-2 group-hover:text-amber-500 transition-colors duration-200">
                             {meta?.title ?? content.title}
                           </h3>
-                          <p className="text-xs text-muted mt-1 line-clamp-2">
+                          <p className="text-xs text-text-secondary mt-1 line-clamp-2 font-medium">
                             {meta?.description || `A complete guide mapping out milestones for ${meta?.title || content.title}.`}
                           </p>
                         </div>
@@ -135,9 +135,9 @@ export default async function DashboardPage() {
                     </div>
 
                     <div className="mt-6">
-                      <div className="flex items-center justify-between text-xs text-muted mb-2 font-medium">
+                      <div className="flex items-center justify-between text-xs text-text-secondary mb-2 font-semibold">
                         <span>Milestone Progress</span>
-                        <span className="text-white font-bold">{pct}%</span>
+                        <span className="text-text-primary font-bold">{pct}%</span>
                       </div>
                       
                       {/* Premium Progress Bar */}
@@ -148,7 +148,7 @@ export default async function DashboardPage() {
                         />
                       </div>
                       
-                      <div className="mt-3 flex items-center justify-between text-xs text-muted">
+                      <div className="mt-3 flex items-center justify-between text-xs text-text-secondary font-medium">
                         <span>{done} of {total} nodes completed</span>
                         <span className="text-amber-500 group-hover:translate-x-0.5 transition-transform duration-200 flex items-center gap-0.5 font-semibold">
                           Continue Track <ChevronRight className="h-3.5 w-3.5" />

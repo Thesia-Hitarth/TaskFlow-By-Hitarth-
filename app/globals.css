@@ -80,3 +80,17 @@ body {
   border: 1px solid var(--color-background) !important;
 }
 
+/* Typography plugin overrides */
+.prose {
+  --tw-prose-body: var(--color-text-secondary) !important;
+  --tw-prose-headings: var(--color-text-primary) !important;
+  --tw-prose-links: var(--color-accent) !important;
+  --tw-prose-bold: var(--color-text-primary) !important;
+  --tw-prose-code: var(--color-accent) !important;
+  --tw-prose-pre-bg: var(--color-surface) !important;
+  --tw-prose-pre-code: var(--color-text-primary) !important;
+  --tw-prose-borders: var(--color-border) !important;
+  --tw-prose-quotes: var(--color-muted) !important;
+}
+
+
