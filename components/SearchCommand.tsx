@@ -60,7 +60,7 @@ export default function SearchCommand() {
 
       {open && mounted && createPortal(
         <div
-          className="fixed inset-0 z-100 flex items-start justify-center pt-24 bg-black/40 dark:bg-black/70 backdrop-blur-xs transition-opacity duration-300"
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-24 bg-black/40 dark:bg-black/70 backdrop-blur-xs transition-opacity duration-300"
           onClick={() => setOpen(false)}
         >
           <div

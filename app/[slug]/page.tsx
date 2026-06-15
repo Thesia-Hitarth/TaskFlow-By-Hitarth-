@@ -2,10 +2,11 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { taskflows } from "@/lib/taskflows-data";
-import TaskflowDiagram from "@/components/taskflow/TaskflowDiagram";
 import { taskflowContent } from "@/lib/taskflow-content";
 import { guides } from "@/lib/guides-data";
 import GuideCard from "@/components/GuideCard";
+import LazyTaskflowDiagram from "@/components/taskflow/LazyTaskflowDiagram";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -20,6 +21,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const taskflow = taskflows.find((tf) => tf.slug === slug);
+  if (!taskflow) return {};
   return {
     title: `${taskflow?.title || "Developer"} Taskflow 2026 — taskflow.sh`,
     description: taskflow?.description || "Step by step guide to learning.",
@@ -29,9 +31,10 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function TaskflowDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const taskflow = taskflows.find((tf) => tf.slug === slug);
+  if (!taskflow) notFound();
   const content = taskflowContent[slug];
   
-  const title = taskflow?.title || slug.charAt(0).toUpperCase() + slug.slice(1);
+  const title = taskflow.title;
 
   return (
     <>
@@ -59,7 +62,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
         {/* Interactive Diagram or Placeholder Box */}
         {content ? (
           <div className="mt-10">
-            <TaskflowDiagram content={content} />
+            <LazyTaskflowDiagram content={content} />
           </div>
         ) : (
           <div className="mt-10 bg-card border border-border border-dashed rounded-xl h-96 w-full flex flex-col items-center justify-center text-center px-4">
