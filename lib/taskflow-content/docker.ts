@@ -5,94 +5,174 @@ export const dockerTaskflow: TaskflowContent = {
   title: "Docker",
   nodes: [
     // 1. Basics
-    { id: "docker-basics", kind: "milestone", label: "Basics",
-      description: "Learn how to build images, execute isolated containers, and configure container layers.",
-      position: { x: 60, y: 0 } },
-    { id: "docker-images-containers", kind: "subtopic", label: "Images & Containers",
-      description: "Differentiate static read-only images from dynamic, writable container instances.",
+    {
+      id: "docker-basics",
+      kind: "milestone",
+      label: "Basics",
+      description: "Learn containerization concepts, configure Dockerfiles templates, and execute CLI commands. Container isolation keeps development environments identical across all machines.",
+      position: { x: 60, y: 0 }
+    },
+    {
+      id: "docker-images-containers",
+      kind: "subtopic",
+      label: "Images & Containers",
+      description: "Images act as read-only blueprints while containers run writeable instances. Master difference between static image templates, container runtime layers, copy-on-write mechanisms, and container lifecycles.",
       links: [{ title: "Docker Guides: Get Started", url: "https://docs.docker.com/get-started/docker-concepts/the-basics/" }],
-      position: { x: 380, y: 0 } },
-    { id: "docker-dockerfile", kind: "subtopic", label: "Dockerfile",
-      description: "Write custom images recipes using commands like FROM, RUN, COPY, and CMD.",
+      position: { x: 380, y: 0 }
+    },
+    {
+      id: "docker-dockerfile",
+      kind: "subtopic",
+      label: "Dockerfile",
+      description: "A Dockerfile compiles image layers. Study key instructions (FROM, RUN, COPY, ADD, CMD, ENTRYPOINT, EXPOSE, ENV), layer caching, build context, and configuring working directories.",
       links: [{ title: "Dockerfile Reference Guide", url: "https://docs.docker.com/reference/dockerfile/" }],
-      position: { x: 380, y: 55 } },
-    { id: "docker-cli", kind: "subtopic", label: "Docker CLI",
-      description: "Command container states via docker build, docker run, docker ps, and docker exec.",
+      position: { x: 380, y: 55 }
+    },
+    {
+      id: "docker-cli",
+      kind: "subtopic",
+      label: "Docker CLI",
+      description: "The Docker CLI manages container tasks. Master essential command loops (docker build, docker run, docker exec, docker ps, docker logs, docker system prune), and port mappings.",
       links: [{ title: "Docker CLI Commands Docs", url: "https://docs.docker.com/reference/cli/docker/" }],
-      position: { x: 380, y: 110 } },
+      position: { x: 380, y: 110 }
+    },
 
     // 2. Networking & Storage
-    { id: "docker-networking-storage", kind: "milestone", label: "Networking & Storage",
-      description: "Persist container data paths and configure virtual network links.",
-      position: { x: 60, y: 220 } },
-    { id: "docker-volumes", kind: "subtopic", label: "Volumes",
-      description: "Persist databases and logs using dedicated storage volumes managed by Docker engine.",
+    {
+      id: "docker-networking-storage",
+      kind: "milestone",
+      label: "Networking & Storage",
+      description: "Configure network links between containers and persist database data across container deletions.",
+      position: { x: 60, y: 220 }
+    },
+    {
+      id: "docker-volumes",
+      kind: "subtopic",
+      label: "Volumes",
+      description: "Volumes persist container data outside container lifecycles. Learn creating volumes, mapping paths, backup routines, sharing volumes, and managing storage drivers.",
       links: [{ title: "Docker Volumes Documentation", url: "https://docs.docker.com/storage/volumes/" }],
-      position: { x: 380, y: 220 } },
-    { id: "docker-bind-mounts", kind: "subtopic", label: "Bind Mounts",
-      description: "Mount files from the host system directory directly into container targets for local hot-reload.",
+      position: { x: 380, y: 220 }
+    },
+    {
+      id: "docker-bind-mounts",
+      kind: "subtopic",
+      label: "Bind Mounts",
+      description: "Bind mounts mount host directories directly into containers. Master differences between volumes and bind mounts, configuring mounts for development code hot-reloads, and managing file permissions.",
       links: [{ title: "Docker Bind Mounts Guide", url: "https://docs.docker.com/storage/bind-mounts/" }],
-      position: { x: 380, y: 275 } },
-    { id: "docker-networks", kind: "subtopic", label: "Docker Networks",
-      description: "Configure communications using bridge, host, overlay, or custom network driver protocols.",
+      position: { x: 380, y: 275 }
+    },
+    {
+      id: "docker-networks",
+      kind: "subtopic",
+      label: "Docker Networks",
+      description: "Networks connect containers together. Study bridge network settings, host networking, overlay configurations, DNS name resolution in custom networks, and managing network ports.",
       links: [{ title: "Docker Network Overview", url: "https://docs.docker.com/network/" }],
-      position: { x: 380, y: 330 } },
+      position: { x: 380, y: 330 }
+    },
 
     // 3. Compose
-    { id: "docker-compose", kind: "milestone", label: "Compose",
-      description: "Orchestrate multi-container applications easily using yaml configuration templates.",
-      position: { x: 60, y: 440 } },
-    { id: "docker-compose-yml", kind: "subtopic", label: "docker-compose.yml",
-      description: "Define multi-container service stacks, network mappings, and storage configs inside a single file.",
+    {
+      id: "docker-compose",
+      kind: "milestone",
+      label: "Compose",
+      description: "Orchestrate multi-container applications easily using YAML files. Compose runs multi-container stacks like APIs, databases, and caches together.",
+      position: { x: 60, y: 440 }
+    },
+    {
+      id: "docker-compose-yml",
+      kind: "subtopic",
+      label: "docker-compose.yml",
+      description: "The Compose file defines a service stack configuration. Study yaml syntax, declaring services, configuring networks mappings, mounting volumes, and setting service dependencies (depends_on).",
       links: [{ title: "Docker Compose Specification", url: "https://docs.docker.com/compose/compose-file/" }],
-      position: { x: 380, y: 440 } },
-    { id: "docker-multi-container", kind: "subtopic", label: "Multi-container Apps",
-      description: "Launch linked services like database containers, cache systems, and API servers together.",
+      position: { x: 380, y: 440 }
+    },
+    {
+      id: "docker-multi-container",
+      kind: "subtopic",
+      label: "Multi-container Apps",
+      description: "Multi-container applications connect service nodes. Learn routing database requests, structuring microservices stacks, initializing databases, and orchestration using Compose commands.",
       links: [{ title: "Docker Compose Overview", url: "https://docs.docker.com/compose/" }],
-      position: { x: 380, y: 495 } },
-    { id: "docker-env-variables", kind: "subtopic", label: "Environment Variables",
-      description: "Pass run parameters and database keys safely into services utilizing dotenv mappings.",
+      position: { x: 380, y: 495 }
+    },
+    {
+      id: "docker-env-variables",
+      kind: "subtopic",
+      label: "Environment Variables",
+      description: "Environment variables configure dynamic service values. Study loading .env file records, passing variables parameters, configuring database keys, and structuring dynamic configs.",
       links: [{ title: "Docker Compose Environment Variables", url: "https://docs.docker.com/compose/environment-variables/" }],
-      position: { x: 380, y: 550 } },
+      position: { x: 380, y: 550 }
+    },
 
     // 4. Optimization
-    { id: "docker-optimization", kind: "milestone", label: "Optimization",
-      description: "Speed up image compiles, scale down output sizes, and configure build cache paths.",
-      position: { x: 60, y: 660 } },
-    { id: "docker-multi-stage-builds", kind: "subtopic", label: "Multi-stage Builds",
-      description: "Separate compilation environments from final runtimes to output small, minimal images.",
+    {
+      id: "docker-optimization",
+      kind: "milestone",
+      label: "Optimization",
+      description: "Shrink compiler image sizes, speed up build times, and configure cache allocations.",
+      position: { x: 60, y: 660 }
+    },
+    {
+      id: "docker-multi-stage-builds",
+      kind: "subtopic",
+      label: "Multi-stage Builds",
+      description: "Multi-stage builds compile code in temporary builder stages and copy outputs to clean runtimes. Master separating build dependencies from final release images to reduce vulnerabilities.",
       links: [{ title: "Docker Multi-stage Builds Guide", url: "https://docs.docker.com/build/building/multi-stage/" }],
-      position: { x: 380, y: 660 } },
-    { id: "docker-image-size-reduction", kind: "subtopic", label: "Image Size Reduction",
-      description: "Minimize image layers using lightweight Alpine distros, removing unnecessary packages.",
+      position: { x: 380, y: 660 }
+    },
+    {
+      id: "docker-image-size-reduction",
+      kind: "subtopic",
+      label: "Image Size Reduction",
+      description: "Smaller images compile and deploy faster. Study using lightweight base distributions (Alpine, distroless), combining commands to reduce layers, ignoring build files (.dockerignore), and cleaning caches.",
       links: [{ title: "Docker Build Optimization Tips", url: "https://docs.docker.com/build/cache/" }],
-      position: { x: 380, y: 715 } },
-    { id: "docker-caching-layers", kind: "subtopic", label: "Caching Layers",
-      description: "Order Dockerfile commands to maximize build-cache hits and speed up continuous integration builds.",
+      position: { x: 380, y: 715 }
+    },
+    {
+      id: "docker-caching-layers",
+      kind: "subtopic",
+      label: "Caching Layers",
+      description: "Docker cache speeds up image compilation. Learn to order instructions from least-frequently to most-frequently changed (copying package manifests before code), and configuring caching rules.",
       links: [{ title: "Docker Cache Allocation", url: "https://docs.docker.com/build/cache/garbage-collection/" }],
-      position: { x: 380, y: 770 } },
+      position: { x: 380, y: 770 }
+    },
 
     // 5. Production
-    { id: "docker-production", kind: "milestone", label: "Production",
-      description: "Distribute images, add health verification rules, and analyze image vulnerabilities.",
-      position: { x: 60, y: 880 } },
-    { id: "docker-registries", kind: "subtopic", label: "Docker Registries",
-      description: "Upload and download images using standard services like Docker Hub or AWS ECR.",
+    {
+      id: "docker-production",
+      kind: "milestone",
+      label: "Production",
+      description: "Distribute image packages, write container checks, and scan for security flaws before deployment.",
+      position: { x: 60, y: 880 }
+    },
+    {
+      id: "docker-registries",
+      kind: "subtopic",
+      label: "Docker Registries",
+      description: "Registries host and distribute image packages. Learn uploading images to Docker Hub or AWS ECR, managing tags, configuring private repositories access, and automated image builds.",
       links: [{ title: "Docker Hub Registry Docs", url: "https://docs.docker.com/docker-hub/" }],
-      position: { x: 380, y: 880 } },
-    { id: "docker-health-checks", kind: "subtopic", label: "Health Checks",
-      description: "Declare HEALTHCHECK checks in Dockerfiles to verify container internal service states.",
+      position: { x: 380, y: 880 }
+    },
+    {
+      id: "docker-health-checks",
+      kind: "subtopic",
+      label: "Health Checks",
+      description: "Container health checks verify if internal applications run correctly. Master writing HEALTHCHECK test parameters in Dockerfiles, monitoring state flags, and configuring retry limits.",
       links: [{ title: "Docker Reference: HEALTHCHECK Instruction", url: "https://docs.docker.com/reference/dockerfile/#healthcheck" }],
-      position: { x: 380, y: 935 } },
-    { id: "docker-security-scanning", kind: "subtopic", label: "Security Scanning",
-      description: "Scan images for package vulnerabilities and run containers using restricted user roles.",
+      position: { x: 380, y: 935 }
+    },
+    {
+      id: "docker-security-scanning",
+      kind: "subtopic",
+      label: "Security Scanning",
+      description: "Security scanning identifies vulnerabilities within base packages. Study image scanning workflows using Docker Scout, running containers with non-root user permissions, and signing images.",
       links: [{ title: "Docker Scout Overview", url: "https://docs.docker.com/scout/" }],
-      position: { x: 380, y: 990 } },
+      position: { x: 380, y: 990 }
+    }
   ],
   edges: [
     { id: "e-docker-basics-docker-networking-storage", source: "docker-basics", target: "docker-networking-storage" },
     { id: "e-docker-networking-storage-docker-compose", source: "docker-networking-storage", target: "docker-compose" },
     { id: "e-docker-compose-docker-optimization", source: "docker-compose", target: "docker-optimization" },
-    { id: "e-docker-optimization-docker-production", source: "docker-optimization", target: "docker-production" },
-  ],
+    { id: "e-docker-optimization-docker-production", source: "docker-optimization", target: "docker-production" }
+  ]
 };

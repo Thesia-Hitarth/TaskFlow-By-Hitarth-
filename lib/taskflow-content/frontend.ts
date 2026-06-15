@@ -5,136 +5,260 @@ export const frontendTaskflow: TaskflowContent = {
   title: "Frontend",
   nodes: [
     // Internet
-    { id: "internet", kind: "milestone", label: "Internet",
-      description: "Foundational knowledge of how the internet works before diving into frontend development.",
-      position: { x: 60, y: 0 } },
-    { id: "internet-how-it-works", kind: "subtopic", label: "How does the internet work?",
-      description: "Understand what happens when you type a URL into your browser, from DNS resolution to receiving a response.",
+    {
+      id: "internet",
+      kind: "milestone",
+      label: "Internet",
+      description: "Establish a foundational understanding of web server infrastructures, DNS lookups, packet routing rules, and browser communications. Learning how computers request and receive assets is essential before scripting user interfaces.",
+      position: { x: 60, y: 0 }
+    },
+    {
+      id: "internet-how-it-works",
+      kind: "subtopic",
+      label: "How does the internet work?",
+      description: "The internet is a global network connecting computer devices. Master the client-server model, IP address networks, routers, packets forwarding, transmission control protocols (TCP/IP), and how browsers render received web documents.",
       links: [{ title: "MDN: How the Web works", url: "https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/How_the_Web_works" }],
-      position: { x: 380, y: 0 } },
-    { id: "internet-http", kind: "subtopic", label: "What is HTTP?",
-      description: "Learn about the HTTP protocol, request/response cycle, methods, status codes and headers.",
+      position: { x: 380, y: 0 }
+    },
+    {
+      id: "internet-http",
+      kind: "subtopic",
+      label: "What is HTTP?",
+      description: "HyperText Transfer Protocol (HTTP) coordinates client-server requests and responses. Study HTTP request structures (headers, body), response status codes (2xx, 3xx, 4xx, 5xx), request methods (GET, POST), and security protocols (HTTPS).",
       links: [{ title: "MDN: HTTP overview", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview" }],
-      position: { x: 380, y: 55 } },
-    { id: "internet-dns", kind: "subtopic", label: "DNS and how it works",
-      description: "Learn how domain names get translated into IP addresses through the Domain Name System.",
+      position: { x: 380, y: 55 }
+    },
+    {
+      id: "internet-dns",
+      kind: "subtopic",
+      label: "DNS and how it works",
+      description: "The Domain Name System (DNS) resolves human-readable domain names to computer IP addresses. Study name servers lookup loops, recursive queries, DNS caches, root name servers, and DNS record classifications (A, CNAME).",
       links: [{ title: "Cloudflare: What is DNS", url: "https://www.cloudflare.com/learning/dns/what-is-dns/" }],
-      position: { x: 380, y: 110 } },
-    { id: "internet-hosting", kind: "subtopic", label: "What is Hosting?",
-      description: "Understand the basics of web hosting and how static and dynamic sites are served.",
+      position: { x: 380, y: 110 }
+    },
+    {
+      id: "internet-hosting",
+      kind: "subtopic",
+      label: "What is Hosting?",
+      description: "Web hosting stores application code and assets on server computers connected to the internet. Study cloud hosting platforms, static page deployments, dynamic web servers configurations, and domain name linkages.",
       links: [{ title: "MDN: What is a web server", url: "https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_web_server" }],
-      position: { x: 380, y: 165 } },
+      position: { x: 380, y: 165 }
+    },
 
     // HTML
-    { id: "html", kind: "milestone", label: "HTML",
-      description: "The markup language used to structure content on the web.",
-      position: { x: 60, y: 220 } },
-    { id: "html-basics", kind: "subtopic", label: "Learn the basics",
-      description: "Get familiar with HTML tags, elements, attributes and basic document structure.",
+    {
+      id: "html",
+      kind: "milestone",
+      label: "HTML",
+      description: "HTML structures all web document elements. Master tag layouts, document hierarchies, semantic elements, search engine tags, accessibility requirements, and form inputs configurations.",
+      position: { x: 60, y: 220 }
+    },
+    {
+      id: "html-basics",
+      kind: "subtopic",
+      label: "Learn the basics",
+      description: "HTML structures page sections using tags and element attributes. Learn document configurations (<!DOCTYPE html>, <html>, <head>, <body>), text headings, links creation, lists formatting, and embedding images.",
       links: [{ title: "MDN: HTML basics", url: "https://developer.mozilla.org/en-US/docs/Learn/HTML" }],
-      position: { x: 380, y: 220 } },
-    { id: "html-semantic", kind: "subtopic", label: "Writing Semantic HTML",
-      description: "Use HTML elements according to their intended meaning to build accessible, well-structured pages.",
+      position: { x: 380, y: 220 }
+    },
+    {
+      id: "html-semantic",
+      kind: "subtopic",
+      label: "Writing Semantic HTML",
+      description: "Semantic elements convey meaning to web browsers and screen readers. Master tag configurations (<header>, <nav>, <main>, <article>, <section>, <footer>), improving document structure, and accessibility compliance (ARIA).",
       links: [{ title: "MDN: HTML semantics", url: "https://developer.mozilla.org/en-US/docs/Glossary/Semantics" }],
-      position: { x: 380, y: 275 } },
-    { id: "html-forms", kind: "subtopic", label: "Forms and Validations",
-      description: "Learn how to build forms, use input types, and implement client-side validation.",
+      position: { x: 380, y: 275 }
+    },
+    {
+      id: "html-forms",
+      kind: "subtopic",
+      label: "Forms and Validations",
+      description: "Forms collect and validate user inputs on pages. Learn configuring inputs (text, email, password), form validation attributes (required, pattern, minlength), submission methods, and handling form payloads.",
       links: [{ title: "MDN: Forms guide", url: "https://developer.mozilla.org/en-US/docs/Learn/Forms" }],
-      position: { x: 380, y: 330 } },
+      position: { x: 380, y: 330 }
+    },
 
     // CSS
-    { id: "css", kind: "milestone", label: "CSS",
-      description: "The language used to style and lay out web pages.",
-      position: { x: 60, y: 440 } },
-    { id: "css-basics", kind: "subtopic", label: "Learn the basics",
-      description: "Understand selectors, the cascade, specificity, and how to apply styles to HTML.",
+    {
+      id: "css",
+      kind: "milestone",
+      label: "CSS",
+      description: "CSS controls web layouts styling and responsive presentation structures. Learn cascade logic, box model parameters, Flexbox/Grid alignment systems, variables, and media query controls.",
+      position: { x: 60, y: 440 }
+    },
+    {
+      id: "css-basics",
+      kind: "subtopic",
+      label: "Learn the basics",
+      description: "Basic CSS styles HTML elements using selectors rules. Study rule specifications, rule cascades, specificity weights calculation, color variables, borders settings, and padding/margin spacing models.",
       links: [{ title: "MDN: CSS basics", url: "https://developer.mozilla.org/en-US/docs/Learn/CSS" }],
-      position: { x: 380, y: 440 } },
-    { id: "css-flexbox", kind: "subtopic", label: "Flexbox",
-      description: "Learn the flexible box layout model for arranging items in rows or columns.",
+      position: { x: 380, y: 440 }
+    },
+    {
+      id: "css-flexbox",
+      kind: "subtopic",
+      label: "Flexbox",
+      description: "Flexbox aligns and distributes page elements along one-dimensional axes. Study flex containers creation, alignment controls (justify-content, align-items), item sizes (flex-grow, flex-shrink), and wrapping elements.",
       links: [{ title: "CSS-Tricks: Guide to Flexbox", url: "https://css-tricks.com/snippets/css/a-guide-to-flexbox/" }],
-      position: { x: 380, y: 495 } },
-    { id: "css-grid", kind: "subtopic", label: "CSS Grid",
-      description: "Learn the grid layout system for building two-dimensional page layouts.",
+      position: { x: 380, y: 495 }
+    },
+    {
+      id: "css-grid",
+      kind: "subtopic",
+      label: "CSS Grid",
+      description: "CSS Grid structures two-dimensional page element layouts. Study defining grid columns and rows (grid-template-columns), template areas mapping, element placements, gaps configurations, and alignment tracks.",
       links: [{ title: "CSS-Tricks: Complete Guide to Grid", url: "https://css-tricks.com/snippets/css/complete-guide-grid/" }],
-      position: { x: 380, y: 550 } },
+      position: { x: 380, y: 550 }
+    },
 
     // JavaScript
-    { id: "javascript", kind: "milestone", label: "JavaScript",
-      description: "The programming language that powers interactivity on the web.",
-      position: { x: 60, y: 660 } },
-    { id: "js-basics", kind: "subtopic", label: "Learn the basics",
-      description: "Variables, data types, functions, conditionals, loops and operators.",
+    {
+      id: "javascript",
+      kind: "milestone",
+      label: "JavaScript",
+      description: "JavaScript powers frontend dynamic scripting. Master document manipulations, listening to events, querying backend APIs, and modern ES6+ language configurations.",
+      position: { x: 60, y: 660 }
+    },
+    {
+      id: "js-basics",
+      kind: "subtopic",
+      label: "Learn the basics",
+      description: "Basic JavaScript introduces variable variables and logic routines. Study scopes declarations (let, const), primitive types, logical operators, loops (for, while), conditional checks (if/else), and writing methods.",
       links: [{ title: "MDN: JavaScript first steps", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps" }],
-      position: { x: 380, y: 660 } },
-    { id: "js-dom", kind: "subtopic", label: "DOM Manipulation",
-      description: "Learn how to select, traverse, and update elements on a page using JavaScript.",
+      position: { x: 380, y: 660 }
+    },
+    {
+      id: "js-dom",
+      kind: "subtopic",
+      label: "DOM Manipulation",
+      description: "The Document Object Model (DOM) connects scripts to page layouts. Master selecting element nodes, altering styles attributes dynamically, listening to user events, and creating element nodes.",
       links: [{ title: "MDN: Manipulating documents", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Manipulating_documents" }],
-      position: { x: 380, y: 715 } },
-    { id: "js-fetch", kind: "subtopic", label: "Fetch API",
-      description: "Learn how to make HTTP requests from the browser using the Fetch API and handle responses.",
+      position: { x: 380, y: 715 }
+    },
+    {
+      id: "js-fetch",
+      kind: "subtopic",
+      label: "Fetch API",
+      description: "The Fetch API queries server endpoints over HTTP networks. Master script configuration for GET/POST requests, HTTP headers configuration, JSON parsing callbacks, and handling network errors.",
       links: [{ title: "MDN: Using Fetch", url: "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" }],
-      position: { x: 380, y: 770 } },
-    { id: "js-es6", kind: "subtopic", label: "ES6+ Features",
-      description: "Arrow functions, destructuring, spread/rest, template literals, async/await and modules.",
+      position: { x: 380, y: 770 }
+    },
+    {
+      id: "js-es6",
+      kind: "subtopic",
+      label: "ES6+ Features",
+      description: "Modern JavaScript updates code layout structures. Learn arrow functions binding, array/object destructuring, rest/spread parameters, template literals variables insertion, async/await workflows, and ES Modules imports.",
       links: [{ title: "MDN: JavaScript Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" }],
-      position: { x: 380, y: 825 } },
+      position: { x: 380, y: 825 }
+    },
 
     // Package Managers
-    { id: "package-managers", kind: "milestone", label: "Package Managers",
-      description: "Tools for installing and managing project dependencies.",
-      position: { x: 60, y: 880 } },
-    { id: "pm-npm", kind: "subtopic", label: "npm",
-      description: "The default package manager for Node.js, used to install and manage dependencies.",
+    {
+      id: "package-managers",
+      kind: "milestone",
+      label: "Package Managers",
+      description: "Package managers handle external library dependency packages version configurations. Managing lockfiles guarantees version consistency across developer nodes.",
+      position: { x: 60, y: 880 }
+    },
+    {
+      id: "pm-npm",
+      kind: "subtopic",
+      label: "npm",
+      description: "npm is the default package manager for Node.js. Master configuration files setups (package.json), dependency version rules, locking files dependencies (package-lock.json), and script executions.",
       links: [{ title: "npm docs", url: "https://docs.npmjs.com/" }],
-      position: { x: 380, y: 880 } },
-    { id: "pm-pnpm", kind: "subtopic", label: "pnpm",
-      description: "A fast, disk space efficient alternative to npm with strict dependency resolution.",
+      position: { x: 380, y: 880 }
+    },
+    {
+      id: "pm-pnpm",
+      kind: "subtopic",
+      label: "pnpm",
+      description: "pnpm is an optimized, fast package manager alternative. Study its global content-addressable storage model to save disk space, strict package resolution trees, and speed parameters.",
       links: [{ title: "pnpm docs", url: "https://pnpm.io/motivation" }],
-      position: { x: 380, y: 935 } },
+      position: { x: 380, y: 935 }
+    },
 
     // Frameworks
-    { id: "frameworks", kind: "milestone", label: "Pick a Framework",
-      description: "Modern UI libraries and frameworks for building component-based interfaces.",
-      position: { x: 60, y: 1100 } },
-    { id: "fw-react", kind: "subtopic", label: "React",
-      description: "A component-based library for building user interfaces, maintained by Meta.",
+    {
+      id: "frameworks",
+      kind: "milestone",
+      label: "Pick a Framework",
+      description: "Frontend frameworks simplify visual state management, automate DOM updates, and speed up building complex user interfaces.",
+      position: { x: 60, y: 1100 }
+    },
+    {
+      id: "fw-react",
+      kind: "subtopic",
+      label: "React",
+      description: "React is a component-driven user interface library utilizing a Virtual DOM. Master component state, hook parameters (useState, useEffect, useMemo), virtual tree comparisons, custom hooks design, routing, performance optimization, and context state APIs.",
       links: [{ title: "React docs", url: "https://react.dev/" }],
-      position: { x: 380, y: 1100 } },
-    { id: "fw-vue", kind: "subtopic", label: "Vue.js",
-      description: "An approachable, performant framework for building UIs with a gentle learning curve.",
+      position: { x: 380, y: 1100 }
+    },
+    {
+      id: "fw-vue",
+      kind: "subtopic",
+      label: "Vue.js",
+      description: "Vue is an approachable, reactive frontend framework. Study the Composition API (ref, reactive, computed), template syntax compilation, directives, component custom events, transitions, Pinia state stores, and Vite integration setups.",
       links: [{ title: "Vue docs", url: "https://vuejs.org/" }],
-      position: { x: 380, y: 1155 } },
-    { id: "fw-svelte", kind: "subtopic", label: "Svelte",
-      description: "A compiler-based framework that shifts work from runtime to build time for highly efficient apps.",
+      position: { x: 380, y: 1155 }
+    },
+    {
+      id: "fw-svelte",
+      kind: "subtopic",
+      label: "Svelte",
+      description: "Svelte compiles component templates into pure JavaScript during build times to omit runtime engines. Study reactive declarations ($:), class styling bindings, store subscriptions, and transit loops.",
       links: [{ title: "Svelte docs", url: "https://svelte.dev/" }],
-      position: { x: 380, y: 1210 } },
+      position: { x: 380, y: 1210 }
+    },
 
     // Build Tools
-    { id: "build-tools", kind: "milestone", label: "Build Tools",
-      description: "Tooling for bundling, transpiling and optimizing frontend code.",
-      position: { x: 60, y: 1320 } },
-    { id: "bt-vite", kind: "subtopic", label: "Vite",
-      description: "A fast frontend build tool and dev server with instant hot module replacement.",
+    {
+      id: "build-tools",
+      kind: "milestone",
+      label: "Build Tools",
+      description: "Optimize assets, compile code syntax modifications, and parse style libraries formats.",
+      position: { x: 60, y: 1320 }
+    },
+    {
+      id: "bt-vite",
+      kind: "subtopic",
+      label: "Vite",
+      description: "Vite is a fast frontend build compiler. Master esbuild compiler settings, dev server instant Hot Module Replacement (HMR) speeds, configuring vite.config.js parameters, and generating production builds.",
       links: [{ title: "Vite docs", url: "https://vitejs.dev/" }],
-      position: { x: 380, y: 1320 } },
-    { id: "bt-eslint", kind: "subtopic", label: "ESLint",
-      description: "A static analysis tool for identifying and fixing problems in JavaScript/TypeScript code.",
+      position: { x: 380, y: 1320 }
+    },
+    {
+      id: "bt-eslint",
+      kind: "subtopic",
+      label: "ESLint",
+      description: "ESLint statically inspects javascript code files for logic flaws. Master custom lint rule configurations, setting env configurations, connecting editor checkers, and running autofixes scripts.",
       links: [{ title: "ESLint docs", url: "https://eslint.org/" }],
-      position: { x: 380, y: 1375 } },
+      position: { x: 380, y: 1375 }
+    },
 
     // Testing
-    { id: "testing", kind: "milestone", label: "Testing",
-      description: "Practices and tools for verifying that frontend code works correctly.",
-      position: { x: 60, y: 1540 } },
-    { id: "test-unit", kind: "subtopic", label: "Unit Testing",
-      description: "Write isolated tests for individual functions and components using tools like Vitest or Jest.",
+    {
+      id: "testing",
+      kind: "milestone",
+      label: "Testing",
+      description: "Verify codebase logic correctness using automated test runners and simulate user behaviors to prevent deployment regressions.",
+      position: { x: 60, y: 1540 }
+    },
+    {
+      id: "test-unit",
+      kind: "subtopic",
+      label: "Unit Testing",
+      description: "Unit testing validates individual functions or component states in isolation. Learn writing test suites via Vitest/Jest, asserting outputs, mocking external service modules, and tracking coverage statistics.",
       links: [{ title: "Vitest docs", url: "https://vitest.dev/" }],
-      position: { x: 380, y: 1540 } },
-    { id: "test-e2e", kind: "subtopic", label: "End-to-End Testing",
-      description: "Test full user flows in a real browser environment using tools like Playwright or Cypress.",
+      position: { x: 380, y: 1540 }
+    },
+    {
+      id: "test-e2e",
+      kind: "subtopic",
+      label: "End-to-End Testing",
+      description: "End-to-End (E2E) testing validates user flows across database transactions inside actual browser engines. Study writing user scenarios, element interactions, trace reviews, and pipelines testing via Playwright.",
       links: [{ title: "Playwright docs", url: "https://playwright.dev/" }],
-      position: { x: 380, y: 1595 } },
+      position: { x: 380, y: 1595 }
+    }
   ],
   edges: [
     { id: "e-internet-html", source: "internet", target: "html" },
@@ -143,6 +267,6 @@ export const frontendTaskflow: TaskflowContent = {
     { id: "e-js-pm", source: "javascript", target: "package-managers" },
     { id: "e-pm-fw", source: "package-managers", target: "frameworks" },
     { id: "e-pm-fw-bt", source: "frameworks", target: "build-tools" },
-    { id: "e-bt-test", source: "build-tools", target: "testing" },
-  ],
+    { id: "e-bt-test", source: "build-tools", target: "testing" }
+  ]
 };

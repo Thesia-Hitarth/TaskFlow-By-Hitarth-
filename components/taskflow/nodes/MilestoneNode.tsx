@@ -10,7 +10,7 @@ const statusStyles: Record<NodeStatus, string> = {
   skipped: "border-red-500/50 bg-red-500/5 opacity-60",
 };
 
-export default function MilestoneNode({ data }: any) {
+export default function MilestoneNode({ data }: { data: { label: string; status?: NodeStatus } }) {
   const status: NodeStatus = data.status ?? "pending";
   return (
     <div className={`rounded-lg border-2 px-4 py-3 min-w-[180px] text-center font-semibold text-white cursor-pointer transition-colors ${statusStyles[status]}`}>

@@ -9,7 +9,7 @@ const statusStyles: Record<NodeStatus, string> = {
   skipped: "border-red-500/40 text-red-400/70 bg-red-500/5 line-through",
 };
 
-export default function SubtopicNode({ data }: any) {
+export default function SubtopicNode({ data }: { data: { label: string; status?: NodeStatus } }) {
   const status: NodeStatus = data.status ?? "pending";
   return (
     <div className={`rounded-md border px-3 py-2 min-w-[170px] text-sm cursor-pointer transition-colors ${statusStyles[status]}`}>

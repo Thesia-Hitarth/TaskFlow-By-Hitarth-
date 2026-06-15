@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: ["next-auth", "@auth/react", "@auth/core"],
 };
 
 export default nextConfig;

@@ -5,94 +5,174 @@ export const gitGithubTaskflow: TaskflowContent = {
   title: "Git and GitHub",
   nodes: [
     // 1. Git Basics
-    { id: "git-basics", kind: "milestone", label: "Git Basics",
-      description: "Learn how to initialize local repositories, track changes, and audit change logs.",
-      position: { x: 60, y: 0 } },
-    { id: "git-init", kind: "subtopic", label: "Init",
-      description: "Create empty local repositories or clone existing remote directories.",
+    {
+      id: "git-basics",
+      kind: "milestone",
+      label: "Git Basics",
+      description: "Initialize local repositories, track changes, and audit change logs. Version control tracks code history to prevent data loss.",
+      position: { x: 60, y: 0 }
+    },
+    {
+      id: "git-init",
+      kind: "subtopic",
+      label: "Init",
+      description: "git init creates a new local repository folder. Master repository structures, configuring user keys, cloning remote directories (git clone), and configuring tracking targets.",
       links: [{ title: "Git Reference: git init", url: "https://git-scm.com/docs/git-init" }],
-      position: { x: 380, y: 0 } },
-    { id: "git-add-commit", kind: "subtopic", label: "Add & Commit",
-      description: "Stage modified files and record snapshot states into repository history files.",
+      position: { x: 380, y: 0 }
+    },
+    {
+      id: "git-add-commit",
+      kind: "subtopic",
+      label: "Add & Commit",
+      description: "git add stages files, and git commit saves a snapshot. Learn how staging areas work, writing descriptive commit messages, and committing changed lines.",
       links: [{ title: "Git Reference: git commit", url: "https://git-scm.com/docs/git-commit" }],
-      position: { x: 380, y: 55 } },
-    { id: "git-status-log", kind: "subtopic", label: "Status & Log",
-      description: "Inspect working directory changes and audit chronological commit lines.",
+      position: { x: 380, y: 55 }
+    },
+    {
+      id: "git-status-log",
+      kind: "subtopic",
+      label: "Status & Log",
+      description: "git status reports uncommitted files, while git log audits repository history. Master reading file status flags, viewing log graphs, and filtering history logs.",
       links: [{ title: "Git Reference: git log", url: "https://git-scm.com/docs/git-log" }],
-      position: { x: 380, y: 110 } },
+      position: { x: 380, y: 110 }
+    },
 
     // 2. Branching
-    { id: "git-branching", kind: "milestone", label: "Branching",
-      description: "Isolate feature developments, merge changes, and re-apply histories.",
-      position: { x: 60, y: 220 } },
-    { id: "git-branches", kind: "subtopic", label: "Branches",
-      description: "Spawn parallel development lines to work on changes without impacting main paths.",
+    {
+      id: "git-branching",
+      kind: "milestone",
+      label: "Branching",
+      description: "Isolate feature developments, merge changes, and re-apply histories. Branching enables developers to work on changes without impacting main paths.",
+      position: { x: 60, y: 220 }
+    },
+    {
+      id: "git-branches",
+      kind: "subtopic",
+      label: "Branches",
+      description: "Branches are pointer lines referencing code commits. Study branch creation (git branch), switching workspaces (git checkout, git switch), list branches, and deleting branches.",
       links: [{ title: "Git Reference: git branch", url: "https://git-scm.com/docs/git-branch" }],
-      position: { x: 380, y: 220 } },
-    { id: "git-merging", kind: "subtopic", label: "Merging",
-      description: "Combine isolated branch commits back into primary target lines.",
+      position: { x: 380, y: 220 }
+    },
+    {
+      id: "git-merging",
+      kind: "subtopic",
+      label: "Merging",
+      description: "git merge combines code branches history records. Master fast-forward merge paths, creating merge commits, choosing target branches, and keeping branch structures clean.",
       links: [{ title: "Git Reference: git merge", url: "https://git-scm.com/docs/git-merge" }],
-      position: { x: 380, y: 275 } },
-    { id: "git-rebasing", kind: "subtopic", label: "Rebasing",
-      description: "Apply sequence of commits from one branch on top of another base tip.",
+      position: { x: 380, y: 275 }
+    },
+    {
+      id: "git-rebasing",
+      kind: "subtopic",
+      label: "Rebasing",
+      description: "git rebase re-applies commits from one branch on top of another base tip. Learn clean commit history generation, interactive rebasing, and avoiding rebase runs on public branches.",
       links: [{ title: "Git Reference: git rebase", url: "https://git-scm.com/docs/git-rebase" }],
-      position: { x: 380, y: 330 } },
+      position: { x: 380, y: 330 }
+    },
 
     // 3. Collaboration
-    { id: "git-collaboration", kind: "milestone", label: "Collaboration",
-      description: "Propose modifications, review teammate code, and copy repositories.",
-      position: { x: 60, y: 440 } },
-    { id: "git-pull-requests", kind: "subtopic", label: "Pull Requests",
-      description: "Submit branch proposals on GitHub to merge code changes into source trees.",
+    {
+      id: "git-collaboration",
+      kind: "milestone",
+      label: "Collaboration",
+      description: "Propose modifications, review teammate code, and copy repositories on code hosting platforms.",
+      position: { x: 60, y: 440 }
+    },
+    {
+      id: "git-pull-requests",
+      kind: "subtopic",
+      label: "Pull Requests",
+      description: "Pull Requests (PRs) submit branch changes for team review. Master writing descriptive descriptions, configuring reviewers, resolving review comments, and merging commits.",
       links: [{ title: "GitHub Docs: Pull Requests", url: "https://docs.github.com/en/pull-requests" }],
-      position: { x: 380, y: 440 } },
-    { id: "git-code-review", kind: "subtopic", label: "Code Review",
-      description: "Comment on suggested changes, audit line diffs, and approve integration requests.",
+      position: { x: 380, y: 440 }
+    },
+    {
+      id: "git-code-review",
+      kind: "subtopic",
+      label: "Code Review",
+      description: "Code reviews audit code changes before integration. Study reviewing line differences (diffs), suggesting changes directly, configuring approvals rules, and checking build statuses.",
       links: [{ title: "GitHub Docs: Reviewing PRs", url: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests" }],
-      position: { x: 380, y: 495 } },
-    { id: "git-forking", kind: "subtopic", label: "Forking",
-      description: "Duplicate a remote repository on GitHub to experiment and submit patches independently.",
+      position: { x: 380, y: 495 }
+    },
+    {
+      id: "git-forking",
+      kind: "subtopic",
+      label: "Forking",
+      description: "Forking duplicates a remote repository to submit pull requests externally. Learn configuring upstream remote targets, synchronizing forks, and managing permissions.",
       links: [{ title: "GitHub Docs: Fork a Repo", url: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks" }],
-      position: { x: 380, y: 550 } },
+      position: { x: 380, y: 550 }
+    },
 
     // 4. GitHub Features
-    { id: "git-github-features", kind: "milestone", label: "GitHub Features",
-      description: "Use project trackers, build automated workflows, and host basic sites.",
-      position: { x: 60, y: 660 } },
-    { id: "git-issues", kind: "subtopic", label: "Issues",
-      description: "Track bug reports, tasks, and feature designs using collaborative task lists.",
+    {
+      id: "git-github-features",
+      kind: "milestone",
+      label: "GitHub Features",
+      description: "Track issues, configure build pipelines, and host static web files using GitHub features.",
+      position: { x: 60, y: 660 }
+    },
+    {
+      id: "git-issues",
+      kind: "subtopic",
+      label: "Issues",
+      description: "GitHub Issues tracks tasks and project planning. Learn templates setup, assigning label flags, linking issues to code commits, and project boards configurations.",
       links: [{ title: "GitHub Docs: Issues Management", url: "https://docs.github.com/en/issues" }],
-      position: { x: 380, y: 660 } },
-    { id: "git-actions", kind: "subtopic", label: "Actions",
-      description: "Configure automated tasks to build, test, and release code changes automatically.",
+      position: { x: 380, y: 660 }
+    },
+    {
+      id: "git-actions",
+      kind: "subtopic",
+      label: "Actions",
+      description: "GitHub Actions automates workflow tasks (CI/CD). Study yaml workflow designs, triggers settings (push, pull_request), checkout actions configurations, caching settings, and deployment runs.",
       links: [{ title: "GitHub Actions Docs", url: "https://docs.github.com/en/actions" }],
-      position: { x: 380, y: 715 } },
-    { id: "git-pages", kind: "subtopic", label: "GitHub Pages",
-      description: "Host static client pages directly from repository branches for free.",
+      position: { x: 380, y: 715 }
+    },
+    {
+      id: "git-pages",
+      kind: "subtopic",
+      label: "GitHub Pages",
+      description: "GitHub Pages hosts static html websites from repository branches. Learn custom domain name mapping, configuring static build files, and deployment rules.",
       links: [{ title: "GitHub Pages Documentation", url: "https://pages.github.com/" }],
-      position: { x: 380, y: 770 } },
+      position: { x: 380, y: 770 }
+    },
 
     // 5. Advanced
-    { id: "git-advanced", kind: "milestone", label: "Advanced",
+    {
+      id: "git-advanced",
+      kind: "milestone",
+      label: "Advanced",
       description: "Temporarily shelter file changes, copy specific commits, and resolve merge conflicts.",
-      position: { x: 60, y: 880 } },
-    { id: "git-stash", kind: "subtopic", label: "Git Stash",
-      description: "Save uncommitted modifications temporarily to work on a separate task clean.",
+      position: { x: 60, y: 880 }
+    },
+    {
+      id: "git-stash",
+      kind: "subtopic",
+      label: "Git Stash",
+      description: "git stash saves uncommitted modifications to clear the working directory. Learn stashing files (git stash push), listing stashes, re-applying changes (git stash pop), and branch creation.",
       links: [{ title: "Git Reference: git stash", url: "https://git-scm.com/docs/git-stash" }],
-      position: { x: 380, y: 880 } },
-    { id: "git-cherry-pick", kind: "subtopic", label: "Cherry-pick",
-      description: "Re-apply specific commit changes from one branch onto the current branch tip.",
+      position: { x: 380, y: 880 }
+    },
+    {
+      id: "git-cherry-pick",
+      kind: "subtopic",
+      label: "Cherry-pick",
+      description: "git cherry-pick copies specific commits from one branch to another. Master commit hash selections, resolving copy conflicts, and maintaining branch sanity.",
       links: [{ title: "Git Reference: git cherry-pick", url: "https://git-scm.com/docs/git-cherry-pick" }],
-      position: { x: 380, y: 935 } },
-    { id: "git-resolving-conflicts", kind: "subtopic", label: "Resolving Conflicts",
-      description: "Resolve line-by-line differences when multiple commits modify overlapping content zones.",
+      position: { x: 380, y: 935 }
+    },
+    {
+      id: "git-resolving-conflicts",
+      kind: "subtopic",
+      label: "Resolving Conflicts",
+      description: "Merge conflicts occur when overlapping code lines are modified. Master conflict markers identification (<<<<<<<, =======, >>>>>>>), selecting changes, and completing merge runs.",
       links: [{ title: "GitHub Docs: Merge Conflicts", url: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts" }],
-      position: { x: 380, y: 990 } },
+      position: { x: 380, y: 990 }
+    }
   ],
   edges: [
     { id: "e-git-basics-git-branching", source: "git-basics", target: "git-branching" },
     { id: "e-git-branching-git-collaboration", source: "git-branching", target: "git-collaboration" },
     { id: "e-git-collaboration-git-github-features", source: "git-collaboration", target: "git-github-features" },
-    { id: "e-git-github-features-git-advanced", source: "git-github-features", target: "git-advanced" },
-  ],
+    { id: "e-git-github-features-git-advanced", source: "git-github-features", target: "git-advanced" }
+  ]
 };

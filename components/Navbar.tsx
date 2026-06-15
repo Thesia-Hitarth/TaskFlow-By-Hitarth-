@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
+import AuthButtons from "./AuthButtons";
 
 export default function Navbar() {
   return (
@@ -26,12 +27,7 @@ export default function Navbar() {
       {/* Right: Auth buttons (Desktop) & Menu icon (Mobile) */}
       <div className="flex items-center gap-2">
         <div className="hidden sm:flex items-center gap-2">
-          <Button variant="ghost" className="text-sm hover:bg-surface">
-            Sign In
-          </Button>
-          <Button className="bg-amber-500 hover:bg-amber-600 text-black text-sm font-medium">
-            Sign Up
-          </Button>
+          <AuthButtons />
         </div>
         <div className="sm:hidden">
           <Button variant="ghost" size="icon" className="text-muted hover:text-white">

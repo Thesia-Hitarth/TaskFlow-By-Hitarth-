@@ -5,94 +5,174 @@ export const cyberSecurityTaskflow: TaskflowContent = {
   title: "Cyber Security",
   nodes: [
     // 1. Foundations
-    { id: "cs-foundations", kind: "milestone", label: "Foundations",
-      description: "Acquire basic systems administration and foundational computer networking understanding.",
-      position: { x: 60, y: 0 } },
-    { id: "cs-networking-basics", kind: "subtopic", label: "Networking Basics",
-      description: "Learn how packets flow across routers, switches, IP addresses, and standard ports.",
+    {
+      id: "cs-foundations",
+      kind: "milestone",
+      label: "Foundations",
+      description: "Learn the core systems administration and networking fundamentals before exploring security tools. Understanding how packets travel, how OS kernels route tasks, and Linux permissions forms the basis of all defensive and offensive security.",
+      position: { x: 60, y: 0 }
+    },
+    {
+      id: "cs-networking-basics",
+      kind: "subtopic",
+      label: "Networking Basics",
+      description: "Computer networks connect resources using complex routing configurations. Master the OSI model layers, TCP/UDP packet transport handshakes, IP addressing subnet masks, DNS queries, routing protocols, and standard firewall port mappings.",
       links: [{ title: "Cisco Networking Basics", url: "https://www.cisco.com/c/en/us/solutions/small-business/resource-center/networking/networking-basics.html" }],
-      position: { x: 380, y: 0 } },
-    { id: "cs-operating-systems", kind: "subtopic", label: "Operating Systems",
-      description: "Understand operating system kernels, process execution, file subsystems, and memory allocation.",
+      position: { x: 380, y: 0 }
+    },
+    {
+      id: "cs-operating-systems",
+      kind: "subtopic",
+      label: "Operating Systems",
+      description: "Operating Systems coordinate memory, hardware inputs, and software processes execution. Study kernel architectures, memory allocations schemes, process scheduling algorithms, standard file subsystems structures, and OS configurations.",
       links: [{ title: "OS Course Notes", url: "https://pages.cs.wisc.edu/~remzi/OSTEP/" }],
-      position: { x: 380, y: 55 } },
-    { id: "cs-linux", kind: "subtopic", label: "Linux",
-      description: "Master navigation, user permission levels, shell configurations, and scripting tasks.",
+      position: { x: 380, y: 55 }
+    },
+    {
+      id: "cs-linux",
+      kind: "subtopic",
+      label: "Linux",
+      description: "Linux is the standard operating system for security engineering and hosting. Master terminal shell navigation commands, user permissions ownership configurations (chmod, chown), script variables, process management, and networking configurations.",
       links: [{ title: "Linux Documentation", url: "https://www.kernel.org/doc/html/latest/" }],
-      position: { x: 380, y: 110 } },
+      position: { x: 380, y: 110 }
+    },
 
     // 2. Security Concepts
-    { id: "cs-security-concepts", kind: "milestone", label: "Security Concepts",
-      description: "Analyze baseline principles of system integrity, cryptography, and modern threat vectors.",
-      position: { x: 60, y: 220 } },
-    { id: "cs-cia-triad", kind: "subtopic", label: "CIA Triad",
-      description: "Ensure Confidentiality, Integrity, and Availability across data architectures.",
+    {
+      id: "cs-security-concepts",
+      kind: "milestone",
+      label: "Security Concepts",
+      description: "Analyze baseline security principles, cryptographic algorithms, and attack methodologies. Understanding these threat models is essential to identify vulnerabilities and design robust defenses.",
+      position: { x: 60, y: 220 }
+    },
+    {
+      id: "cs-cia-triad",
+      kind: "subtopic",
+      label: "CIA Triad",
+      description: "The CIA Triad dictates system defense boundaries. Master Confidentiality controls (encryption, permissions), Integrity verifications (hashing algorithms, audit logs), and Availability rules (redundancy structures, failover scaling).",
       links: [{ title: "NIST Security Principles", url: "https://csrc.nist.gov/" }],
-      position: { x: 380, y: 220 } },
-    { id: "cs-cryptography-basics", kind: "subtopic", label: "Cryptography Basics",
-      description: "Implement public key encryption, symmetric hashing algorithms, and SSL/TLS keys.",
+      position: { x: 380, y: 220 }
+    },
+    {
+      id: "cs-cryptography-basics",
+      kind: "subtopic",
+      label: "Cryptography Basics",
+      description: "Cryptography secures data payloads in transit and at rest. Study symmetric encryption (AES), asymmetric algorithms (RSA, ECC), secure hashing algorithms (SHA-256), SSL/TLS handshake configurations, and certificate authorities.",
       links: [{ title: "OpenSSL Documentation", url: "https://www.openssl.org/docs/" }],
-      position: { x: 380, y: 275 } },
-    { id: "cs-common-attack-types", kind: "subtopic", label: "Common Attack Types",
-      description: "Identify phishing attempts, man-in-the-middle captures, DDoS attacks, and buffer overflows.",
+      position: { x: 380, y: 275 }
+    },
+    {
+      id: "cs-common-attack-types",
+      kind: "subtopic",
+      label: "Common Attack Types",
+      description: "Common attacks exploit network, OS, or application gaps. Identify phishing vectors, Man-in-the-Middle (MitM) captures, Distributed Denial of Service (DDoS) traffic flood configurations, SQL injection parameters, and buffer overflows.",
       links: [{ title: "MITRE ATT&CK Matrix", url: "https://attack.mitre.org/" }],
-      position: { x: 380, y: 330 } },
+      position: { x: 380, y: 330 }
+    },
 
     // 3. Tools
-    { id: "cs-tools", kind: "milestone", label: "Tools",
-      description: "Operate standard network auditing, packet inspecting, and vulnerability analysis applications.",
-      position: { x: 60, y: 440 } },
-    { id: "cs-wireshark", kind: "subtopic", label: "Wireshark",
-      description: "Analyze packet headers, TCP handshakes, and application protocol payloads interactively.",
+    {
+      id: "cs-tools",
+      kind: "milestone",
+      label: "Tools",
+      description: "Master using standard industry tools to audit networks, inspect packet streams, and test web application parameters. Utilizing these utilities allows developers to identify exposures before malicious actors do.",
+      position: { x: 60, y: 440 }
+    },
+    {
+      id: "cs-wireshark",
+      kind: "subtopic",
+      label: "Wireshark",
+      description: "Wireshark captures and inspects real-time network packets. Master packet filters writing, capturing HTTP/S TCP handshakes, tracing streams, diagnosing packet loss, and parsing network protocol data packets.",
       links: [{ title: "Wireshark User Guide", url: "https://www.wireshark.org/docs/wsug_html_chunked/" }],
-      position: { x: 380, y: 440 } },
-    { id: "cs-nmap", kind: "subtopic", label: "Nmap",
-      description: "Perform host discovery, scan ports, and determine services running on network nodes.",
+      position: { x: 380, y: 440 }
+    },
+    {
+      id: "cs-nmap",
+      kind: "subtopic",
+      label: "Nmap",
+      description: "Nmap maps network nodes and audits open ports. Master host discovery commands, port state identification (-sS, -sT), OS detection parameters, banner grabbing scripts, and exporting scan configurations.",
       links: [{ title: "Nmap Reference Guide", url: "https://nmap.org/book/man.html" }],
-      position: { x: 380, y: 495 } },
-    { id: "cs-burpsuite", kind: "subtopic", label: "Burp Suite",
-      description: "Intercept web server HTTP transactions to audit application APIs and form parameters.",
+      position: { x: 380, y: 495 }
+    },
+    {
+      id: "cs-burpsuite",
+      kind: "subtopic",
+      label: "Burp Suite",
+      description: "Burp Suite is a proxy tool used to analyze web application security. Master HTTP requests interception, testing input parameters in Repeater, custom dictionary payloads in Intruder, and verifying session cookie safety.",
       links: [{ title: "Burp Suite Docs", url: "https://portswigger.net/burp/documentation" }],
-      position: { x: 380, y: 550 } },
+      position: { x: 380, y: 550 }
+    },
 
     // 4. Application Security
-    { id: "cs-app-security", kind: "milestone", label: "Application Security",
-      description: "Mitigate application exploits and build secure architectures through testing practices.",
-      position: { x: 60, y: 660 } },
-    { id: "cs-owasp-top-10", kind: "subtopic", label: "OWASP Top 10",
-      description: "Reference the standard list of critical security vulnerabilities impacting modern web services.",
+    {
+      id: "cs-app-security",
+      kind: "milestone",
+      label: "Application Security",
+      description: "Secure web application source code, configure server frameworks, and run penetration testing procedures. This phase focuses on software logic validation and input sanitization.",
+      position: { x: 60, y: 660 }
+    },
+    {
+      id: "cs-owasp-top-10",
+      kind: "subtopic",
+      label: "OWASP Top 10",
+      description: "The OWASP Top 10 is the standard awareness guide outlining critical web vulnerabilities. Master mitigating SQL injection, Cross-Site Scripting (XSS), Broken Object-Level Authorization (BOLA), and security misconfigurations.",
       links: [{ title: "OWASP Top 10 Project", url: "https://owasp.org/www-project-top-ten/" }],
-      position: { x: 380, y: 660 } },
-    { id: "cs-secure-coding", kind: "subtopic", label: "Secure Coding",
-      description: "Sanitize data inputs, manage password hashing, and prevent injection vulnerabilities.",
+      position: { x: 380, y: 660 }
+    },
+    {
+      id: "cs-secure-coding",
+      kind: "subtopic",
+      label: "Secure Coding",
+      description: "Secure coding prevents security flaws by applying defensive practices. Study data input sanitization, encoding outputs, secure storage of credentials, parameterized SQL statements, and memory boundaries checking.",
       links: [{ title: "SEI CERT Coding Standards", url: "https://www.securecoding.cert.org/" }],
-      position: { x: 380, y: 715 } },
-    { id: "cs-penetration-testing", kind: "subtopic", label: "Penetration Testing",
-      description: "Perform simulated attacks to identify system exploits and verify patch effectiveness.",
+      position: { x: 380, y: 715 }
+    },
+    {
+      id: "cs-penetration-testing",
+      kind: "subtopic",
+      label: "Penetration Testing",
+      description: "Penetration testing audits software security via simulated attacks. Master reconnaissance steps, vulnerability mappings, exploit execution setups, privilege escalation, and writing technical remediation reports.",
       links: [{ title: "OSCP Guidelines", url: "https://www.offsec.com/" }],
-      position: { x: 380, y: 770 } },
+      position: { x: 380, y: 770 }
+    },
 
     // 5. Certifications & Practice
-    { id: "cs-certifications-practice", kind: "milestone", label: "Certifications & Practice",
-      description: "Validate security skills through recognized certificates and hands-on laboratory games.",
-      position: { x: 60, y: 880 } },
-    { id: "cs-comptia-security-plus", kind: "subtopic", label: "CompTIA Security+",
-      description: "Study Core security principles, risk management, and network infrastructure threats.",
+    {
+      id: "cs-certifications-practice",
+      kind: "milestone",
+      label: "Certifications & Practice",
+      description: "Validate security engineering capabilities using standardized professional certifications and practice offensive and defensive techniques inside Capture The Flag (CTF) environments.",
+      position: { x: 60, y: 880 }
+    },
+    {
+      id: "cs-comptia-security-plus",
+      kind: "subtopic",
+      label: "CompTIA Security+",
+      description: "CompTIA Security+ validates baseline security principles. Study corporate risk management rules, network infrastructure, identity controls architectures, threat signatures, and basic compliance regulations.",
       links: [{ title: "CompTIA Security+ Certification", url: "https://www.comptia.org/certifications/security" }],
-      position: { x: 380, y: 880 } },
-    { id: "cs-ctf-practice", kind: "subtopic", label: "CTF Practice",
-      description: "Solve challenges across cryptography, binary exploitation, and reverse engineering.",
+      position: { x: 380, y: 880 }
+    },
+    {
+      id: "cs-ctf-practice",
+      kind: "subtopic",
+      label: "CTF Practice",
+      description: "CTFs provide gamified environments to practice security exploits. Solve binary analysis challenges, reverse engineer code, exploit web forms, decode crypto inputs, and search for flags inside mock servers.",
       links: [{ title: "CTFTime Platform", url: "https://ctftime.org/" }],
-      position: { x: 380, y: 935 } },
-    { id: "cs-ceh", kind: "subtopic", label: "CEH",
-      description: "Learn ethical hacking methodologies, footprinting, and vulnerability scanning techniques.",
+      position: { x: 380, y: 935 }
+    },
+    {
+      id: "cs-ceh",
+      kind: "subtopic",
+      label: "CEH",
+      description: "Certified Ethical Hacker outlines formal footprinting methodologies. Learn scanning network topologies rules, Trojan threat analysis, SQL injection exploits frameworks, and using security scanner suites.",
       links: [{ title: "EC-Council CEH", url: "https://www.eccouncil.org/train-certify/certified-ethical-hacker-ceh/" }],
-      position: { x: 380, y: 990 } },
+      position: { x: 380, y: 990 }
+    }
   ],
   edges: [
     { id: "e-cs-foundations-cs-security-concepts", source: "cs-foundations", target: "cs-security-concepts" },
     { id: "e-cs-security-concepts-cs-tools", source: "cs-security-concepts", target: "cs-tools" },
     { id: "e-cs-tools-cs-app-security", source: "cs-tools", target: "cs-app-security" },
-    { id: "e-cs-app-security-cs-certifications-practice", source: "cs-app-security", target: "cs-certifications-practice" },
-  ],
+    { id: "e-cs-app-security-cs-certifications-practice", source: "cs-app-security", target: "cs-certifications-practice" }
+  ]
 };
