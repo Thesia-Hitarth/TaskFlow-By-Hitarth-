@@ -2,7 +2,17 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { taskflows } from "@/lib/taskflows-data";
-import TaskflowDiagramWrapper from "@/components/taskflow/TaskflowDiagramWrapper";
+import dynamic from "next/dynamic";
+
+const TaskflowDiagram = dynamic(
+  () => import("@/components/taskflow/TaskflowDiagram"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[60vh] w-full rounded-xl border border-border/50 bg-surface/30 animate-pulse mt-10" />
+    ),
+  }
+);
 import { taskflowContent } from "@/lib/taskflow-content";
 import { guides } from "@/lib/guides-data";
 import GuideCard from "@/components/GuideCard";
@@ -59,7 +69,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
         {/* Interactive Diagram or Placeholder Box */}
         {content ? (
           <div className="mt-10">
-            <TaskflowDiagramWrapper content={content} />
+            <TaskflowDiagram content={content} />
           </div>
         ) : (
           <div className="mt-10 bg-card border border-border border-dashed rounded-xl h-96 w-full flex flex-col items-center justify-center text-center px-4">
