@@ -2,34 +2,15 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Developer Taskflows",
-    template: "%s | Developer Taskflows",
-  },
-  description:
-    "Community created taskflows, guides and articles to help developers grow in their career.",
-  openGraph: {
-    title: "Developer Taskflows",
-    description:
-      "Community created taskflows, guides and articles to help developers grow in their career.",
-    type: "website",
-    siteName: "Developer Taskflows",
-  },
-  twitter: {
-    card: "summary_large_image",
-  },
+  title: "Developer Taskflows",
+  description: "Community created taskflows, guides and articles to help developers grow in their career.",
 };
 
 export default function RootLayout({
@@ -63,11 +44,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-text-primary font-sans flex flex-col">
-        <Providers>
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
