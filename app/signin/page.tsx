@@ -31,7 +31,7 @@ export default function SignInPage() {
       <div className="absolute top-6 left-6 sm:left-12">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors duration-200 font-semibold"
+          className="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors duration-200"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to home
@@ -39,13 +39,13 @@ export default function SignInPage() {
       </div>
 
       {/* Auth Card Container */}
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface/80 backdrop-blur-xl p-8 sm:p-10 shadow-2xl shadow-black/5 dark:shadow-black/50 transition-all duration-300 hover:border-accent/20">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-surface/80 backdrop-blur-xl p-8 sm:p-10 shadow-2xl shadow-black/50 transition-all duration-300 hover:border-amber-500/20">
         <div className="text-center">
-          <Link href="/" className="inline-block text-2xl font-bold text-text-primary tracking-tight hover:text-accent transition-colors">
+          <Link href="/" className="inline-block text-2xl font-bold text-white tracking-tight hover:text-amber-500 transition-colors">
             taskflow.sh
           </Link>
-          <h1 className="text-3xl font-extrabold text-text-primary mt-6 tracking-tight">Welcome Back</h1>
-          <p className="text-sm text-text-secondary mt-2 font-medium">
+          <h1 className="text-3xl font-extrabold text-white mt-6 tracking-tight">Welcome Back</h1>
+          <p className="text-sm text-muted mt-2">
             Track your professional progress and career tracks across all your devices.
           </p>
         </div>
@@ -53,15 +53,15 @@ export default function SignInPage() {
         <div className="mt-8 space-y-4">
           <button
             onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-card/50 py-3 text-sm font-semibold text-text-primary hover:bg-surface hover:border-accent transition-all duration-200 cursor-pointer active:scale-[0.99]"
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-card/50 py-3 text-sm font-semibold text-white hover:bg-card hover:border-amber-500 transition-all duration-200 cursor-pointer hover:shadow-[0_0_15px_rgba(245,158,11,0.05)] active:scale-[0.99]"
           >
-            <GithubIcon className="h-5 w-5 text-text-primary" />
+            <GithubIcon className="h-5 w-5 text-white" />
             <span>Continue with GitHub</span>
           </button>
-          
+
           <button
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-card/50 py-3 text-sm font-semibold text-text-primary hover:bg-surface hover:border-accent transition-all duration-200 cursor-pointer active:scale-[0.99]"
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-card/50 py-3 text-sm font-semibold text-white hover:bg-card hover:border-amber-500 transition-all duration-200 cursor-pointer hover:shadow-[0_0_15px_rgba(245,158,11,0.05)] active:scale-[0.99]"
           >
             <GoogleIcon className="h-5 w-5" />
             <span>Continue with Google</span>
@@ -69,11 +69,10 @@ export default function SignInPage() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-border/50 text-center">
-          <p className="text-xs text-text-secondary font-medium">
+          <p className="text-xs text-muted">
             By signing in, you agree to track progress and sync guest taskflows dynamically.
           </p>
         </div>
-
       </div>
     </div>
   );

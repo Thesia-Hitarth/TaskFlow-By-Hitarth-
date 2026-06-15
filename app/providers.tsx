@@ -14,14 +14,20 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("theme") as Theme | null;
-      if (savedTheme) return savedTheme;
-      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  const [theme, setTheme] = useState<Theme>("dark"); // Default to dark theme
+
+  useEffect(() => {
+    // Check saved preference on mount
+    const savedTheme = localStorage.getItem("theme") as Theme | null;
+    const initialTheme = savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    if (initialTheme !== "dark") {
+      // Defer state update to avoid synchronous cascading render warning
+      const timer = setTimeout(() => {
+        setTheme(initialTheme);
+      }, 0);
+      return () => clearTimeout(timer);
     }
-    return "dark"; // Default to dark theme for server pre-rendering
-  });
+  }, []);
 
 
   useEffect(() => {
