@@ -13,9 +13,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "default") {
       variantStyles = "bg-accent text-black hover:bg-amber-600";
     } else if (variant === "outline") {
-      variantStyles = "border border-border text-text-primary hover:border-accent hover:text-white bg-transparent";
+      variantStyles = "border border-border text-text-primary hover:border-accent hover:bg-accent/10 hover:text-accent bg-transparent";
     } else if (variant === "ghost") {
-      variantStyles = "text-muted hover:text-white bg-transparent";
+      variantStyles = "text-text-secondary hover:text-text-primary hover:bg-surface/80 bg-transparent";
     }
 
     let sizeStyles = "";

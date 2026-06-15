@@ -62,10 +62,10 @@ export default function Navbar() {
           )}
         </Button>
 
-        <div className="hidden sm:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2">
           <AuthButtons />
         </div>
-        <div className="sm:hidden">
+        <div className="md:hidden">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-text-secondary hover:text-text-primary cursor-pointer w-9 h-9 rounded-lg" aria-label="Open navigation menu">
