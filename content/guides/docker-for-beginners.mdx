@@ -1,0 +1,103 @@
+If you've ever said, "But it works on my machine!" when code breaks in production, you already know the problem Docker is designed to solve. Docker guarantees that software runs identically everywhere by packaging it into standardized units.
+
+## The Problem Docker Solves
+
+In modern development, applications rely on specific versions of languages, library packages, and background processes. Replicating this stack across multiple developer laptops and production servers is historically challenging. 
+
+Docker isolates the application and its dependencies into a self-contained unit. This eliminates version drift, conflicting dependencies, and server configuration mismatches.
+
+## Images vs Containers: The Mental Model
+
+To understand Docker, you must grasp the difference between an Image and a Container:
+
+- **Image (The Blueprint)**: A read-only template containing the application code, runtime environment, libraries, and configurations. Think of it as a class in object-oriented programming.
+- **Container (The Instance)**: A running, executable instance of an image. It has its own isolated filesystem, memory, and network stack. You can run multiple independent containers from a single image.
+
+## Writing Your First Dockerfile
+
+A `Dockerfile` is a text document containing instructions on how to build a Docker image. Here is a standard Dockerfile for a Node.js web application:
+
+```dockerfile
+# 1. Start from an official base image
+FROM node:20-alpine
+
+# 2. Set the working directory inside the container
+WORKDIR /app
+
+# 3. Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install --production
+
+# 4. Copy the rest of the application code
+COPY . .
+
+# 5. Document the port the container listens on
+EXPOSE 3000
+
+# 6. Define the command to start the app
+CMD ["node", "server.js"]
+```
+
+## Essential Docker Commands
+
+Here are the core CLI commands you will use daily:
+
+- **Build an image**: Create a blueprint from your Dockerfile.
+  ```bash
+  docker build -t my-node-app .
+  ```
+- **Run a container**: Instantiates and runs the built image.
+  ```bash
+  docker run -p 8080:3000 -d my-node-app
+  ```
+  *(Maps host port 8080 to container port 3000, running in detached/background mode)*
+- **List running containers**: Check status and IDs.
+  ```bash
+  docker ps
+  ```
+- **Check container logs**: Debug output.
+  ```bash
+  docker logs <container_id>
+  ```
+- **Execute command inside container**: Access a running shell.
+  ```bash
+  docker exec -it <container_id> sh
+  ```
+
+## Data Persistence: Volumes vs Bind Mounts
+
+Containers are ephemeral — when a container is deleted, any data written inside it is lost. Docker provides two main ways to persist data:
+
+- **Volumes**: Managed entirely by Docker inside host storage. They are isolated from the host OS structure and are recommended for database state persistence.
+- **Bind Mounts**: Maps a specific, absolute directory from the host machine directly into the container. Excellent for local development so that code edits on the host instantly reflect in the container.
+
+## Multi-Container Setup with Docker Compose
+
+Most applications require multiple services, like a frontend, backend API, and database. Managing multiple Docker CLI commands is tedious. 
+
+Docker Compose allows you to define and run multi-container applications using a single YAML configuration file:
+
+```yaml
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
+```
+With this configuration, starting your entire stack is as simple as running `docker compose up`.
+
+## Key Takeaways
+
+- Docker solves environment drift by packaging applications and dependencies into isolated environments.
+- Images are the read-only templates, while containers are the isolated running instances.
+- Dockerfiles contain code blueprints, and Docker Compose coordinates multi-container configurations.
+- Use bind mounts for hot-reloading code in development; use volumes to persist databases in production.

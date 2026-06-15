@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 import { taskflows } from "@/lib/taskflows-data";
 import TaskflowDiagram from "@/components/taskflow/TaskflowDiagram";
 import { taskflowContent } from "@/lib/taskflow-content";
+import { guides } from "@/lib/guides-data";
+import GuideCard from "@/components/GuideCard";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -67,6 +69,20 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
             <p className="text-muted/60 text-sm mt-2">
               Check back soon
             </p>
+          </div>
+        )}
+
+        {/* Related Guides */}
+        {guides.filter((g) => g.roadmapSlug === slug).length > 0 && (
+          <div className="mt-12 pt-10 border-t border-border/40">
+            <h2 className="text-xl font-bold text-white mb-6">Related Guides</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {guides
+                .filter((g) => g.roadmapSlug === slug)
+                .map((g) => (
+                  <GuideCard key={g.slug} guide={g} />
+                ))}
+            </div>
           </div>
         )}
 

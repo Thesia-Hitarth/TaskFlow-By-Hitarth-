@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --color-background: #101010;
@@ -10,6 +11,18 @@
   --color-text-primary: #e5e5e5;
 
   --font-sans: "Inter", "system-ui", "sans-serif";
+}
+
+@utility prose-invert {
+  --tw-prose-body: #e5e5e5;
+  --tw-prose-headings: #ffffff;
+  --tw-prose-links: #f59e0b;
+  --tw-prose-bold: #ffffff;
+  --tw-prose-code: #f59e0b;
+  --tw-prose-pre-bg: #1a1a1a;
+  --tw-prose-pre-code: #e5e5e5;
+  --tw-prose-borders: #2a2a2a;
+  --tw-prose-quotes: #a3a3a3;
 }
 
 body {

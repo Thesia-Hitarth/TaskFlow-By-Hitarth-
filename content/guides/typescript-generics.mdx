@@ -1,0 +1,107 @@
+In TypeScript, static type checking ensures that our code behaves predictably. However, we sometimes need to write functions or structures that operate on different types while maintaining type safety. This is where TypeScript Generics come in.
+
+## The Problem: Avoiding `any`
+
+Imagine writing a function that returns the first element of an array. If we want it to be reusable, we might type it using `any`:
+
+```ts
+function getFirst(arr: any[]): any {
+  return arr[0];
+}
+
+const val = getFirst([1, 2, 3]); // Type of val is 'any'
+```
+
+Using `any` turns off type checking. We lose type safety. If we call `.toUpperCase()` on `val`, TypeScript won't catch the runtime crash since it doesn't know `val` is a number. 
+
+Generics solve this by creating a **type variable** that remembers the type passed in.
+
+## A Basic Generic Function
+
+We declare a generic function by adding angle brackets `<T>` right before the parameters:
+
+```ts
+function getFirst<T>(arr: T[]): T {
+  return arr[0];
+}
+
+const num = getFirst([1, 2, 3]);    // TypeScript infers T is 'number' (returns number)
+const str = getFirst(["a", "b"]);   // TypeScript infers T is 'string' (returns string)
+```
+
+The type variable `T` captures the exact type of the array items at compile-time. If you try to call string methods on `num`, the compiler will throw an error.
+
+## Generic Interfaces
+
+Generics also work with interfaces and type aliases. This is extremely useful for defining standard structures, like API responses:
+
+```ts
+interface ApiResponse<T> {
+  data: T;
+  error: string | null;
+  status: number;
+}
+
+interface User {
+  id: string;
+  name: string;
+}
+
+// Reusing the response interface for a User payload
+const response: ApiResponse<User> = {
+  data: { id: "123", name: "Alice" },
+  error: null,
+  status: 200
+};
+```
+
+## Constraining Generics with `extends`
+
+Sometimes, you want a generic parameter to work with multiple types, but not *any* type. You want to restrict it to shapes containing specific fields. We use the `extends` keyword to define constraints:
+
+```ts
+interface Lengthwise {
+  length: number;
+}
+
+// T must be an object containing a 'length' property
+function logLength<T extends Lengthwise>(arg: T): T {
+  console.log("Length is:", arg.length);
+  return arg;
+}
+
+logLength("hello");           // OK: strings have a .length
+logLength([1, 2, 3]);         // OK: arrays have a .length
+logLength({ length: 10, v: 4 }); // OK
+logLength(42);                // Error: numbers do not have a .length
+```
+
+## Generic React Components
+
+Generics are heavily used in React development to type flexible UI components, such as a drop-down list:
+
+```tsx
+interface ListProps<T> {
+  items: T[];
+  renderItem: (item: T) => React.ReactNode;
+}
+
+export function List<T>({ items, renderItem }: ListProps<T>) {
+  return (
+    <ul>
+      {items.map((item, index) => (
+        <li key={index}>{renderItem(item)}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+This ensures that whatever items are supplied to the `<List>` component are type-checked inside the `renderItem` callback.
+
+## Key Takeaways
+
+- Generics create reusable code blocks that maintain static type safety without using `any`.
+- Declare type parameters inside angle brackets (e.g. `<T>`) to create placeholders resolved at invocation.
+- Define generic interfaces and types to model API payloads and state structures.
+- Use constraints via `<T extends Constraints>` to restrict generic inputs to specific object shapes.

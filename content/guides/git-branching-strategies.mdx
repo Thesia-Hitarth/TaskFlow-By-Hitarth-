@@ -1,0 +1,59 @@
+When multiple developers write code on the same repository, conflict is inevitable. A Git branching strategy defines rules for how team members write features, fix bugs, merge code, and release software. Without one, deployments become chaotic and hard to coordinate.
+
+## Why a Branching Strategy Matters
+
+A Git repository without a branching strategy often suffers from "merge hell" — where developers spend more time resolving merge conflicts than writing features. A clear strategy:
+- Prevents unfinished code from breaking production.
+- Streamlines code reviews and CI/CD pipelines.
+- Ensures a stable, deployable state at all times.
+
+## 1. Git Flow: The Structured Classic
+
+Git Flow is a highly structured, branch-heavy model suited for projects with scheduled release cycles. It relies on two main branches and several supporting branches:
+- **`main`**: Stores the official release history. Always stable.
+- **`develop`**: The integration branch for features.
+- **Supporting branches**:
+  - `feature/*`: Branched from `develop`, merged back to `develop`.
+  - `release/*`: Prepared for production release; merged to `main` and `develop`.
+  - `hotfix/*`: Fast patches branched from `main`, merged to `main` and `develop`.
+
+### Pros and Cons
+- **Pros**: Clear separation of work, excellent control over scheduled release windows, and isolates hotfixes.
+- **Cons**: High complexity, delayed feedback loops, and merging long-lived branches can be extremely painful.
+
+## 2. GitHub Flow: The Continuous Standard
+
+GitHub Flow is a lightweight, simple strategy designed for continuous deployment (CD). It revolves around short-lived feature branches and Pull Requests:
+1. Branch off `main` with a descriptive name (e.g., `feature/login-form`).
+2. Commit changes locally and push to the remote repository.
+3. Open a Pull Request (PR) for feedback and code review.
+4. Merge into `main` only after tests pass and reviews are approved.
+5. Deploy `main` immediately to production.
+
+### Pros and Cons
+- **Pros**: Highly intuitive, promotes regular code reviews, and is ideal for software that gets deployed multiple times a day.
+- **Cons**: Relies heavily on high-quality automated testing. If a bad commit hits `main`, it immediately hits production.
+
+## 3. Trunk-Based Development: The High-Velocity Standard
+
+In Trunk-Based Development, all developers merge their changes directly into a single central branch (usually `main` or "trunk") multiple times a day. Feature branches, if used, are extremely short-lived (usually lasting less than 24 hours). 
+
+To prevent unfinished code from breaking the application, developers use **feature flags** — wrapping new code in conditional blocks that can be toggled on or off in production.
+
+### Pros and Cons
+- **Pros**: Eliminates merge conflicts, provides immediate integration feedback, and accelerates delivery speed.
+- **Cons**: Requires excellent code quality, robust testing, and discipline with feature flags to avoid exposing partial code.
+
+## How to Choose for Your Team
+
+Selecting the right strategy depends on your team's architecture and release requirements:
+- **Choose Git Flow** if you ship versioned desktop software, mobile apps, or enterprise software with strict, scheduled release cycles.
+- **Choose GitHub Flow** if you run a small-to-medium team building a SaaS web app that deploys continuously, and you value thorough code reviews.
+- **Choose Trunk-Based Development** if you have a mature team with excellent automated test coverage, high continuous integration adoption, and want to ship features as fast as possible.
+
+## Key Takeaways
+
+- Branching strategies coordinate team contributions, prevent conflict, and automate releases.
+- Git Flow uses structured, long-lived branches; GitHub Flow uses simple feature branches with PR reviews.
+- Trunk-Based Development advocates for merging directly into `main` daily using feature flags.
+- Align your strategy with your deployment cadence: heavy branching for scheduled releases, trunk-based for automated continuous delivery.

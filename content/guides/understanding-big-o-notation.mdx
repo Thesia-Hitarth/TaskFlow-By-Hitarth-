@@ -1,0 +1,95 @@
+Big-O notation is the language developers use to describe the efficiency of an algorithm. It answers a single question: **"How does the execution time or memory usage of this code grow as the input size increases?"**
+
+## What Big-O Actually Measures
+
+Big-O doesn't measure performance in seconds. A fast computer will run a slow algorithm quickly on small inputs, but as input sizes scale to millions of items, the core efficiency of the code dominates. 
+
+Big-O measures the **worst-case growth rate** of an algorithm's resource consumption relative to the size of the input, denoted as `n`.
+
+## Common Big-O Complexity Classes
+
+Here are the most common complexity classes you will encounter, ordered from fastest to slowest.
+
+### 1. Constant Time: O(1)
+The execution time remains the same, regardless of how large the input array grows.
+
+```js
+function getFirstItem(items) {
+  return items[0]; // O(1)
+}
+```
+
+### 2. Logarithmic Time: O(log n)
+With each step, the algorithm halves the remaining search space. Very efficient at large scales.
+
+```js
+// Binary Search is the classic example of O(log n)
+function binarySearch(arr, target) {
+  let left = 0, right = arr.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) return mid;
+    else if (arr[mid] < target) left = mid + 1;
+    else right = mid - 1;
+  }
+  return -1;
+}
+```
+
+### 3. Linear Time: O(n)
+The execution time grows in direct proportion to the input size. Typically occurs in single loops.
+
+```js
+function searchItem(items, target) {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i] === target) return i; // O(n)
+  }
+  return -1;
+}
+```
+
+### 4. Linearithmic Time: O(n log n)
+Occurs when an O(log n) operation is performed `n` times. This is the complexity of standard sorting algorithms.
+
+```js
+// QuickSort / MergeSort run in O(n log n) time on average
+function sortItems(items) {
+  return items.sort((a, b) => a - b);
+}
+```
+
+### 5. Quadratic Time: O(n²)
+The execution time grows proportionally to the square of the input size. Typically occurs with nested loops.
+
+```js
+function printAllPairs(items) {
+  for (let i = 0; i < items.length; i++) {
+    for (let j = 0; j < items.length; j++) {
+      console.log(items[i], items[j]); // O(n^2)
+    }
+  }
+}
+```
+
+## Why Constants and Lower-Order Terms Are Dropped
+
+Big-O focuses on the big picture. When input size `n` becomes huge, constants and minor additions have negligible impact.
+
+For example, if an algorithm has a complexity of `O(2n + 50)`, we drop the constant `2` and the addition `50`, simplifying it to `O(n)`. Similarly, in `O(n² + n)`, the `n²` dominates so much that `n` becomes irrelevant at scale, so we drop the `n` and state the complexity as `O(n²)`.
+
+## How to Estimate Code Complexity
+
+To calculate the Big-O of your own functions:
+1. Identify the input parameter that can grow (e.g. an array, a string, a number). Let this be `n`.
+2. Count the operations. Look for loops:
+   - A single loop over `n` items is `O(n)`.
+   - Nested loops over `n` items are `O(n²)`.
+   - Two separate loops in sequence are `O(n + m)`, which simplifies to `O(n)` if they iterate over the same input.
+3. Factor in library methods (e.g., `.indexOf()`, `.includes()`, or `.slice()` inside a loop will add an implicit inner loop, turning O(n) code into O(n²)).
+
+## Key Takeaways
+
+- Big-O measures how algorithm runtime scales with input size, not execution speed in seconds.
+- Logarithmic O(log n) and constant O(1) are highly efficient; quadratic O(n²) should be avoided at scale.
+- Drop constants and lower-order terms to focus entirely on the dominant growth class.
+- Always watch out for nested loops and hidden built-in array operations that degrade performance.

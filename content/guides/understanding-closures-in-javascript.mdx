@@ -1,0 +1,117 @@
+A closure is one of the most fundamental — and most misunderstood — concepts in JavaScript. If you've ever written a function that "remembers" a variable from outside its own scope, you've already used one.
+
+## What Exactly Is a Closure?
+
+A closure is formed when a function retains access to variables from its enclosing scope, even after that outer function has finished executing. In other words, the inner function "closes over" the variables it needs.
+
+```js
+function makeCounter() {
+  let count = 0;
+
+  return function () {
+    count += 1;
+    return count;
+  };
+}
+
+const counter = makeCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2
+console.log(counter()); // 3
+```
+
+Even though `makeCounter()` has already returned, the inner function still has access to `count`. That's the closure at work — `count` lives on in memory because the returned function still references it.
+
+## Why Closures Matter
+
+Closures aren't just a quirky side effect of how JavaScript works — they're the foundation of several common patterns.
+
+### 1. Data Privacy
+
+Before classes had private fields, closures were the standard way to hide implementation details:
+
+```js
+function createBankAccount(balance) {
+  return {
+    deposit(amount) {
+      balance += amount;
+      return balance;
+    },
+    withdraw(amount) {
+      if (amount > balance) throw new Error("Insufficient funds");
+      balance -= amount;
+      return balance;
+    },
+    getBalance() {
+      return balance;
+    },
+  };
+}
+
+const account = createBankAccount(100);
+account.deposit(50);
+console.log(account.getBalance()); // 150
+```
+
+There's no way to access `balance` directly from outside — the only way to interact with it is through the methods that close over it.
+
+### 2. Memoization
+
+Closures let you cache results between function calls:
+
+```js
+function memoize(fn) {
+  const cache = new Map();
+
+  return function (arg) {
+    if (cache.has(arg)) return cache.get(arg);
+    const result = fn(arg);
+    cache.set(arg, result);
+    return result;
+  };
+}
+```
+
+### 3. Event Handlers and Callbacks
+
+Every time you write a callback that references a variable from outside, you're creating a closure:
+
+```js
+function setupButton(label) {
+  const button = document.createElement("button");
+  button.textContent = label;
+  button.addEventListener("click", () => {
+    console.log(`${label} was clicked`);
+  });
+  return button;
+}
+```
+
+## A Common Pitfall: Closures in Loops
+
+This is the classic interview question. What does the following log?
+
+```js
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100);
+}
+```
+
+It logs `3, 3, 3` — not `0, 1, 2`. Because `var` is function-scoped, all three callbacks share the *same* `i`, and by the time they run, the loop has already finished and `i` is `3`.
+
+Switching to `let` fixes it, because `let` creates a new binding for `i` on each iteration:
+
+```js
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100);
+}
+// Logs: 0, 1, 2
+```
+
+## Key Takeaways
+
+- A closure gives a function access to its outer scope's variables, even after the outer function returns.
+- Closures power data privacy, memoization, and callbacks.
+- Be careful with `var` inside loops — prefer `let` or `const` to avoid shared-binding bugs.
+
+Understanding closures deeply will make concepts like React hooks, debouncing, and currying click much faster — they're all built on this same mechanism.

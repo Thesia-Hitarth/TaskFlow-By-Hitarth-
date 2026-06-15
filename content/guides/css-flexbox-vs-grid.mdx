@@ -1,0 +1,95 @@
+Flexbox and Grid are both modern CSS layout systems, and they solve overlapping — but distinct — problems. Knowing which one to reach for (or how to combine them) will save you from fighting the browser.
+
+## The One-Sentence Difference
+
+**Flexbox is one-dimensional** — it lays items out in a row OR a column. **Grid is two-dimensional** — it lays items out in rows AND columns at the same time.
+
+That's really the core of it. Everything else follows from this.
+
+## When Flexbox Wins
+
+Flexbox shines when you're arranging items along a single axis and want them to grow, shrink, or wrap naturally.
+
+```css
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+```
+
+Good use cases:
+- Navigation bars
+- Button groups
+- Centering a single item vertically and horizontally
+- A row of cards that should wrap onto multiple lines
+
+```css
+.card-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.card {
+  flex: 1 1 250px; /* grow, shrink, basis */
+}
+```
+
+## When Grid Wins
+
+Grid shines when you're defining an actual layout — a structure with rows and columns that items need to align to.
+
+```css
+.page-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar main"
+    "sidebar footer";
+  min-height: 100vh;
+}
+
+.sidebar { grid-area: sidebar; }
+.header  { grid-area: header; }
+.main    { grid-area: main; }
+.footer  { grid-area: footer; }
+```
+
+Good use cases:
+- Overall page layouts (header/sidebar/content/footer)
+- Image galleries with consistent rows and columns
+- Dashboards with cards that need to align both horizontally and vertically
+- Anything where you'd otherwise need to carefully match heights across rows
+
+## They Work Together
+
+In practice, most real layouts use both. Grid for the page skeleton, Flexbox for the components inside it:
+
+```css
+.page {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+```
+
+## Quick Decision Guide
+
+Ask yourself: **"Do I care about alignment across two dimensions, or just one?"**
+
+- If you're laying out a single row or column of items that should flow naturally → **Flexbox**
++- If you're building a grid-like structure where things need to line up both horizontally and vertically → **Grid**
+- If you're not sure → start with Flexbox for the small pieces, and reach for Grid once you find yourself fighting with margin hacks to make columns align.
+
+## Common Misconception
+
+People often think Grid "replaced" Flexbox. It didn't — they were designed for different problems and were released around the same time. Modern CSS codebases use both extensively, often on the same page.
