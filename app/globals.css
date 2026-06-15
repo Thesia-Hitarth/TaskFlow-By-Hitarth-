@@ -2,95 +2,96 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --color-background: #f8fafc;
-  --color-surface: #ffffff;
-  --color-card: #ffffff;
-  --color-border: #e2e8f0;
-  --color-accent: #d97706;
-  /* amber-600 for better visibility in light mode */
-  --color-muted: #64748b;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #334155;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --accent: #d97706; /* amber-600 for better visibility in light mode */
+  --muted: #64748b;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
 
   /* Typography plugin variables for light mode */
-  --tw-prose-body: var(--color-text-secondary);
-  --tw-prose-headings: var(--color-text-primary);
-  --tw-prose-links: var(--color-accent);
-  --tw-prose-bold: var(--color-text-primary);
-  --tw-prose-code: var(--color-accent);
+  --tw-prose-body: var(--text-secondary);
+  --tw-prose-headings: var(--text-primary);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--text-primary);
+  --tw-prose-code: var(--accent);
   --tw-prose-pre-bg: #f1f5f9;
   --tw-prose-pre-code: #0f172a;
-  --tw-prose-borders: var(--color-border);
-  --tw-prose-quotes: var(--color-muted);
+  --tw-prose-borders: var(--border);
+  --tw-prose-quotes: var(--muted);
 }
 
 .dark {
-  --color-background: #09090b;
-  --color-surface: #141416;
-  --color-card: #18181b;
-  --color-border: #27272a;
-  --color-accent: #f59e0b;
-  /* amber-500 */
-  --color-muted: #a1a1aa;
-  --color-text-primary: #fafafa;
-  --color-text-secondary: #d4d4d8;
+  --background: #09090b;
+  --surface: #141416;
+  --card: #18181b;
+  --border: #27272a;
+  --accent: #f59e0b; /* amber-500 */
+  --muted: #a1a1aa;
+  --text-primary: #fafafa;
+  --text-secondary: #d4d4d8;
 
   /* Typography plugin variables for dark mode */
-  --tw-prose-body: var(--color-text-secondary);
-  --tw-prose-headings: var(--color-text-primary);
-  --tw-prose-links: var(--color-accent);
-  --tw-prose-bold: var(--color-text-primary);
-  --tw-prose-code: var(--color-accent);
+  --tw-prose-body: var(--text-secondary);
+  --tw-prose-headings: var(--text-primary);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--text-primary);
+  --tw-prose-code: var(--accent);
   --tw-prose-pre-bg: #141416;
   --tw-prose-pre-code: #fafafa;
-  --tw-prose-borders: var(--color-border);
-  --tw-prose-quotes: var(--color-muted);
+  --tw-prose-borders: var(--border);
+  --tw-prose-quotes: var(--muted);
 }
 
 @theme {
-  --color-background: var(--color-background);
-  --color-surface: var(--color-surface);
-  --color-card: var(--color-card);
-  --color-border: var(--color-border);
-  --color-accent: var(--color-accent);
-  --color-muted: var(--color-muted);
-  --color-text-primary: var(--color-text-primary);
-  --color-text-secondary: var(--color-text-secondary);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
 
   --font-sans: "Inter", "system-ui", "sans-serif";
 }
 
 body {
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
+  background-color: var(--background);
+  color: var(--text-primary);
   font-family: var(--font-sans);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* React Flow customizations */
 .react-flow__pane {
-  background-color: var(--color-background) !important;
+  background-color: var(--background) !important;
 }
 
 .react-flow__edge-path {
-  stroke: var(--color-border) !important;
+  stroke: var(--border) !important;
   transition: stroke 0.2s ease;
 }
 
 .react-flow__handle {
-  background-color: var(--color-border) !important;
-  border: 1px solid var(--color-background) !important;
+  background-color: var(--border) !important;
+  border: 1px solid var(--background) !important;
 }
 
 /* Typography plugin overrides */
 .prose {
-  --tw-prose-body: var(--color-text-secondary) !important;
-  --tw-prose-headings: var(--color-text-primary) !important;
-  --tw-prose-links: var(--color-accent) !important;
-  --tw-prose-bold: var(--color-text-primary) !important;
-  --tw-prose-code: var(--color-accent) !important;
-  --tw-prose-pre-bg: var(--color-surface) !important;
-  --tw-prose-pre-code: var(--color-text-primary) !important;
-  --tw-prose-borders: var(--color-border) !important;
-  --tw-prose-quotes: var(--color-muted) !important;
+  --tw-prose-body: var(--text-secondary) !important;
+  --tw-prose-headings: var(--text-primary) !important;
+  --tw-prose-links: var(--accent) !important;
+  --tw-prose-bold: var(--text-primary) !important;
+  --tw-prose-code: var(--accent) !important;
+  --tw-prose-pre-bg: var(--surface) !important;
+  --tw-prose-pre-code: var(--text-primary) !important;
+  --tw-prose-borders: var(--border) !important;
+  --tw-prose-quotes: var(--muted) !important;
 }
+
+
+
