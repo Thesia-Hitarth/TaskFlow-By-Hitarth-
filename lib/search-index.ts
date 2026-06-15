@@ -1,8 +1,9 @@
 import { taskflows } from "./taskflows-data";
 import { guides } from "./guides-data";
+import { bestPractices } from "./best-practices-data";
 
 export interface SearchItem {
-  type: "taskflow" | "guide";
+  type: "taskflow" | "guide" | "best-practice";
   title: string;
   description: string;
   href: string;
@@ -20,5 +21,11 @@ export const searchIndex: SearchItem[] = [
     title: g.title,
     description: g.description,
     href: `/guides/${g.slug}`,
+  })),
+  ...bestPractices.map((bp) => ({
+    type: "best-practice" as const,
+    title: bp.title,
+    description: bp.description,
+    href: `/best-practices/${bp.slug}`,
   })),
 ];

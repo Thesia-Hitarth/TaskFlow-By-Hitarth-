@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import Fuse from "fuse.js";
 import { useRouter } from "next/navigation";
-import { Search, X, Map, FileText } from "lucide-react";
+import { Search, X, Map, FileText, ShieldCheck } from "lucide-react";
 import { searchIndex } from "@/lib/search-index";
 
 export default function SearchCommand() {
@@ -92,7 +92,7 @@ export default function SearchCommand() {
                 <p className="px-3 py-8 text-center text-sm text-text-secondary">No results found.</p>
               )}
               {results.map((item) => {
-                const Icon = item.type === "taskflow" ? Map : FileText;
+                const Icon = item.type === "taskflow" ? Map : item.type === "guide" ? FileText : ShieldCheck;
                 return (
                   <button
                     key={item.href}

@@ -8,11 +8,13 @@ import AuthButtons from "./AuthButtons";
 import SearchCommand from "./SearchCommand";
 import { useTheme } from "@/app/providers";
 import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "./ui/sheet";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -33,13 +35,34 @@ export default function Navbar() {
 
       {/* Center: Nav links (Desktop only) */}
       <nav className="hidden md:flex items-center gap-6">
-        <Link href="/taskflows" className="text-text-secondary hover:text-text-primary transition-colors text-sm font-medium">
+        <Link 
+          href="/taskflows" 
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
+            pathname.startsWith("/taskflows")
+              ? "text-text-primary border-accent"
+              : "text-text-secondary hover:text-text-primary border-transparent"
+          }`}
+        >
           Taskflows
         </Link>
-        <Link href="/guides" className="text-text-secondary hover:text-text-primary transition-colors text-sm font-medium">
+        <Link 
+          href="/guides" 
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
+            pathname.startsWith("/guides")
+              ? "text-text-primary border-accent"
+              : "text-text-secondary hover:text-text-primary border-transparent"
+          }`}
+        >
           Guides
         </Link>
-        <Link href="#" className="text-text-secondary hover:text-text-primary transition-colors text-sm font-medium">
+        <Link 
+          href="/best-practices" 
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
+            pathname.startsWith("/best-practices")
+              ? "text-text-primary border-accent"
+              : "text-text-secondary hover:text-text-primary border-transparent"
+          }`}
+        >
           Best Practices
         </Link>
       </nav>
@@ -83,21 +106,33 @@ export default function Navbar() {
                 <Link 
                   href="/taskflows" 
                   onClick={() => setMenuOpen(false)}
-                  className="text-text-secondary hover:text-text-primary text-base font-semibold py-1.5 transition-colors"
+                  className={`text-base font-bold py-1.5 transition-colors ${
+                    pathname.startsWith("/taskflows")
+                      ? "text-accent"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
                 >
                   Taskflows
                 </Link>
                 <Link 
                   href="/guides" 
                   onClick={() => setMenuOpen(false)}
-                  className="text-text-secondary hover:text-text-primary text-base font-semibold py-1.5 transition-colors"
+                  className={`text-base font-bold py-1.5 transition-colors ${
+                    pathname.startsWith("/guides")
+                      ? "text-accent"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
                 >
                   Guides
                 </Link>
                 <Link 
-                  href="#" 
+                  href="/best-practices" 
                   onClick={() => setMenuOpen(false)}
-                  className="text-text-secondary hover:text-text-primary text-base font-semibold py-1.5 transition-colors"
+                  className={`text-base font-bold py-1.5 transition-colors ${
+                    pathname.startsWith("/best-practices")
+                      ? "text-accent"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
                 >
                   Best Practices
                 </Link>

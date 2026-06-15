@@ -1,8 +1,7 @@
-import { MessageSquare } from "lucide-react";
+"use client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import TaskflowCard from "@/components/TaskflowCard";
-import { Button } from "@/components/ui/button";
 import { taskflows } from "@/lib/taskflows-data";
 
 // Custom inline GitHub icon to avoid lucide-react version export mismatches
@@ -39,14 +38,36 @@ export default function Home() {
           <p className="text-text-secondary text-lg sm:text-xl max-w-2xl mt-4 leading-relaxed font-medium">
             Community created taskflows, guides and articles to help developers grow in their career.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center mt-8">
-            <Button variant="outline" className="border-border text-text-primary hover:border-accent hover:bg-surface/50 px-6 py-2 cursor-pointer transition-all">
-              Subscribe for Updates
-            </Button>
-            <Button variant="outline" className="border-border text-text-primary hover:border-accent hover:bg-surface/50 px-6 py-2 flex items-center gap-2 cursor-pointer transition-all">
+          <div className="flex flex-col sm:flex-row items-center gap-4 justify-center mt-8 w-full max-w-xl">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                alert("Thanks! We'll notify you when new content is added.");
+              }}
+              className="flex w-full gap-2"
+            >
+              <input
+                type="email"
+                required
+                placeholder="your@email.com"
+                className="flex-1 rounded-xl border border-border bg-card/50 px-4 py-2 text-sm text-text-primary placeholder-text-secondary outline-none focus:border-accent transition-colors"
+              />
+              <button
+                type="submit"
+                className="rounded-xl bg-accent px-5 py-2 text-sm font-semibold text-black hover:bg-amber-600 transition-colors cursor-pointer active:scale-[0.98] shrink-0"
+              >
+                Subscribe
+              </button>
+            </form>
+            <a
+              href="https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border text-text-primary hover:border-accent hover:bg-border/60 bg-transparent px-6 py-2.5 text-sm font-semibold cursor-pointer transition-all active:scale-[0.98] shrink-0"
+            >
               <GithubIcon className="h-4 w-4" />
-              Contribute on GitHub
-            </Button>
+              Contribute
+            </a>
           </div>
         </section>
 
@@ -77,29 +98,7 @@ export default function Home() {
           </section>
         </div>
 
-        {/* Section D: Stats Bar */}
-        <section className="bg-surface border-y border-border py-12 mt-16 w-full px-4 sm:px-8 transition-colors duration-200">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-around items-center gap-8 text-center flex-wrap">
-            {/* Stat 1 */}
-            <div className="flex flex-col items-center">
-              <span className="text-4xl font-extrabold text-text-primary">357K+</span>
-              <span className="text-text-secondary text-sm mt-1 font-medium">GitHub Stars</span>
-              <span className="text-accent text-xs font-semibold mt-1">+1.5k stars this week</span>
-            </div>
-            {/* Stat 2 */}
-            <div className="flex flex-col items-center">
-              <span className="text-4xl font-extrabold text-text-primary">2.8M+</span>
-              <span className="text-text-secondary text-sm mt-1 font-medium">Registered Users</span>
-              <span className="text-accent text-xs font-semibold mt-1">+90k every month</span>
-            </div>
-            {/* Stat 3 */}
-            <div className="flex flex-col items-center">
-              <span className="text-4xl font-extrabold text-text-primary">48K+</span>
-              <span className="text-text-secondary text-sm mt-1 font-medium">Discord Members</span>
-              <span className="text-accent text-xs font-semibold mt-1">+500 online now</span>
-            </div>
-          </div>
-        </section>
+
 
         {/* Actively Maintained (Timeline) Section */}
         <section className="pt-16 pb-20 px-4 sm:px-8 max-w-4xl mx-auto">
@@ -208,17 +207,18 @@ export default function Home() {
         <section className="py-16 px-4 sm:px-8 text-center max-w-xl mx-auto flex flex-col items-center">
           <h2 className="text-3xl font-extrabold text-text-primary tracking-tight">Join the Community</h2>
           <p className="text-text-secondary text-sm mt-3 leading-relaxed">
-            taskflow.sh is the 6th most starred project on GitHub and is visited by hundreds of thousands of developers every month.
+            taskflow.sh is visited by hundreds of thousands of developers every month to plan their career goals.
           </p>
-          <div className="flex gap-4 justify-center mt-8 w-full">
-            <Button className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2 flex items-center gap-2 font-semibold cursor-pointer transition-colors">
+          <div className="flex justify-center mt-8 w-full">
+            <a
+              href="https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent hover:bg-amber-600 text-black px-6 py-2.5 font-semibold cursor-pointer transition-colors active:scale-[0.98]"
+            >
               <GithubIcon className="h-4 w-4" />
               Star on GitHub
-            </Button>
-            <Button variant="outline" className="border-border text-text-primary hover:border-accent hover:bg-surface px-6 py-2 flex items-center gap-2 cursor-pointer transition-all">
-              <MessageSquare className="h-4 w-4" />
-              Join on Discord
-            </Button>
+            </a>
           </div>
         </section>
       </main>
