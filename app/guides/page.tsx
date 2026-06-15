@@ -21,13 +21,13 @@ export default function GuidesPage() {
   }, [searchQuery]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background transition-colors duration-200">
       <Navbar />
       <main className="flex-1 py-12 px-4 sm:px-8 max-w-7xl mx-auto w-full">
         {/* Page Header */}
-        <header className="pb-6">
-          <h1 className="text-3xl font-bold text-white">Guides</h1>
-          <p className="text-muted mt-2">In-depth articles to deepen your understanding</p>
+        <header className="pb-6 border-b border-border mb-8">
+          <h1 className="text-3xl font-extrabold text-text-primary tracking-tight">Guides</h1>
+          <p className="text-text-secondary mt-2 font-medium">In-depth articles to deepen your understanding</p>
         </header>
 
         {/* Search Bar */}
@@ -37,7 +37,7 @@ export default function GuidesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search guides..."
-            className="w-full bg-[#1e1e1e] border border-border rounded-lg px-4 py-2.5 text-white placeholder-muted focus:outline-none focus:border-accent transition-colors text-sm"
+            className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-text-primary placeholder-text-secondary focus:outline-hidden focus:border-accent transition-colors text-sm font-medium"
           />
         </div>
 
@@ -50,8 +50,8 @@ export default function GuidesPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
-              <p className="text-muted">No guides found.</p>
+            <div className="text-center py-20 bg-card rounded-xl border border-border border-dashed">
+              <p className="text-text-secondary font-medium">No guides found.</p>
             </div>
           )}
         </div>
@@ -60,3 +60,4 @@ export default function GuidesPage() {
     </div>
   );
 }
+

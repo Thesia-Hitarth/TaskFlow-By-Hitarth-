@@ -36,22 +36,22 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   return (
     <>
       <Navbar />
-      <main className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col">
+      <main className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
         {/* Breadcrumb */}
-        <nav className="text-muted text-sm" aria-label="Breadcrumb">
-          <Link href="/taskflows" className="hover:text-white transition-colors">
+        <nav className="text-text-secondary text-sm" aria-label="Breadcrumb font-medium">
+          <Link href="/taskflows" className="hover:text-text-primary transition-colors">
             All Taskflows
           </Link>
           <span className="mx-2">&gt;</span>
-          <span className="text-white">{title}</span>
+          <span className="text-text-primary font-semibold">{title}</span>
         </nav>
 
         {/* Header */}
-        <header className="mt-4">
-          <h1 className="text-4xl font-bold text-white leading-tight">
+        <header className="mt-4 pb-6 border-b border-border">
+          <h1 className="text-4xl font-extrabold text-text-primary leading-tight tracking-tight">
             {title} Developer Taskflow
           </h1>
-          <p className="text-muted mt-2">
+          <p className="text-text-secondary mt-2 font-semibold">
             {taskflow?.description || `Step by step guide to becoming a ${title} developer`}
           </p>
         </header>
@@ -62,11 +62,11 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
             <TaskflowDiagram content={content} />
           </div>
         ) : (
-          <div className="mt-10 bg-surface border border-border rounded-xl h-96 w-full flex flex-col items-center justify-center text-center px-4">
-            <p className="text-muted text-lg font-medium">
-              Interactive taskflow diagram coming in Phase 2
+          <div className="mt-10 bg-card border border-border border-dashed rounded-xl h-96 w-full flex flex-col items-center justify-center text-center px-4">
+            <p className="text-text-secondary text-lg font-bold">
+              Interactive taskflow diagram coming soon
             </p>
-            <p className="text-muted/60 text-sm mt-2">
+            <p className="text-text-secondary/60 text-sm mt-2">
               Check back soon
             </p>
           </div>
@@ -74,8 +74,8 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
 
         {/* Related Guides */}
         {guides.filter((g) => g.roadmapSlug === slug).length > 0 && (
-          <div className="mt-12 pt-10 border-t border-border/40">
-            <h2 className="text-xl font-bold text-white mb-6">Related Guides</h2>
+          <div className="mt-12 pt-10 border-t border-border">
+            <h2 className="text-2xl font-bold text-text-primary mb-6 tracking-tight">Related Guides</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {guides
                 .filter((g) => g.roadmapSlug === slug)
@@ -87,10 +87,10 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
         )}
 
         {/* Back Link */}
-        <div className="mt-8">
+        <div className="mt-10">
           <Link
             href="/taskflows"
-            className="text-accent hover:underline inline-flex items-center gap-1 text-sm font-medium"
+            className="text-accent hover:underline inline-flex items-center gap-1.5 text-sm font-bold"
           >
             &larr; Back to all taskflows
           </Link>
@@ -100,3 +100,4 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
     </>
   );
 }
+

@@ -1,32 +1,82 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+:root {
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+  --color-accent: #d97706; /* amber-600 for better visibility in light mode */
+  --color-muted: #64748b;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+
+  /* Typography plugin variables for light mode */
+  --tw-prose-body: var(--color-text-secondary);
+  --tw-prose-headings: var(--color-text-primary);
+  --tw-prose-links: var(--color-accent);
+  --tw-prose-bold: var(--color-text-primary);
+  --tw-prose-code: var(--color-accent);
+  --tw-prose-pre-bg: #f1f5f9;
+  --tw-prose-pre-code: #0f172a;
+  --tw-prose-borders: var(--color-border);
+  --tw-prose-quotes: var(--color-muted);
+}
+
+.dark {
+  --color-background: #09090b;
+  --color-surface: #141416;
+  --color-card: #18181b;
+  --color-border: #27272a;
+  --color-accent: #f59e0b; /* amber-500 */
+  --color-muted: #a1a1aa;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #d4d4d8;
+
+  /* Typography plugin variables for dark mode */
+  --tw-prose-body: var(--color-text-secondary);
+  --tw-prose-headings: var(--color-text-primary);
+  --tw-prose-links: var(--color-accent);
+  --tw-prose-bold: var(--color-text-primary);
+  --tw-prose-code: var(--color-accent);
+  --tw-prose-pre-bg: #141416;
+  --tw-prose-pre-code: #fafafa;
+  --tw-prose-borders: var(--color-border);
+  --tw-prose-quotes: var(--color-muted);
+}
+
 @theme {
-  --color-background: #101010;
-  --color-surface: #1a1a1a;
-  --color-card: #1e1e1e;
-  --color-border: #2a2a2a;
-  --color-accent: #f59e0b;
-  --color-muted: #737373;
-  --color-text-primary: #e5e5e5;
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-card: var(--color-card);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-muted: var(--color-muted);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
 
   --font-sans: "Inter", "system-ui", "sans-serif";
 }
 
-@utility prose-invert {
-  --tw-prose-body: #e5e5e5;
-  --tw-prose-headings: #ffffff;
-  --tw-prose-links: #f59e0b;
-  --tw-prose-bold: #ffffff;
-  --tw-prose-code: #f59e0b;
-  --tw-prose-pre-bg: #1a1a1a;
-  --tw-prose-pre-code: #e5e5e5;
-  --tw-prose-borders: #2a2a2a;
-  --tw-prose-quotes: #a3a3a3;
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-body {
-  background-color: #101010;
-  color: #e5e5e5;
-  font-family: var(--font-sans);
+/* React Flow customizations */
+.react-flow__pane {
+  background-color: var(--color-background) !important;
 }
+
+.react-flow__edge-path {
+  stroke: var(--color-border) !important;
+  transition: stroke 0.2s ease;
+}
+
+.react-flow__handle {
+  background-color: var(--color-border) !important;
+  border: 1px solid var(--color-background) !important;
+}
+

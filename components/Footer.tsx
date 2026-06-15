@@ -70,31 +70,31 @@ function GithubIcon({ className }: { className?: string }) {
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-background border-t border-border py-10 px-4 sm:px-8 mt-auto">
+    <footer className="w-full bg-surface border-t border-border py-10 px-4 sm:px-8 mt-auto transition-colors duration-200">
       <div className="max-w-7xl mx-auto flex flex-col gap-8">
         {/* Top row: Logo left, Nav links right */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <Link href="/" className="text-white font-bold text-lg hover:text-white transition-colors">
+          <Link href="/" className="text-text-primary font-bold text-lg hover:opacity-90 transition-opacity">
             taskflow.sh
           </Link>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
-            <Link href="/taskflows" className="hover:text-white transition-colors">
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-secondary">
+            <Link href="/taskflows" className="hover:text-text-primary transition-colors">
               Taskflows
             </Link>
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link href="/guides" className="hover:text-text-primary transition-colors">
               Guides
             </Link>
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link href="#" className="hover:text-text-primary transition-colors">
               FAQs
             </Link>
-            <Link href="#" className="hover:text-white transition-colors">
+            <Link href="#" className="hover:text-text-primary transition-colors">
               YouTube
             </Link>
           </div>
         </div>
 
         {/* Middle row: Tagline */}
-        <p className="text-muted text-sm max-w-2xl leading-relaxed">
+        <p className="text-text-secondary text-sm max-w-2xl leading-relaxed">
           Community created taskflows, best practices, guides and articles to help you grow in your career.
         </p>
 
@@ -103,6 +103,7 @@ export default function Footer() {
           <p className="text-muted text-xs">
             &copy; {new Date().getFullYear()} taskflow.sh
           </p>
+
           <div className="flex items-center gap-3">
             <a
               href="https://github.com/Thesia-Hitarth"

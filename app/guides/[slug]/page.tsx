@@ -37,13 +37,13 @@ export default async function GuidePage({ params }: PageProps) {
   const source = fs.readFileSync(filePath, "utf-8");
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background transition-colors duration-200">
       <Navbar />
       <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full">
         {/* Back Link */}
         <Link 
           href="/guides" 
-          className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-amber-500 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent transition-colors font-semibold"
         >
           ← All Guides
         </Link>
@@ -53,7 +53,7 @@ export default async function GuidePage({ params }: PageProps) {
           {guide.tags.map((tag) => (
             <span 
               key={tag} 
-              className="text-xs text-text-secondary border border-border bg-surface rounded-full px-3 py-0.5 uppercase tracking-wide font-semibold"
+              className="text-xs text-text-secondary border border-border bg-card rounded-full px-3 py-0.5 uppercase tracking-wide font-bold transition-colors"
             >
               {tag}
             </span>
@@ -61,14 +61,14 @@ export default async function GuidePage({ params }: PageProps) {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white mt-4 leading-tight tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary mt-4 leading-tight tracking-tight">
           {guide.title}
         </h1>
 
         {/* Meta Info */}
-        <div className="flex items-center gap-4 mt-4 text-xs sm:text-sm text-muted font-medium pb-8 border-b border-border/50">
+        <div className="flex items-center gap-4 mt-4 text-xs sm:text-sm text-text-secondary font-semibold pb-8 border-b border-border/50">
           <span className="flex items-center gap-1.5">
-            <Clock className="h-4 w-4 text-amber-500" />
+            <Clock className="h-4 w-4 text-accent" />
             {guide.readingTime}
           </span>
           <span>•</span>
@@ -79,7 +79,7 @@ export default async function GuidePage({ params }: PageProps) {
         </div>
 
         {/* Article Content */}
-        <article className="prose prose-invert max-w-none mt-8 leading-relaxed">
+        <article className="prose max-w-none mt-8 leading-relaxed">
           <MDXRemote source={source} />
         </article>
       </main>
@@ -87,3 +87,4 @@ export default async function GuidePage({ params }: PageProps) {
     </div>
   );
 }
+

@@ -43,19 +43,19 @@ export default function SearchCommand() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-border bg-[#1e1e1e]/60 px-3 py-1.5 text-sm text-text-secondary hover:border-amber-500/50 hover:text-white transition-all duration-200 cursor-pointer"
+        className="flex items-center gap-2 rounded-lg border border-border bg-card/60 px-3 py-1.5 text-sm text-text-secondary hover:border-accent/50 hover:text-text-primary transition-all duration-200 cursor-pointer"
         aria-label="Open search command palette"
       >
-        <Search className="h-4 w-4 text-muted" />
+        <Search className="h-4 w-4 text-text-secondary" />
         <span className="hidden md:inline">Search...</span>
-        <kbd className="hidden md:inline-flex text-[10px] items-center gap-0.5 border border-border bg-background rounded px-1.5 py-0.5 font-mono text-muted select-none">
+        <kbd className="hidden md:inline-flex text-[10px] items-center gap-0.5 border border-border bg-background rounded px-1.5 py-0.5 font-mono text-text-secondary select-none">
           Ctrl K
         </kbd>
       </button>
 
       {open && (
         <div
-          className="fixed inset-0 z-100 flex items-start justify-center pt-24 bg-black/70 backdrop-blur-xs transition-opacity duration-300"
+          className="fixed inset-0 z-100 flex items-start justify-center pt-24 bg-black/40 dark:bg-black/70 backdrop-blur-xs transition-opacity duration-300"
           onClick={() => setOpen(false)}
         >
           <div
@@ -64,17 +64,17 @@ export default function SearchCommand() {
           >
             {/* Input Header */}
             <div className="flex items-center gap-2 border-b border-border/80 px-4 py-3.5">
-              <Search className="h-4 w-4 text-amber-500" />
+              <Search className="h-4 w-4 text-accent" />
               <input
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search taskflows and guides..."
-                className="flex-1 bg-transparent text-white placeholder-muted outline-none text-sm border-none focus:ring-0"
+                className="flex-1 bg-transparent text-text-primary placeholder-text-secondary outline-none text-sm border-none focus:ring-0"
               />
               <button 
                 onClick={() => setOpen(false)} 
-                className="p-1 text-muted hover:text-white hover:bg-card rounded-md transition-colors cursor-pointer"
+                className="p-1 text-text-secondary hover:text-text-primary hover:bg-card rounded-md transition-colors cursor-pointer"
                 aria-label="Close search"
               >
                 <X className="h-4 w-4" />
@@ -84,7 +84,7 @@ export default function SearchCommand() {
             {/* Results List */}
             <div className="max-h-80 overflow-y-auto p-2 space-y-0.5">
               {results.length === 0 && (
-                <p className="px-3 py-8 text-center text-sm text-muted">No results found.</p>
+                <p className="px-3 py-8 text-center text-sm text-text-secondary">No results found.</p>
               )}
               {results.map((item) => {
                 const Icon = item.type === "taskflow" ? Map : FileText;
@@ -94,12 +94,12 @@ export default function SearchCommand() {
                     onClick={() => go(item.href)}
                     className="flex w-full items-start gap-3.5 rounded-xl px-3 py-2.5 text-left hover:bg-card border border-transparent hover:border-border/50 transition-all duration-150 cursor-pointer"
                   >
-                    <div className="p-2 rounded-lg bg-background border border-border text-muted shrink-0">
-                      <Icon className="h-4 w-4 text-amber-500" />
+                    <div className="p-2 rounded-lg bg-background border border-border text-text-secondary shrink-0">
+                      <Icon className="h-4 w-4 text-accent" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{item.title}</p>
-                      <p className="text-xs text-muted truncate mt-0.5">{item.description}</p>
+                      <p className="text-sm font-semibold text-text-primary truncate">{item.title}</p>
+                      <p className="text-xs text-text-secondary truncate mt-0.5">{item.description}</p>
                     </div>
                   </button>
                 );
@@ -107,7 +107,7 @@ export default function SearchCommand() {
             </div>
             
             {/* Command Palette Footer */}
-            <div className="flex items-center justify-between border-t border-border/50 px-4 py-2 bg-background/50 text-[10px] text-muted">
+            <div className="flex items-center justify-between border-t border-border/50 px-4 py-2 bg-background/50 text-[10px] text-text-secondary">
               <span>Search index: {searchIndex.length} items</span>
               <span className="flex items-center gap-1.5">
                 <kbd className="border border-border rounded px-1 py-0.5">ESC</kbd> to close
@@ -116,6 +116,7 @@ export default function SearchCommand() {
           </div>
         </div>
       )}
+
     </>
   );
 }

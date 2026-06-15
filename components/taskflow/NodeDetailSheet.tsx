@@ -15,52 +15,52 @@ interface Props {
 export default function NodeDetailSheet({ node, status, onStatusChange, onClose }: Props) {
   return (
     <Sheet open={!!node} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="bg-[#1a1a1a] border-[#2a2a2a] text-[#e5e5e5] w-full sm:max-w-md">
+      <SheetContent side="right" className="bg-surface border-border text-text-primary w-full sm:max-w-md transition-colors duration-200">
         {node && (
           <>
             <SheetHeader>
-              <SheetTitle className="text-white">{node.label}</SheetTitle>
-              <SheetDescription className="text-[#737373] mt-2">{node.description}</SheetDescription>
+              <SheetTitle className="text-text-primary text-xl font-bold tracking-tight">{node.label}</SheetTitle>
+              <SheetDescription className="text-text-secondary mt-2 text-sm leading-relaxed font-medium">{node.description}</SheetDescription>
             </SheetHeader>
 
             {node.links && node.links.length > 0 && (
               <div className="mt-6 space-y-2">
-                <p className="text-sm font-medium text-white mb-2">Resources</p>
+                <p className="text-sm font-bold text-text-primary mb-2">Resources</p>
                 {node.links.map((link) => (
                   <a
                     key={link.url}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between rounded-md border border-[#2a2a2a] px-3 py-2 text-sm text-[#e5e5e5] hover:border-amber-500 hover:text-amber-500 transition-colors"
+                    className="flex items-center justify-between rounded-xl border border-border px-3.5 py-2.5 text-sm text-text-primary hover:border-accent hover:text-accent bg-card/40 transition-colors duration-200"
                   >
-                    {link.title}
-                    <ExternalLink className="h-4 w-4" />
+                    <span className="font-semibold">{link.title}</span>
+                    <ExternalLink className="h-4 w-4 shrink-0" />
                   </a>
                 ))}
               </div>
             )}
 
-            <div className="mt-8 border-t border-[#2a2a2a] pt-6">
-              <p className="text-sm font-medium text-white mb-3">Mark as</p>
+            <div className="mt-8 border-t border-border pt-6">
+              <p className="text-sm font-bold text-text-primary mb-3">Mark as</p>
               <div className="flex gap-2 flex-wrap">
                 <Button
                   size="sm"
-                  className={status === "done" ? "bg-green-600 hover:bg-green-700 text-white" : "bg-transparent border border-[#2a2a2a] text-[#e5e5e5] hover:border-green-500"}
+                  className={status === "done" ? "bg-green-600 hover:bg-green-700 text-white shadow-xs cursor-pointer font-semibold" : "bg-transparent border border-border text-text-primary hover:border-green-500 cursor-pointer font-semibold"}
                   onClick={() => onStatusChange(status === "done" ? "pending" : "done")}
                 >
                   <Check className="h-4 w-4 mr-1" /> Done
                 </Button>
                 <Button
                   size="sm"
-                  className={status === "in-progress" ? "bg-yellow-600 hover:bg-yellow-700 text-white" : "bg-transparent border border-[#2a2a2a] text-[#e5e5e5] hover:border-yellow-500"}
+                  className={status === "in-progress" ? "bg-yellow-600 hover:bg-yellow-700 text-white shadow-xs cursor-pointer font-semibold" : "bg-transparent border border-border text-text-primary hover:border-yellow-500 cursor-pointer font-semibold"}
                   onClick={() => onStatusChange(status === "in-progress" ? "pending" : "in-progress")}
                 >
                   <CircleDot className="h-4 w-4 mr-1" /> In Progress
                 </Button>
                 <Button
                   size="sm"
-                  className={status === "skipped" ? "bg-red-600 hover:bg-red-700 text-white" : "bg-transparent border border-[#2a2a2a] text-[#e5e5e5] hover:border-red-500"}
+                  className={status === "skipped" ? "bg-red-600 hover:bg-red-700 text-white shadow-xs cursor-pointer font-semibold" : "bg-transparent border border-border text-text-primary hover:border-red-500 cursor-pointer font-semibold"}
                   onClick={() => onStatusChange(status === "skipped" ? "pending" : "skipped")}
                 >
                   <X className="h-4 w-4 mr-1" /> Skip
@@ -73,3 +73,4 @@ export default function NodeDetailSheet({ node, status, onStatusChange, onClose 
     </Sheet>
   );
 }
+
