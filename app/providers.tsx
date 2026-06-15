@@ -21,11 +21,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const savedTheme = localStorage.getItem("theme") as Theme | null;
     const initialTheme = savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     if (initialTheme !== "dark") {
-      // Defer state update to avoid synchronous cascading render warning
-      const timer = setTimeout(() => {
-        setTheme(initialTheme);
-      }, 0);
-      return () => clearTimeout(timer);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTheme(initialTheme);
     }
   }, []);
 
