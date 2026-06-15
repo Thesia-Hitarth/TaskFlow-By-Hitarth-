@@ -14,7 +14,17 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -24,7 +34,11 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full h-[56px] bg-surface/85 backdrop-blur-md border-b border-border flex items-center justify-between px-4 sm:px-8 transition-colors duration-200">
+    <header className={`sticky top-0 z-50 w-full h-[56px] flex items-center justify-between px-4 sm:px-8 transition-all duration-300 ${
+      scrolled 
+        ? "bg-surface/85 backdrop-blur-md border-b border-border shadow-xs" 
+        : "bg-transparent border-b border-transparent"
+    }`}>
       {/* Left: Logo & Search */}
       <div className="flex items-center gap-4">
         <Link href="/" className="text-text-primary font-bold text-lg hover:opacity-95 transition-opacity">

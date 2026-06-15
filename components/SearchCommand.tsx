@@ -48,14 +48,11 @@ export default function SearchCommand() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-border bg-card/60 px-3 py-1.5 text-sm text-text-secondary hover:border-accent/50 hover:text-text-primary transition-all duration-200 cursor-pointer"
+        className="flex items-center gap-2 w-40 sm:w-56 md:w-72 rounded-lg border border-border bg-card/60 px-3.5 py-2 text-sm text-text-secondary hover:border-accent/50 hover:text-text-primary transition-all duration-200 cursor-pointer text-left"
         aria-label="Open search command palette"
       >
-        <Search className="h-4 w-4 text-text-secondary" />
-        <span className="hidden md:inline">Search...</span>
-        <kbd className="hidden md:inline-flex text-[10px] items-center gap-0.5 border border-border bg-background rounded px-1.5 py-0.5 font-mono text-text-secondary select-none">
-          Ctrl K
-        </kbd>
+        <Search className="h-4 w-4 text-text-secondary shrink-0" />
+        <span className="truncate">Search...</span>
       </button>
 
       {open && mounted && createPortal(
