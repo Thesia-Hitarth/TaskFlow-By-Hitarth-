@@ -2,7 +2,17 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { taskflows } from "@/lib/taskflows-data";
-import TaskflowDiagram from "@/components/taskflow/TaskflowDiagram";
+import dynamic from "next/dynamic";
+
+const TaskflowDiagram = dynamic(
+  () => import("@/components/taskflow/TaskflowDiagram"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[60vh] w-full rounded-xl border border-border/50 bg-surface/30 animate-pulse mt-10" />
+    ),
+  }
+);
 import { taskflowContent } from "@/lib/taskflow-content";
 import { guides } from "@/lib/guides-data";
 import GuideCard from "@/components/GuideCard";
