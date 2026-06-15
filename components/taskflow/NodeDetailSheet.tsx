@@ -16,17 +16,12 @@ export default function NodeDetailSheet({ node, status, onStatusChange, onClose 
   return (
     <Sheet open={!!node} onOpenChange={(open) => !open && onClose()}>
       <SheetContent side="right" className="bg-surface border-border text-text-primary w-full sm:max-w-md transition-colors duration-200">
-        <SheetHeader>
-          <SheetTitle className="text-text-primary text-xl font-bold tracking-tight">
-            {node?.label || "Node Details"}
-          </SheetTitle>
-          <SheetDescription className="text-text-secondary mt-2 text-sm leading-relaxed font-medium">
-            {node?.description || "Description of the selected node"}
-          </SheetDescription>
-        </SheetHeader>
-
         {node && (
           <>
+            <SheetHeader>
+              <SheetTitle className="text-text-primary text-xl font-bold tracking-tight">{node.label}</SheetTitle>
+              <SheetDescription className="text-text-secondary mt-2 text-sm leading-relaxed font-medium">{node.description}</SheetDescription>
+            </SheetHeader>
 
             {node.links && node.links.length > 0 && (
               <div className="mt-6 space-y-2">
