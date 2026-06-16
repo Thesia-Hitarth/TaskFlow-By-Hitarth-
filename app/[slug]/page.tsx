@@ -7,6 +7,7 @@ import { guides } from "@/lib/guides-data";
 import GuideCard from "@/components/GuideCard";
 import LazyTaskflowDiagram from "@/components/taskflow/LazyTaskflowDiagram";
 import { notFound } from "next/navigation";
+import RoadmapProgressBar from "@/components/roadmap/RoadmapProgressBar";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -58,6 +59,12 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
             {taskflow?.description || `Step by step guide to becoming a ${title} developer`}
           </p>
         </header>
+
+        {content && (
+          <div className="mt-8">
+            <RoadmapProgressBar slug={slug} totalNodes={content.nodes.length} />
+          </div>
+        )}
 
         {/* Interactive Diagram or Placeholder Box */}
         {content ? (

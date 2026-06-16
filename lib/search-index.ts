@@ -28,4 +28,6 @@ export const searchIndex: SearchItem[] = [
     description: bp.description,
     href: `/best-practices/${bp.slug}`,
   })),
+  { type: "taskflow" as const, title: "Compare Paths", description: "Compare two roadmaps side by side to find the right one for you.", href: "/compare" },
+  { type: "guide" as const, title: "Changelog", description: "See everything that has been added and updated in TaskFlow.", href: "/changelog" },
 ];

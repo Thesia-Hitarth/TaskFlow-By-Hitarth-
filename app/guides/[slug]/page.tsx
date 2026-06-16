@@ -7,6 +7,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { guides } from "@/lib/guides-data";
 import { Clock, Calendar } from "lucide-react";
+import GuideQuiz from "@/components/GuideQuiz";
+import { guidesQuizData } from "@/lib/guides-quiz-data";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -82,6 +84,14 @@ export default async function GuidePage({ params }: PageProps) {
         <article className="prose max-w-none mt-8 leading-relaxed">
           <MDXRemote source={source} />
         </article>
+
+        {/* Quiz block */}
+        {(() => {
+          const quiz = guidesQuizData.find((q) => q.guideSlug === slug);
+          return quiz ? (
+            <GuideQuiz guideSlug={slug} questions={quiz.questions} />
+          ) : null;
+        })()}
       </main>
       <Footer />
     </div>

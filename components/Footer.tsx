@@ -87,8 +87,11 @@ export default function Footer() {
             <Link href="/guides" className="hover:text-text-primary transition-colors font-medium">
               Guides
             </Link>
-            <Link href="/#faq" className="hover:text-text-primary transition-colors font-medium">
-              FAQs
+            <Link href="/best-practices" className="hover:text-text-primary transition-colors font-medium">
+              Best Practices
+            </Link>
+            <Link href="/compare" className="hover:text-text-primary transition-colors font-medium">
+              Compare
             </Link>
           </div>
         </div>

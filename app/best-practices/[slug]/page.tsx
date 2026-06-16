@@ -40,18 +40,19 @@ export default async function BestPracticePage({ params }: PageProps) {
           ← All Best Practices
         </Link>
 
-        {/* Header with icon and category */}
-        <div className="mt-8 flex items-start gap-4">
-          <span className="text-4xl select-none" role="img" aria-label="practice icon">{bp.icon}</span>
-          <div>
-            <span className="text-xs text-accent font-bold uppercase tracking-wider">
-              {bp.category}
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary mt-1 leading-tight tracking-tight">
-              {bp.title}
-            </h1>
-          </div>
+        {/* Tag Badges */}
+        <div className="flex items-center gap-2 mt-6 flex-wrap">
+          <span 
+            className="text-xs text-text-secondary border border-border bg-card rounded-full px-3 py-0.5 uppercase tracking-wide font-bold transition-colors"
+          >
+            {bp.category}
+          </span>
         </div>
+
+        {/* Title */}
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary mt-4 leading-tight tracking-tight">
+          {bp.icon} {bp.title}
+        </h1>
 
         {/* Description */}
         <p className="text-text-secondary font-medium text-base sm:text-lg mt-5 leading-relaxed">

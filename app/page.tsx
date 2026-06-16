@@ -1,8 +1,11 @@
 "use client";
+import { useState } from "react";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import TaskflowCard from "@/components/TaskflowCard";
 import { taskflows } from "@/lib/taskflows-data";
+import PathRecommender from "@/components/PathRecommender";
 
 // Custom inline GitHub icon to avoid lucide-react version export mismatches
 function GithubIcon({ className }: { className?: string }) {
@@ -23,6 +26,7 @@ function GithubIcon({ className }: { className?: string }) {
 }
 
 export default function Home() {
+  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
   const roleTaskflows = taskflows.filter((t) => t.type === "role");
   const skillTaskflows = taskflows.filter((t) => t.type === "skill");
 
@@ -38,11 +42,11 @@ export default function Home() {
           <p className="text-text-secondary text-lg sm:text-xl max-w-2xl mt-4 leading-relaxed font-medium">
             Community created taskflows, guides and articles to help developers grow in their career.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-4 justify-center mt-8 w-full max-w-xl">
+          <div className="flex flex-col items-center gap-4 justify-center mt-8 w-full max-w-md">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                alert("Thanks! We'll notify you when new content is added.");
+                setShowSubscribePopup(true);
               }}
               className="flex w-full gap-2"
             >
@@ -50,13 +54,13 @@ export default function Home() {
                 type="email"
                 required
                 placeholder="your@email.com"
-                className="flex-1 rounded-xl border border-border bg-card/50 px-4 py-2 text-sm text-text-primary placeholder-text-secondary outline-none focus:border-accent transition-colors"
+                className="flex-1 rounded-md border border-border bg-card px-3 py-1.5 text-sm text-text-primary placeholder-text-secondary outline-none focus:border-accent transition-colors"
               />
               <button
                 type="submit"
                 className="rounded-xl bg-accent px-5 py-2 text-sm font-semibold text-black hover:bg-amber-600 transition-colors cursor-pointer active:scale-[0.98] shrink-0"
               >
-                Subscribe
+                Subscribe for Updates
               </button>
             </form>
             <a
@@ -66,13 +70,15 @@ export default function Home() {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border text-text-primary hover:border-accent hover:bg-border/60 bg-transparent px-6 py-2.5 text-sm font-semibold cursor-pointer transition-all active:scale-[0.98] shrink-0"
             >
               <GithubIcon className="h-4 w-4" />
-              Contribute
+              Contribute on GitHub
             </a>
           </div>
         </section>
 
         {/* Core Grids Container */}
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+          <PathRecommender />
+
           {/* Section B: Role Based Taskflows */}
           <section className="mb-14">
             <h2 className="text-2xl font-bold text-text-primary mb-6 mt-6 tracking-tight border-b border-border pb-2">
@@ -198,6 +204,15 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          <div className="text-center mt-12">
+            <Link
+              href="/changelog"
+              className="text-sm font-semibold text-accent hover:underline inline-block transition-colors"
+            >
+              View full changelog &rarr;
+            </Link>
+          </div>
         </section>
 
         {/* Horizontal separator line */}
@@ -223,6 +238,23 @@ export default function Home() {
         </section>
       </main>
       <Footer />
+      {showSubscribePopup && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs px-4 animate-fade-in">
+          <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-2xl animate-in zoom-in-95 duration-150 text-center">
+            <span className="text-4xl" role="img" aria-label="party popper">🎉</span>
+            <h3 className="text-xl font-bold text-text-primary mt-4">Thank You!</h3>
+            <p className="text-sm text-text-secondary mt-2 leading-relaxed">
+              Thanks! You'll be notified when new content is added.
+            </p>
+            <button
+              onClick={() => setShowSubscribePopup(false)}
+              className="mt-6 w-full rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-black hover:bg-amber-600 transition-colors cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

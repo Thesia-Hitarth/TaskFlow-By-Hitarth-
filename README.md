@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TaskFlow
 
-## Getting Started
+> Community-created taskflows, guides, and best practices to help developers grow in their careers.
 
-First, run the development server:
+**Live site:** [task-flow-by-hitarth.vercel.app](https://task-flow-by-hitarth.vercel.app)
+
+---
+
+## What is TaskFlow?
+
+TaskFlow is an interactive developer learning platform featuring:
+
+- **Roadmaps** — Step-by-step visual paths for 30+ roles and skills
+  (Frontend, Backend, DevOps, AI Engineer, JavaScript, Python, and more)
+- **Guides** — In-depth articles on core concepts (closures, Big-O, Docker,
+  CORS, TypeScript generics, and more)
+- **Best Practices** — Curated checklists for code quality, security,
+  testing, accessibility, CI/CD, and DevOps
+- **Progress Tracking** — Mark nodes as Done / In Progress / Skipped,
+  saved to localStorage
+- **Search** — Ctrl+K command palette searching all roadmaps, guides,
+  and best practices
+- **Path Recommender** — 5-question quiz that recommends the right roadmap
+  for you
+- **Guide Quizzes** — Self-check questions at the end of every guide article
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Diagrams | React Flow (@xyflow/react) |
+| Content | MDX (next-mdx-remote) |
+| Database | Prisma (PostgreSQL) |
+| Auth | NextAuth.js |
+| Deployment | Vercel |
+
+---
+
+## Getting Started (Local Development)
+
+### Prerequisites
+- Node.js 18+
+- npm or pnpm
+- PostgreSQL database (for auth features)
+
+### Setup
 
 ```bash
+# 1. Clone the repository
+git clone https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-.git
+cd TaskFlow-By-Hitarth-
+
+# 2. Install dependencies
+npm install
+
+# 3. Set up environment variables
+cp .env.example .env.local
+# Fill in DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL
+
+# 4. Set up the database
+npx prisma migrate dev
+
+# 5. Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+app/                   # Next.js App Router pages
+  [slug]/              # Individual roadmap pages
+  guides/              # Guides listing + individual guide pages
+  best-practices/      # Best Practices listing + detail pages
+  compare/             # Side-by-side roadmap comparison
+  changelog/           # What's new page
+components/
+  roadmap/             # Roadmap diagram, progress bar, node components
+  GuideQuiz.tsx        # Quiz component for guide pages
+  PathRecommender.tsx  # Homepage path recommendation quiz
+  SearchCommand.tsx    # Ctrl+K search palette
+  Navbar.tsx
+  Footer.tsx
+lib/
+  roadmaps-data.ts     # All roadmap metadata
+  guides-data.ts       # All guide metadata
+  best-practices-data.ts
+  roadmap-content/     # Full node/edge data for interactive diagrams
+  progress.ts          # localStorage progress tracking hook
+content/
+  guides/              # MDX files for each guide article
+prisma/
+  schema.prisma        # Database schema
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Author
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Hitarth Thesia**
 
-## Deploy on Vercel
+- Portfolio: [hitarththesia.vercel.app](https://hitarththesia.vercel.app)
+- GitHub: [@Thesia-Hitarth](https://github.com/Thesia-Hitarth)
+- LinkedIn: [hitarth-thesia-2043b0170](https://www.linkedin.com/in/hitarth-thesia-2043b0170/)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contributing
+
+Contributions are welcome! To add a new roadmap, guide, or best practice:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/add-rust-roadmap`
+3. Make your changes following the existing data structure patterns
+4. Open a pull request with a clear description
+
+---
+
+## License
+
+MIT
+```

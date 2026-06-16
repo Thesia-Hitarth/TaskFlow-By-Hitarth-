@@ -79,6 +79,16 @@ export default function Navbar() {
         >
           Best Practices
         </Link>
+        <Link 
+          href="/compare" 
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
+            pathname.startsWith("/compare")
+              ? "text-text-primary border-accent"
+              : "text-text-secondary hover:text-text-primary border-transparent"
+          }`}
+        >
+          Compare
+        </Link>
       </nav>
 
       {/* Right: Theme toggle, Auth buttons & Menu icon */}
@@ -149,6 +159,17 @@ export default function Navbar() {
                   }`}
                 >
                   Best Practices
+                </Link>
+                <Link 
+                  href="/compare" 
+                  onClick={() => setMenuOpen(false)}
+                  className={`text-base font-bold py-1.5 transition-colors ${
+                    pathname.startsWith("/compare")
+                      ? "text-accent"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  Compare
                 </Link>
               </nav>
               <div className="h-[1px] bg-border my-2" />
