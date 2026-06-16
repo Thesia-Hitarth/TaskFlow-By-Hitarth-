@@ -1,6 +1,4 @@
 "use client";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import TaskflowCard from "@/components/TaskflowCard";
 import { taskflows } from "@/lib/taskflows-data";
 
@@ -27,9 +25,7 @@ export default function Home() {
   const skillTaskflows = taskflows.filter((t) => t.type === "skill");
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1 bg-background transition-colors duration-200">
+    <main className="flex-1 bg-background transition-colors duration-200">
         {/* Section A: Hero */}
         <section className="pt-24 pb-16 px-4 sm:px-8 max-w-4xl mx-auto text-center flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 bg-clip-text text-transparent animate-fade-in">
@@ -42,19 +38,21 @@ export default function Home() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                alert("Thanks! We'll notify you when new content is added.");
+                const input = (e.currentTarget as HTMLFormElement).querySelector("input");
+                if (input) input.value = "";
+                alert("Thanks! You'll be notified when new content is added.");
               }}
-              className="flex w-full gap-2"
+              className="flex gap-2 flex-wrap"
             >
               <input
                 type="email"
                 required
                 placeholder="your@email.com"
-                className="flex-1 rounded-xl border border-border bg-card/50 px-4 py-2 text-sm text-text-primary placeholder-text-secondary outline-none focus:border-accent transition-colors"
+                className="rounded-md border border-[#2a2a2a] bg-[#1e1e1e] px-3 py-2 text-sm text-white placeholder-[#737373] outline-none focus:border-amber-500 transition-colors"
               />
               <button
                 type="submit"
-                className="rounded-xl bg-accent px-5 py-2 text-sm font-semibold text-black hover:bg-amber-600 transition-colors cursor-pointer active:scale-[0.98] shrink-0"
+                className="rounded-md bg-amber-500 px-4 py-2 text-sm font-medium text-black hover:bg-amber-400 transition-colors"
               >
                 Subscribe
               </button>
@@ -63,10 +61,9 @@ export default function Home() {
               href="https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border text-text-primary hover:border-accent hover:bg-border/60 bg-transparent px-6 py-2.5 text-sm font-semibold cursor-pointer transition-all active:scale-[0.98] shrink-0"
+              className="inline-flex items-center gap-2 rounded-md border border-[#2a2a2a] bg-[#1e1e1e] px-4 py-2 text-sm text-white hover:border-amber-500 transition-colors"
             >
-              <GithubIcon className="h-4 w-4" />
-              Contribute
+              Contribute on GitHub
             </a>
           </div>
         </section>
@@ -210,19 +207,18 @@ export default function Home() {
             taskflow.sh is visited by hundreds of thousands of developers every month to plan their career goals.
           </p>
           <div className="flex justify-center mt-8 w-full">
-            <a
-              href="https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent hover:bg-amber-600 text-black px-6 py-2.5 font-semibold cursor-pointer transition-colors active:scale-[0.98]"
-            >
-              <GithubIcon className="h-4 w-4" />
-              Star on GitHub
-            </a>
+            <div className="flex flex-wrap gap-3 mt-4">
+              <a
+                href="https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md bg-white text-black px-4 py-2 text-sm font-medium hover:bg-white/90 transition-colors"
+              >
+                ⭐ Star on GitHub
+              </a>
+            </div>
           </div>
         </section>
       </main>
-      <Footer />
-    </>
   );
 }

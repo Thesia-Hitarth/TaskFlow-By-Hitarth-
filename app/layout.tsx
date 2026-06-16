@@ -4,6 +4,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -63,7 +65,11 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-text-primary font-sans flex flex-col">
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+          {children}
+          <Footer />
+        </Providers>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -1,164 +1,110 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, Sun, Moon } from "lucide-react";
-import { Button } from "./ui/button";
-import AuthButtons from "./AuthButtons";
-import SearchCommand from "./SearchCommand";
-import { useTheme } from "@/app/providers";
-import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "./ui/sheet";
 import { usePathname } from "next/navigation";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import SearchCommand from "./SearchCommand";
+
+const navLinks = [
+  { href: "/taskflows", label: "Taskflows" },
+  { href: "/guides", label: "Guides" },
+  { href: "/best-practices", label: "Best Practices" },
+];
 
 export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    const stored = localStorage.getItem("theme") as "dark" | "light" | null;
+    const resolved = stored ?? "dark";
+    setTheme(resolved);
+    document.documentElement.classList.toggle("dark", resolved === "dark");
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMounted(true);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
+  function toggleTheme() {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("theme", next);
+    document.documentElement.classList.toggle("dark", next === "dark");
+  }
 
   return (
-    <header className={`sticky top-0 z-50 w-full h-[56px] flex items-center justify-between px-4 sm:px-8 transition-all duration-300 ${
-      scrolled 
-        ? "bg-surface/85 backdrop-blur-md border-b border-border shadow-xs" 
-        : "bg-transparent border-b border-transparent"
-    }`}>
-      {/* Left: Logo & Search */}
-      <div className="flex items-center gap-4">
-        <Link href="/" className="text-text-primary font-bold text-lg hover:opacity-95 transition-opacity">
+    <nav className="sticky top-0 z-40 border-b border-[#2a2a2a] bg-[#0d0d0d]/90 backdrop-blur-sm">
+      <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+
+        {/* Logo */}
+        <Link href="/" className="text-white font-semibold text-sm shrink-0">
           taskflow.sh
         </Link>
-        <SearchCommand />
-      </div>
 
-      {/* Center: Nav links (Desktop only) */}
-      <nav className="hidden md:flex items-center gap-6">
-        <Link 
-          href="/taskflows" 
-          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
-            pathname.startsWith("/taskflows")
-              ? "text-text-primary border-accent"
-              : "text-text-secondary hover:text-text-primary border-transparent"
-          }`}
-        >
-          Taskflows
-        </Link>
-        <Link 
-          href="/guides" 
-          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
-            pathname.startsWith("/guides")
-              ? "text-text-primary border-accent"
-              : "text-text-secondary hover:text-text-primary border-transparent"
-          }`}
-        >
-          Guides
-        </Link>
-        <Link 
-          href="/best-practices" 
-          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
-            pathname.startsWith("/best-practices")
-              ? "text-text-primary border-accent"
-              : "text-text-secondary hover:text-text-primary border-transparent"
-          }`}
-        >
-          Best Practices
-        </Link>
-      </nav>
-
-      {/* Right: Theme toggle, Auth buttons & Menu icon */}
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleTheme}
-          className="text-text-secondary hover:text-text-primary cursor-pointer w-9 h-9 rounded-lg"
-          aria-label="Toggle theme"
-        >
-          {!mounted ? (
-            <div className="h-[18px] w-[18px]" />
-          ) : theme === "light" ? (
-            <Moon className="h-[18px] w-[18px] transition-transform duration-200 hover:-rotate-12" />
-          ) : (
-            <Sun className="h-[18px] w-[18px] transition-transform duration-200 hover:rotate-45" />
-          )}
-        </Button>
-
-        <div className="hidden md:flex items-center gap-2">
-          <AuthButtons />
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm transition-colors pb-0.5 ${
+                  isActive
+                    ? "text-white border-b border-amber-500"
+                    : "text-[#737373] hover:text-white"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
-        <div className="md:hidden">
-          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-text-secondary hover:text-text-primary cursor-pointer w-9 h-9 rounded-lg" aria-label="Open navigation menu">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="bg-surface border-border text-text-primary w-full max-w-[280px] p-6 flex flex-col gap-5 transition-colors duration-200">
-              <SheetTitle className="text-text-primary font-bold text-lg border-b border-border pb-3">
-                taskflow.sh
-              </SheetTitle>
-              <SheetDescription className="sr-only">
-                Navigation links for mobile viewports
-              </SheetDescription>
-              <nav className="flex flex-col gap-4 mt-2">
-                <Link 
-                  href="/taskflows" 
-                  onClick={() => setMenuOpen(false)}
-                  className={`text-base font-bold py-1.5 transition-colors ${
-                    pathname.startsWith("/taskflows")
-                      ? "text-accent"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  Taskflows
-                </Link>
-                <Link 
-                  href="/guides" 
-                  onClick={() => setMenuOpen(false)}
-                  className={`text-base font-bold py-1.5 transition-colors ${
-                    pathname.startsWith("/guides")
-                      ? "text-accent"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  Guides
-                </Link>
-                <Link 
-                  href="/best-practices" 
-                  onClick={() => setMenuOpen(false)}
-                  className={`text-base font-bold py-1.5 transition-colors ${
-                    pathname.startsWith("/best-practices")
-                      ? "text-accent"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  Best Practices
-                </Link>
-              </nav>
-              <div className="h-[1px] bg-border my-2" />
-              <div className="flex flex-col gap-3 mt-auto pb-4" onClick={() => setMenuOpen(false)}>
-                <AuthButtons />
-              </div>
-            </SheetContent>
-          </Sheet>
+
+        {/* Right side: search + theme + mobile toggle */}
+        <div className="flex items-center gap-2">
+          <SearchCommand />
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="p-1.5 rounded-md border border-[#2a2a2a] text-[#737373] hover:border-amber-500 hover:text-amber-500 transition-colors"
+          >
+            {theme === "dark"
+              ? <Sun className="h-4 w-4" />
+              : <Moon className="h-4 w-4" />}
+          </button>
+
+          {/* Mobile hamburger */}
+          <button
+            className="flex md:hidden p-1.5 text-[#737373] hover:text-white transition-colors"
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
-    </header>
+
+      {/* Mobile dropdown */}
+      {mobileOpen && (
+        <div className="md:hidden border-t border-[#2a2a2a] bg-[#0d0d0d] px-4 py-3 flex flex-col gap-3">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm transition-colors ${
+                  isActive ? "text-white" : "text-[#737373] hover:text-white"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </nav>
   );
 }

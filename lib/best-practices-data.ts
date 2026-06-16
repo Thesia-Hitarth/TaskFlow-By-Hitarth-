@@ -4,7 +4,7 @@ export interface BestPracticeCard {
   title: string;
   description: string;
   topics: string[];
-  icon: string; // emoji icon for the card
+  icon: string;
 }
 
 export const bestPractices: BestPracticeCard[] = [
@@ -12,7 +12,7 @@ export const bestPractices: BestPracticeCard[] = [
     slug: "code-quality",
     category: "Code Quality",
     title: "Writing Clean, Maintainable Code",
-    description: "Principles and conventions that keep your codebase readable and easy to change.",
+    description: "Principles and conventions that keep your codebase readable and easy to change over time.",
     topics: ["Clean code principles", "Naming conventions", "DRY & SOLID", "Code reviews"],
     icon: "✨",
   },
@@ -28,15 +28,15 @@ export const bestPractices: BestPracticeCard[] = [
     slug: "security",
     category: "Security",
     title: "Security Fundamentals for Developers",
-    description: "The baseline security habits every developer should build before shipping code.",
-    topics: ["Never hardcode secrets", "Input validation", "HTTPS/SSL", "OWASP Top 10"],
+    description: "The baseline security habits every developer should have before shipping to production.",
+    topics: ["Never hardcode secrets", "Input validation", "HTTPS & SSL", "OWASP Top 10"],
     icon: "🔐",
   },
   {
     slug: "performance",
     category: "Performance",
     title: "Web Performance Best Practices",
-    description: "Techniques to make your app fast for users and green in Core Web Vitals.",
+    description: "Techniques to make your app fast for real users and green in Core Web Vitals audits.",
     topics: ["Lazy loading", "Caching strategies", "Avoid premature optimization", "Core Web Vitals"],
     icon: "⚡",
   },
@@ -44,7 +44,7 @@ export const bestPractices: BestPracticeCard[] = [
     slug: "testing",
     category: "Testing",
     title: "Testing Strategies That Actually Work",
-    description: "How to think about test coverage without wasting time on low-value tests.",
+    description: "How to think about test coverage without wasting time writing low-value tests.",
     topics: ["Unit vs integration vs E2E", "The test pyramid", "TDD basics", "Test naming"],
     icon: "🧪",
   },
@@ -61,7 +61,7 @@ export const bestPractices: BestPracticeCard[] = [
     category: "Documentation",
     title: "Writing Docs That Get Read",
     description: "README structure, inline comments, and JSDoc patterns that save future-you hours.",
-    topics: ["README best practices", "Inline comments", "JSDoc/TSDoc", "Changelog format"],
+    topics: ["README best practices", "Inline comments", "JSDoc / TSDoc", "Changelog format"],
     icon: "📝",
   },
   {
@@ -74,9 +74,9 @@ export const bestPractices: BestPracticeCard[] = [
   },
   {
     slug: "ci-cd",
-    category: "CI/CD",
+    category: "CI / CD",
     title: "CI/CD Pipeline Best Practices",
-    description: "Automate your way from commit to production without breaking things.",
+    description: "Automate your way from commit to production without breaking things for your users.",
     topics: ["Automate tests on PRs", "Lint checks in CI", "Deployment pipelines", "Rollback strategy"],
     icon: "🚀",
   },
