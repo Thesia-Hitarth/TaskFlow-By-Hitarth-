@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { taskflows } from "@/lib/taskflows-data";
 import { taskflowContent } from "@/lib/taskflow-content";
 import { guides } from "@/lib/guides-data";
@@ -35,7 +37,9 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   const title = taskflow.title;
 
   return (
-    <main className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
+    <>
+      <Navbar />
+      <main className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
         {/* Breadcrumb */}
         <nav className="text-text-secondary text-sm" aria-label="Breadcrumb font-medium">
           <Link href="/taskflows" className="hover:text-text-primary transition-colors">
@@ -95,6 +99,8 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
           </Link>
         </div>
       </main>
+      <Footer />
+    </>
   );
 }
 

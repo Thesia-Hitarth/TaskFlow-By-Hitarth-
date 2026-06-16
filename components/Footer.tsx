@@ -1,8 +1,23 @@
 import Link from "next/link";
-import { Globe } from "lucide-react";
 
-// Inline definitions for brand icons to bypass lucide-react version mismatches
-function Linkedin(props: React.SVGProps<SVGSVGElement>) {
+function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+      <path d="M9 18c-4.51 2-5-2-7-2" />
+    </svg>
+  );
+}
+
+function LinkedinIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -20,7 +35,7 @@ function Linkedin(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function Github(props: React.SVGProps<SVGSVGElement>) {
+function GlobeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -31,8 +46,9 @@ function Github(props: React.SVGProps<SVGSVGElement>) {
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-      <path d="M9 18c-4.51 2-5-2-7-2" />
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     </svg>
   );
 }
@@ -41,74 +57,70 @@ const socialLinks = [
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/hitarth-thesia-2043b0170/",
-    icon: Linkedin,
+    icon: LinkedinIcon,
   },
   {
     label: "GitHub",
     href: "https://github.com/Thesia-Hitarth",
-    icon: Github,
+    icon: GithubIcon,
   },
   {
     label: "Portfolio",
     href: "https://hitarththesia.vercel.app/",
-    icon: Globe,
+    icon: GlobeIcon,
   },
-];
-
-const footerNavLinks = [
-  { label: "Taskflows", href: "/taskflows" },
-  { label: "Guides", href: "/guides" },
-  { label: "Best Practices", href: "/best-practices" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#2a2a2a] bg-[#0d0d0d] mt-16">
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          {/* Brand */}
-          <div>
-            <Link href="/" className="text-white font-semibold text-sm">
-              taskflow.sh
+    <footer className="w-full bg-surface border-t border-border py-10 px-4 sm:px-8 mt-auto transition-colors duration-200">
+      <div className="max-w-7xl mx-auto flex flex-col gap-8">
+        {/* Top row: Logo left, Nav links right */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <Link href="/" className="text-text-primary font-bold text-lg hover:opacity-90 transition-opacity">
+            taskflow.sh
+          </Link>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-secondary">
+            <Link href="/taskflows" className="hover:text-text-primary transition-colors font-medium">
+              Taskflows
             </Link>
-            <p className="text-xs text-[#737373] mt-1 max-w-xs">
-              Community created taskflows, best practices, guides and articles
-              to help you grow in your career.
-            </p>
-          </div>
-
-          {/* Nav links */}
-          <div className="flex flex-wrap gap-4">
-            {footerNavLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm text-[#737373] hover:text-white transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Social icons */}
-          <div className="flex items-center gap-3">
-            {socialLinks.map(({ label, href, icon: Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="p-2 rounded-md border border-[#2a2a2a] text-[#737373] hover:border-amber-500 hover:text-amber-500 transition-colors"
-              >
-                <Icon className="h-4 w-4" />
-              </a>
-            ))}
+            <Link href="/guides" className="hover:text-text-primary transition-colors font-medium">
+              Guides
+            </Link>
+            <Link href="/#faq" className="hover:text-text-primary transition-colors font-medium">
+              FAQs
+            </Link>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-[#2a2a2a] text-xs text-[#737373]">
-          © {new Date().getFullYear()} taskflow.sh
+        {/* Middle row: Tagline */}
+        <p className="text-text-secondary text-sm max-w-2xl leading-relaxed">
+          Community created taskflows, best practices, guides and articles to help you grow in your career.
+        </p>
+
+        {/* Bottom row: Copyright left, Socials right */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-border pt-6 mt-2">
+          <p className="text-muted text-xs font-semibold">
+            &copy; {new Date().getFullYear()} taskflow.sh
+          </p>
+
+          <div className="flex items-center gap-3">
+            {socialLinks.map((social) => {
+              const Icon = social.icon;
+              return (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card/40 text-text-secondary transition-all duration-200 hover:border-accent hover:text-accent hover:bg-border/40 focus:outline-none"
+                  aria-label={social.label}
+                >
+                  <Icon className="h-[18px] w-[18px]" />
+                </a>
+              );
+            })}
+          </div>
         </div>
       </div>
     </footer>

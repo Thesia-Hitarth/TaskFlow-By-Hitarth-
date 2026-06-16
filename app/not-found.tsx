@@ -1,8 +1,12 @@
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function NotFound() {
   return (
-    <main className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 bg-background transition-colors duration-200">
+    <>
+      <Navbar />
+      <main className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 bg-background transition-colors duration-200">
         <h1 className="text-6xl font-extrabold text-text-primary tracking-tight">404</h1>
         <p className="text-text-secondary mt-3 font-semibold">This page doesn&apos;t exist.</p>
         <Link
@@ -12,5 +16,7 @@ export default function NotFound() {
           Back to home
         </Link>
       </main>
+      <Footer />
+    </>
   );
 }

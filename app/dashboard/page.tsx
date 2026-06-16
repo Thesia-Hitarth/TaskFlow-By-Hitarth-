@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { taskflowContent } from "@/lib/taskflow-content";
 import { taskflows } from "@/lib/taskflows-data";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LayoutDashboard, GraduationCap, Trophy, ChevronRight, BookOpen } from "lucide-react";
@@ -32,7 +34,10 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="flex flex-col min-h-screen bg-background">
+      <Navbar />
+      
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* User Profile Summary Card */}
         <div className="relative rounded-2xl border border-border bg-surface/50 backdrop-blur-md p-6 sm:p-8 overflow-hidden mb-10">
           <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -157,5 +162,8 @@ export default async function DashboardPage() {
           )}
         </div>
       </main>
+
+      <Footer />
+    </div>
   );
 }

@@ -3,6 +3,8 @@ import path from "path";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { guides } from "@/lib/guides-data";
 import { Clock, Calendar } from "lucide-react";
 
@@ -35,7 +37,9 @@ export default async function GuidePage({ params }: PageProps) {
   const source = fs.readFileSync(filePath, "utf-8");
 
   return (
-    <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full">
+    <div className="flex flex-col min-h-screen bg-background transition-colors duration-200">
+      <Navbar />
+      <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full">
         {/* Back Link */}
         <Link 
           href="/guides" 
@@ -79,6 +83,8 @@ export default async function GuidePage({ params }: PageProps) {
           <MDXRemote source={source} />
         </article>
       </main>
+      <Footer />
+    </div>
   );
 }
 
