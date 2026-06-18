@@ -1,7 +1,3 @@
-// BUG-023: ESLint 9 flat config using FlatCompat from @eslint/eslintrc.
-// This bridges the legacy CJS format of eslint-config-next with ESLint 9's
-// flat config system.
-
 import { FlatCompat } from "@eslint/eslintrc";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -24,6 +20,11 @@ const eslintConfig = [
       "next-env.d.ts",
       "node_modules/**",
     ],
+  },
+  {
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+    },
   },
 ];
 

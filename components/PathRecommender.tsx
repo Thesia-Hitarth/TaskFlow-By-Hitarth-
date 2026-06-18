@@ -175,7 +175,7 @@ export default function PathRecommender() {
           Not sure where to start?
         </p>
         <p className="text-sm text-text-secondary mt-1 mb-4 font-medium">
-          Answer 5 quick questions and we'll recommend the right path for you.
+          Answer 5 quick questions and we&apos;ll recommend the right path for you.
         </p>
         <button
           onClick={() => setStarted(true)}
@@ -243,13 +243,12 @@ export default function PathRecommender() {
           {questions.map((_, i) => (
             <span
               key={i}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i < currentQ
+              className={`h-1.5 rounded-full transition-all duration-300 ${i < currentQ
                   ? "w-4 bg-accent"
                   : i === currentQ
-                  ? "w-4 bg-accent/60"
-                  : "w-1.5 bg-border"
-              }`}
+                    ? "w-4 bg-accent/60"
+                    : "w-1.5 bg-border"
+                }`}
             />
           ))}
         </div>

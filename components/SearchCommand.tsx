@@ -22,9 +22,8 @@ export default function SearchCommand() {
     : searchIndex.slice(0, 8);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
-    
+
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
@@ -74,8 +73,8 @@ export default function SearchCommand() {
                 placeholder="Search taskflows and guides..."
                 className="flex-1 bg-transparent text-text-primary placeholder-text-secondary outline-none text-sm border-none focus:ring-0"
               />
-              <button 
-                onClick={() => setOpen(false)} 
+              <button
+                onClick={() => setOpen(false)}
                 className="p-1 text-text-secondary hover:text-text-primary hover:bg-card rounded-md transition-colors cursor-pointer"
                 aria-label="Close search"
               >
@@ -107,7 +106,7 @@ export default function SearchCommand() {
                 );
               })}
             </div>
-            
+
             {/* Command Palette Footer */}
             <div className="flex items-center justify-between border-t border-border/50 px-4 py-2 bg-background/50 text-[10px] text-text-secondary">
               <span>Search index: {searchIndex.length} items</span>
