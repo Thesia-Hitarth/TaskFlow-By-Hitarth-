@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { track } from "@vercel/analytics";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -28,39 +27,8 @@ function GithubIcon({ className }: { className?: string }) {
 
 export default function Home() {
   const [showSubscribePopup, setShowSubscribePopup] = useState(false);
-  const [email, setEmail] = useState("");
-  const [subscribeError, setSubscribeError] = useState("");
-  const [isSubscribing, setIsSubscribing] = useState(false);
   const roleTaskflows = taskflows.filter((t) => t.type === "role");
   const skillTaskflows = taskflows.filter((t) => t.type === "skill");
-
-  async function handleSubscribe(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubscribeError("");
-    setIsSubscribing(true);
-
-    try {
-      const response = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const result = (await response.json()) as { error?: string };
-
-      if (!response.ok) {
-        setSubscribeError(result.error ?? "Subscription failed. Please try again.");
-        return;
-      }
-
-      track("subscribe", { source: "homepage" });
-      setEmail("");
-      setShowSubscribePopup(true);
-    } catch {
-      setSubscribeError("Subscription failed. Please try again.");
-    } finally {
-      setIsSubscribing(false);
-    }
-  }
 
   return (
     <>
@@ -76,30 +44,25 @@ export default function Home() {
           </p>
           <div className="flex flex-col items-center gap-4 justify-center mt-8 w-full max-w-md">
             <form
-              onSubmit={handleSubscribe}
-              className="flex w-full flex-col gap-2 sm:flex-row"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setShowSubscribePopup(true);
+              }}
+              className="flex w-full gap-2"
             >
               <input
                 type="email"
                 required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
                 placeholder="your@email.com"
                 className="flex-1 rounded-md border border-border bg-card px-3 py-1.5 text-sm text-text-primary placeholder-text-secondary outline-none focus:border-accent transition-colors"
               />
               <button
                 type="submit"
-                disabled={isSubscribing}
                 className="rounded-xl bg-accent px-5 py-2 text-sm font-semibold text-black hover:bg-amber-600 transition-colors cursor-pointer active:scale-[0.98] shrink-0"
               >
-                {isSubscribing ? "Subscribing..." : "Subscribe for Updates"}
+                Subscribe for Updates
               </button>
             </form>
-            {subscribeError && (
-              <p className="w-full text-left text-sm font-semibold text-red-500" role="alert">
-                {subscribeError}
-              </p>
-            )}
             <a
               href="https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-"
               target="_blank"
@@ -146,7 +109,7 @@ export default function Home() {
         {/* Actively Maintained (Timeline) Section */}
         <section className="pt-16 pb-20 px-4 sm:px-8 max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <span className="text-4xl font-black text-accent" aria-hidden="true">^</span>
+            <span className="text-4xl" role="img" aria-label="rocket">🚀</span>
             <h2 className="text-3xl font-extrabold text-text-primary mt-4 tracking-tight">Actively Maintained</h2>
             <p className="text-text-secondary text-base max-w-xl mx-auto mt-2 leading-relaxed">
               We are always improving our content, adding new resources and adding features to enhance your learning experience.
@@ -278,10 +241,10 @@ export default function Home() {
       {showSubscribePopup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs px-4 animate-fade-in">
           <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-2xl animate-in zoom-in-95 duration-150 text-center">
-            <span className="text-4xl font-black text-accent" aria-hidden="true">*</span>
+            <span className="text-4xl" role="img" aria-label="party popper">🎉</span>
             <h3 className="text-xl font-bold text-text-primary mt-4">Thank You!</h3>
             <p className="text-sm text-text-secondary mt-2 leading-relaxed">
-              Thanks! You&apos;ll be notified when new content is added.
+              Thanks! You'll be notified when new content is added.
             </p>
             <button
               onClick={() => setShowSubscribePopup(false)}

@@ -7,12 +7,7 @@ import { prisma } from "@/lib/prisma";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [GitHub, Google],
-  secret: process.env.AUTH_SECRET,
-  trustHost: true,
-  session: {
-    strategy: "database",
-    maxAge: 30 * 24 * 60 * 60,
-  },
+  session: { strategy: "database" },
   pages: {
     signIn: "/signin",
   },
