@@ -34,58 +34,53 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className={`sticky top-0 z-50 w-full h-[56px] flex items-center justify-between px-4 sm:px-8 transition-all duration-300 ${
-      scrolled 
-        ? "bg-surface/85 backdrop-blur-md border-b border-border shadow-xs" 
+    <header className={`sticky top-0 z-50 w-full h-[56px] flex items-center justify-between px-4 sm:px-8 transition-all duration-300 ${scrolled
+        ? "bg-surface/85 backdrop-blur-md border-b border-border shadow-xs"
         : "bg-transparent border-b border-transparent"
-    }`}>
+      }`}>
       {/* Left: Logo & Search */}
       <div className="flex items-center gap-4">
         <Link href="/" className="text-text-primary font-bold text-lg hover:opacity-95 transition-opacity">
-          taskflow.sh
+          task-flow-by-hitarth
         </Link>
         <SearchCommand />
       </div>
 
       {/* Center: Nav links (Desktop only) */}
       <nav className="hidden md:flex items-center gap-6">
-        <Link 
-          href="/taskflows" 
-          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
-            pathname.startsWith("/taskflows")
+        <Link
+          href="/taskflows"
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/taskflows")
               ? "text-text-primary border-accent"
               : "text-text-secondary hover:text-text-primary border-transparent"
-          }`}
+            }`}
         >
           Taskflows
         </Link>
-        <Link 
-          href="/guides" 
-          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
-            pathname.startsWith("/guides")
+        <Link
+          href="/guides"
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/guides")
               ? "text-text-primary border-accent"
               : "text-text-secondary hover:text-text-primary border-transparent"
-          }`}
+            }`}
         >
           Guides
         </Link>
-        <Link 
-          href="/best-practices" 
-          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
-            pathname.startsWith("/best-practices")
+        <Link
+          href="/best-practices"
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/best-practices")
               ? "text-text-primary border-accent"
               : "text-text-secondary hover:text-text-primary border-transparent"
-          }`}
+            }`}
         >
           Best Practices
         </Link>
-        <Link 
-          href="/compare" 
-          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${
-            pathname.startsWith("/compare")
+        <Link
+          href="/compare"
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/compare")
               ? "text-text-primary border-accent"
               : "text-text-secondary hover:text-text-primary border-transparent"
-          }`}
+            }`}
         >
           Compare
         </Link>
@@ -121,53 +116,49 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="bg-surface border-border text-text-primary w-full max-w-[280px] p-6 flex flex-col gap-5 transition-colors duration-200">
               <SheetTitle className="text-text-primary font-bold text-lg border-b border-border pb-3">
-                taskflow.sh
+                task-flow-by-hitarth
               </SheetTitle>
               <SheetDescription className="sr-only">
                 Navigation links for mobile viewports
               </SheetDescription>
               <nav className="flex flex-col gap-4 mt-2">
-                <Link 
-                  href="/taskflows" 
+                <Link
+                  href="/taskflows"
                   onClick={() => setMenuOpen(false)}
-                  className={`text-base font-bold py-1.5 transition-colors ${
-                    pathname.startsWith("/taskflows")
+                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/taskflows")
                       ? "text-accent"
                       : "text-text-secondary hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Taskflows
                 </Link>
-                <Link 
-                  href="/guides" 
+                <Link
+                  href="/guides"
                   onClick={() => setMenuOpen(false)}
-                  className={`text-base font-bold py-1.5 transition-colors ${
-                    pathname.startsWith("/guides")
+                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/guides")
                       ? "text-accent"
                       : "text-text-secondary hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Guides
                 </Link>
-                <Link 
-                  href="/best-practices" 
+                <Link
+                  href="/best-practices"
                   onClick={() => setMenuOpen(false)}
-                  className={`text-base font-bold py-1.5 transition-colors ${
-                    pathname.startsWith("/best-practices")
+                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/best-practices")
                       ? "text-accent"
                       : "text-text-secondary hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Best Practices
                 </Link>
-                <Link 
-                  href="/compare" 
+                <Link
+                  href="/compare"
                   onClick={() => setMenuOpen(false)}
-                  className={`text-base font-bold py-1.5 transition-colors ${
-                    pathname.startsWith("/compare")
+                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/compare")
                       ? "text-accent"
                       : "text-text-secondary hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Compare
                 </Link>

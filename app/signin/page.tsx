@@ -42,7 +42,7 @@ export default function SignInPage() {
       <div className="w-full max-w-md rounded-2xl border border-border bg-surface/80 backdrop-blur-xl p-8 sm:p-10 shadow-2xl shadow-black/5 dark:shadow-black/50 transition-all duration-300 hover:border-accent/20">
         <div className="text-center">
           <Link href="/" className="inline-block text-2xl font-bold text-text-primary tracking-tight hover:text-accent transition-colors">
-            taskflow.sh
+            task-flow-by-hitarth
           </Link>
           <h1 className="text-3xl font-extrabold text-text-primary mt-6 tracking-tight">Welcome Back</h1>
           <p className="text-sm text-text-secondary mt-2 font-medium">
@@ -58,7 +58,7 @@ export default function SignInPage() {
             <GithubIcon className="h-5 w-5 text-text-primary" />
             <span>Continue with GitHub</span>
           </button>
-          
+
           <button
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
             className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-card/50 py-3 text-sm font-semibold text-text-primary hover:bg-surface hover:border-accent transition-all duration-200 cursor-pointer active:scale-[0.99]"

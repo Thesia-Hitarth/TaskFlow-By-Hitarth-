@@ -1,28 +1,8 @@
-# TaskFlow
+# TaskFlow — Developer Taskflows & Guides Platform
 
-> Community-created taskflows, guides, and best practices to help developers grow in their careers.
+> Community-created taskflows, guides, and articles to help developers plan and grow their careers.
 
-**Live site:** [task-flow-by-hitarth.vercel.app](https://task-flow-by-hitarth.vercel.app)
-
----
-
-## What is TaskFlow?
-
-TaskFlow is an interactive developer learning platform featuring:
-
-- **Roadmaps** — Step-by-step visual paths for 30+ roles and skills
-  (Frontend, Backend, DevOps, AI Engineer, JavaScript, Python, and more)
-- **Guides** — In-depth articles on core concepts (closures, Big-O, Docker,
-  CORS, TypeScript generics, and more)
-- **Best Practices** — Curated checklists for code quality, security,
-  testing, accessibility, CI/CD, and DevOps
-- **Progress Tracking** — Mark nodes as Done / In Progress / Skipped,
-  saved to localStorage
-- **Search** — Ctrl+K command palette searching all roadmaps, guides,
-  and best practices
-- **Path Recommender** — 5-question quiz that recommends the right roadmap
-  for you
-- **Guide Quizzes** — Self-check questions at the end of every guide article
+**Live deployment:** [task-flow-by-hitarth.vercel.app](https://task-flow-by-hitarth.vercel.app)
 
 ---
 
@@ -30,101 +10,183 @@ TaskFlow is an interactive developer learning platform featuring:
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Diagrams | React Flow (@xyflow/react) |
-| Content | MDX (next-mdx-remote) |
-| Database | Prisma (PostgreSQL) |
-| Auth | NextAuth.js |
-| Deployment | Vercel |
+| Framework | Next.js 15 (App Router, Turbopack) |
+| Auth | next-auth v5 (beta) — GitHub & Google OAuth |
+| Database | PostgreSQL via [Neon](https://neon.tech) |
+| ORM | Prisma 6 |
+| UI | React 19, Tailwind CSS v4, Radix UI |
+| Diagrams | @xyflow/react (React Flow) |
+| Content | MDX via next-mdx-remote |
+| Analytics | Vercel Analytics + Speed Insights |
+| Deployment | Vercel (serverless) |
 
 ---
 
-## Getting Started (Local Development)
+## Prerequisites
 
-### Prerequisites
-- Node.js 18+
-- npm or pnpm
-- PostgreSQL database (for auth features)
+- **Node.js** ≥ 20 (LTS recommended)
+- **npm** ≥ 10
+- A **PostgreSQL** database (Neon free tier works great)
+- A **GitHub OAuth App** and/or **Google OAuth credentials**
 
-### Setup
+---
+
+## Local Setup
+
+### 1. Clone the repository
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-.git
 cd TaskFlow-By-Hitarth-
+```
 
-# 2. Install dependencies
+### 2. Install dependencies
+
+```bash
 npm install
+```
 
-# 3. Set up environment variables
+### 3. Configure environment variables
+
+Copy the example file and fill in your values:
+
+```bash
 cp .env.example .env.local
-# Fill in DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL
+```
 
-# 4. Set up the database
-npx prisma migrate dev
+Then edit `.env.local`:
 
-# 5. Run the development server
+| Variable | How to get it |
+|---|---|
+| `DATABASE_URL` | Your PostgreSQL connection string (Neon: Settings → Connection string) |
+| `AUTH_SECRET` | Run `openssl rand -base64 32` in your terminal |
+| `AUTH_TRUST_HOST` | Set to `true` for any non-localhost deployment |
+| `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | [GitHub Developer Settings → OAuth Apps](https://github.com/settings/developers) |
+| `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials) |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` for local, your domain in production |
+
+> **GitHub OAuth callback URL:** `http://localhost:3000/api/auth/callback/github`
+> **Google OAuth redirect URI:** `http://localhost:3000/api/auth/callback/google`
+
+### 4. Set up the database
+
+Run Prisma migrations to create all tables:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Generate the Prisma client (also runs automatically on `npm install`):
+
+```bash
+npx prisma generate
+```
+
+To view/edit data in a browser UI:
+
+```bash
+npx prisma studio
+```
+
+### 5. Start the development server
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
 ## Project Structure
 
 ```
-app/                   # Next.js App Router pages
-  [slug]/              # Individual roadmap pages
-  guides/              # Guides listing + individual guide pages
-  best-practices/      # Best Practices listing + detail pages
-  compare/             # Side-by-side roadmap comparison
-  changelog/           # What's new page
-components/
-  roadmap/             # Roadmap diagram, progress bar, node components
-  GuideQuiz.tsx        # Quiz component for guide pages
-  PathRecommender.tsx  # Homepage path recommendation quiz
-  SearchCommand.tsx    # Ctrl+K search palette
-  Navbar.tsx
-  Footer.tsx
-lib/
-  roadmaps-data.ts     # All roadmap metadata
-  guides-data.ts       # All guide metadata
-  best-practices-data.ts
-  roadmap-content/     # Full node/edge data for interactive diagrams
-  progress.ts          # localStorage progress tracking hook
-content/
-  guides/              # MDX files for each guide article
-prisma/
-  schema.prisma        # Database schema
+app/                  # Next.js App Router pages
+  [slug]/             # Taskflow detail pages (e.g. /frontend, /backend)
+  guides/             # Guide listing and detail pages
+  best-practices/     # Best practices pages
+  compare/            # Technology comparison page
+  api/                # API routes
+    auth/             # NextAuth v5 route handler
+    progress/         # User progress save/load
+    subscribe/        # Email subscription endpoint
+components/           # Shared React components
+  taskflow/           # ReactFlow diagram components
+  roadmap/            # Progress bar components
+  ui/                 # Primitive UI components (Button, Sheet, etc.)
+lib/                  # Data, utilities, and business logic
+  taskflows-data.ts   # Taskflow metadata (title, slug, description)
+  taskflow-content/   # Taskflow node/edge data for diagrams
+  guides-data.ts      # Guide metadata
+  prisma.ts           # Prisma client singleton
+content/              # MDX guide files
+  guides/             # One .mdx file per guide
+prisma/               # Database schema and migrations
+  schema.prisma       # Prisma schema definition
+middleware.ts         # Auth middleware protecting /api/* and /dashboard/*
+auth.ts               # NextAuth v5 configuration
 ```
 
 ---
 
-## Author
+## Adding a New Taskflow
 
-**Hitarth Thesia**
+1. **Add metadata** to `lib/taskflows-data.ts`:
+   ```ts
+   { slug: "my-role", title: "My Role", description: "...", type: "role" }
+   ```
 
-- Portfolio: [hitarththesia.vercel.app](https://hitarththesia.vercel.app)
-- GitHub: [@Thesia-Hitarth](https://github.com/Thesia-Hitarth)
-- LinkedIn: [hitarth-thesia-2043b0170](https://www.linkedin.com/in/hitarth-thesia-2043b0170/)
+2. **Add diagram content** in `lib/taskflow-content/`:
+   Create a new file `my-role.ts` with `nodes` and `edges` arrays, then export it from `lib/taskflow-content/index.ts`.
+
+3. The route `/{slug}` is dynamically generated — no new page file needed.
+
+---
+
+## Adding a New Guide
+
+1. **Add metadata** to `lib/guides-data.ts`.
+2. **Create the content** at `content/guides/{slug}.mdx`.
+3. Optionally add quiz questions to `lib/guides-quiz-data.ts`.
+
+---
+
+## Deployment (Vercel)
+
+1. Import the GitHub repository in the [Vercel dashboard](https://vercel.com/new).
+2. Set all environment variables from `.env.example` in **Settings → Environment Variables**.
+3. Set `NEXT_PUBLIC_SITE_URL` to your Vercel deployment URL.
+4. Ensure `DATABASE_URL` points to your production database.
+5. Vercel automatically runs `npm install` (which triggers `prisma generate`) on each deploy.
+
+> **Important:** `AUTH_SECRET` and `AUTH_TRUST_HOST=true` must be set in Vercel or authentication will not work.
+
+---
+
+## Available Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start development server with Turbopack |
+| `npm run build` | Build production bundle |
+| `npm run start` | Start production server |
+| `npm run lint` | Lint all files with ESLint |
+| `npx prisma studio` | Open Prisma database browser |
+| `npx prisma migrate dev` | Apply schema changes to dev database |
 
 ---
 
 ## Contributing
 
-Contributions are welcome! To add a new roadmap, guide, or best practice:
+Contributions are welcome! To add a new taskflow or guide:
 
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/add-rust-roadmap`
-3. Make your changes following the existing data structure patterns
-4. Open a pull request with a clear description
+2. Create a feature branch: `git checkout -b feat/my-taskflow`
+3. Follow the steps in "Adding a New Taskflow" or "Adding a New Guide"
+4. Open a Pull Request
 
 ---
 
 ## License
 
-MIT
-```
+MIT © [Hitarth Thesia](https://hitarththesia.vercel.app/)

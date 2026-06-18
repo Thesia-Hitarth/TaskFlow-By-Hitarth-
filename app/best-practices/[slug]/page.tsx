@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const bp = bestPractices.find((b) => b.slug === slug);
   if (!bp) return {};
   return {
-    title: `${bp.title} — taskflow.sh`,
+    title: `${bp.title} — task-flow-by-hitarth`,
     description: bp.description,
   };
 }
@@ -42,7 +42,7 @@ export default async function BestPracticePage({ params }: PageProps) {
 
         {/* Tag Badges */}
         <div className="flex items-center gap-2 mt-6 flex-wrap">
-          <span 
+          <span
             className="text-xs text-text-secondary border border-border bg-card rounded-full px-3 py-0.5 uppercase tracking-wide font-bold transition-colors"
           >
             {bp.category}

@@ -4,7 +4,7 @@ import BestPracticesExplorer from "@/components/BestPracticesExplorer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Best Practices — taskflow.sh",
+  title: "Best Practices — task-flow-by-hitarth",
   description: "Curated best practices across code quality, security, testing, performance, and more.",
 };
 

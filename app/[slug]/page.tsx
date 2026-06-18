@@ -23,18 +23,38 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const taskflow = taskflows.find((tf) => tf.slug === slug);
   if (!taskflow) return {};
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const title = `${taskflow.title} Taskflow 2026 — task-flow-by-hitarth`;
+  const description =
+    taskflow.description || `Step by step guide to becoming a ${taskflow.title} developer.`;
+
+  // BUG-020: Dynamic OG metadata per taskflow so social share links show
+  // the correct title instead of the site-wide "Developer Taskflows" default.
   return {
-    title: `${taskflow?.title || "Developer"} Taskflow 2026 — taskflow.sh`,
-    description: taskflow?.description || "Step by step guide to learning.",
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${siteUrl}/${slug}`,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
+
 
 export default async function TaskflowDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const taskflow = taskflows.find((tf) => tf.slug === slug);
   if (!taskflow) notFound();
   const content = taskflowContent[slug];
-  
+
   const title = taskflow.title;
 
   return (

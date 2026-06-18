@@ -22,9 +22,27 @@ export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const guide = guides.find((g) => g.slug === slug);
   if (!guide) return {};
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+  // BUG-020: Dynamic OG tags per guide page so social shares show the correct
+  // title, description, and URL instead of the site-wide defaults.
   return {
-    title: `${guide.title} — taskflow.sh`,
+    title: `${guide.title} — task-flow-by-hitarth`,
     description: guide.description,
+    openGraph: {
+      title: guide.title,
+      description: guide.description,
+      url: `${siteUrl}/guides/${slug}`,
+      type: "article",
+      publishedTime: guide.publishedAt,
+      tags: guide.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: guide.title,
+      description: guide.description,
+    },
   };
 }
 
@@ -43,8 +61,8 @@ export default async function GuidePage({ params }: PageProps) {
       <Navbar />
       <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full">
         {/* Back Link */}
-        <Link 
-          href="/guides" 
+        <Link
+          href="/guides"
           className="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent transition-colors font-semibold"
         >
           ← All Guides
@@ -53,8 +71,8 @@ export default async function GuidePage({ params }: PageProps) {
         {/* Tag Badges */}
         <div className="flex items-center gap-2 mt-6 flex-wrap">
           {guide.tags.map((tag) => (
-            <span 
-              key={tag} 
+            <span
+              key={tag}
               className="text-xs text-text-secondary border border-border bg-card rounded-full px-3 py-0.5 uppercase tracking-wide font-bold transition-colors"
             >
               {tag}
