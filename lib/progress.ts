@@ -19,7 +19,7 @@ export function useRoadmapProgress(slug: string) {
   const [progress, setProgress] = useState<Record<string, NodeStatus>>({});
 
   useEffect(() => {
-    setProgress(read(slug));
+    queueMicrotask(() => setProgress(read(slug)));
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       if (detail?.slug === slug) setProgress(read(slug));

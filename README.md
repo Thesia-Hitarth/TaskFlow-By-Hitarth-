@@ -1,130 +1,112 @@
 # TaskFlow
 
-> Community-created taskflows, guides, and best practices to help developers grow in their careers.
+Community-created taskflows, guides, and best practices to help developers grow in their careers.
 
-**Live site:** [task-flow-by-hitarth.vercel.app](https://task-flow-by-hitarth.vercel.app)
+Live site: https://task-flow-by-hitarth.vercel.app
 
----
+## Features
 
-## What is TaskFlow?
-
-TaskFlow is an interactive developer learning platform featuring:
-
-- **Roadmaps** — Step-by-step visual paths for 30+ roles and skills
-  (Frontend, Backend, DevOps, AI Engineer, JavaScript, Python, and more)
-- **Guides** — In-depth articles on core concepts (closures, Big-O, Docker,
-  CORS, TypeScript generics, and more)
-- **Best Practices** — Curated checklists for code quality, security,
-  testing, accessibility, CI/CD, and DevOps
-- **Progress Tracking** — Mark nodes as Done / In Progress / Skipped,
-  saved to localStorage
-- **Search** — Ctrl+K command palette searching all roadmaps, guides,
-  and best practices
-- **Path Recommender** — 5-question quiz that recommends the right roadmap
-  for you
-- **Guide Quizzes** — Self-check questions at the end of every guide article
-
----
+- Roadmaps: step-by-step visual paths for roles and skills.
+- Guides: MDX articles for core developer concepts.
+- Best Practices: curated checklists for quality, security, testing, accessibility, CI/CD, and DevOps.
+- Progress Tracking: local progress plus authenticated database sync.
+- Search: Ctrl+K command palette across taskflows, guides, and best practices.
+- Path Recommender: five-question quiz that suggests a roadmap.
+- Guide Quizzes: self-check questions on guide pages.
 
 ## Tech Stack
 
 | Layer | Technology |
-|---|---|
-| Framework | Next.js 15 (App Router) |
+| --- | --- |
+| Framework | Next.js 16 App Router |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
-| Diagrams | React Flow (@xyflow/react) |
-| Content | MDX (next-mdx-remote) |
-| Database | Prisma (PostgreSQL) |
+| Diagrams | React Flow (`@xyflow/react`) |
+| Content | MDX (`next-mdx-remote`) |
+| Database | Prisma with PostgreSQL |
 | Auth | NextAuth.js |
 | Deployment | Vercel |
 
----
+## Local Setup
 
-## Getting Started (Local Development)
+Prerequisites:
 
-### Prerequisites
-- Node.js 18+
-- npm or pnpm
-- PostgreSQL database (for auth features)
+- Node.js 20.9 or newer
+- npm
+- PostgreSQL database for auth and synced progress
 
-### Setup
+Setup:
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-.git
-cd TaskFlow-By-Hitarth-
-
-# 2. Install dependencies
 npm install
-
-# 3. Set up environment variables
 cp .env.example .env.local
-# Fill in DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL
-
-# 4. Set up the database
 npx prisma migrate dev
-
-# 5. Run the development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Required environment variables:
 
----
+```env
+DATABASE_URL=postgresql://user:password@host:5432/taskflow
+AUTH_SECRET=your-32-plus-character-secret
+AUTH_TRUST_HOST=true
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+GITHUB_ID=your-github-oauth-app-id
+GITHUB_SECRET=your-github-oauth-app-secret
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
+
+Generate an auth secret with:
+
+```bash
+openssl rand -base64 32
+```
+
+## Common Commands
+
+```bash
+npm run dev
+npm run dev:turbo
+npm run lint
+npm run build
+npx prisma migrate dev
+npx prisma generate
+```
+
+`npm run dev` uses Webpack for local stability on Windows. `npm run dev:turbo`
+keeps the default Next.js 16 Turbopack dev server available for debugging or
+when the local Turbopack panic is resolved upstream.
 
 ## Project Structure
 
-```
-app/                   # Next.js App Router pages
-  [slug]/              # Individual roadmap pages
-  guides/              # Guides listing + individual guide pages
-  best-practices/      # Best Practices listing + detail pages
-  compare/             # Side-by-side roadmap comparison
-  changelog/           # What's new page
-components/
-  roadmap/             # Roadmap diagram, progress bar, node components
-  GuideQuiz.tsx        # Quiz component for guide pages
-  PathRecommender.tsx  # Homepage path recommendation quiz
-  SearchCommand.tsx    # Ctrl+K search palette
-  Navbar.tsx
-  Footer.tsx
-lib/
-  roadmaps-data.ts     # All roadmap metadata
-  guides-data.ts       # All guide metadata
-  best-practices-data.ts
-  roadmap-content/     # Full node/edge data for interactive diagrams
-  progress.ts          # localStorage progress tracking hook
-content/
-  guides/              # MDX files for each guide article
-prisma/
-  schema.prisma        # Database schema
+```text
+app/                    Next.js App Router pages, API routes, metadata files
+components/             Shared UI, search, diagrams, quizzes, navigation
+content/guides/         MDX guide content
+lib/                    Taskflow data, guide data, progress helpers, Prisma
+lib/taskflow-content/   Node and edge data for interactive diagrams
+prisma/schema.prisma    Database schema
 ```
 
----
+## Adding Content
+
+Add a taskflow by creating metadata in `lib/taskflows-data.ts` and full node data in `lib/taskflow-content/`.
+
+Add a guide by creating an MDX file in `content/guides/` and adding metadata in `lib/guides-data.ts`.
+
+Add a best-practice page by updating `lib/best-practices-data.ts`; the existing dynamic route handles the detail page.
+
+## Production Notes
+
+- Configure `AUTH_SECRET`, `AUTH_TRUST_HOST=true`, and `DATABASE_URL` in Vercel.
+- Keep `NEXT_PUBLIC_SITE_URL` set to the deployed origin for metadata and same-origin API checks.
+- Database sessions expire after 30 days; schedule cleanup for expired `Session` rows in production.
 
 ## Author
 
-**Hitarth Thesia**
+Hitarth Thesia
 
-- Portfolio: [hitarththesia.vercel.app](https://hitarththesia.vercel.app)
-- GitHub: [@Thesia-Hitarth](https://github.com/Thesia-Hitarth)
-- LinkedIn: [hitarth-thesia-2043b0170](https://www.linkedin.com/in/hitarth-thesia-2043b0170/)
-
----
-
-## Contributing
-
-Contributions are welcome! To add a new roadmap, guide, or best practice:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/add-rust-roadmap`
-3. Make your changes following the existing data structure patterns
-4. Open a pull request with a clear description
-
----
-
-## License
-
-MIT
-```
+- Portfolio: https://hitarththesia.vercel.app/
+- GitHub: https://github.com/Thesia-Hitarth
+- LinkedIn: https://www.linkedin.com/in/hitarth-thesia-2043b0170/

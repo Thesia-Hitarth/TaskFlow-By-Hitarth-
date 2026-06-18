@@ -15,15 +15,19 @@ export default function GuideQuiz({ guideSlug, questions }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY(guideSlug));
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setAnswers(parsed.answers ?? {});
-        setRevealed(parsed.revealed ?? {});
+    queueMicrotask(() => {
+      setMounted(true);
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY(guideSlug));
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          setAnswers(parsed.answers ?? {});
+          setRevealed(parsed.revealed ?? {});
+        }
+      } catch {
+        // Ignore malformed local quiz progress.
       }
-    } catch {}
+    });
   }, [guideSlug]);
 
   function save(

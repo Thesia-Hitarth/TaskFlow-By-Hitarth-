@@ -175,7 +175,7 @@ export default function PathRecommender() {
           Not sure where to start?
         </p>
         <p className="text-sm text-text-secondary mt-1 mb-4 font-medium">
-          Answer 5 quick questions and we'll recommend the right path for you.
+          Answer 5 quick questions and we&apos;ll recommend the right path for you.
         </p>
         <button
           onClick={() => setStarted(true)}

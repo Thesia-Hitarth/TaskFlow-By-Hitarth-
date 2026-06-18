@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { taskflows } from "@/lib/taskflows-data";
@@ -19,13 +20,27 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const taskflow = taskflows.find((tf) => tf.slug === slug);
   if (!taskflow) return {};
+
+  const title = `${taskflow.title} Taskflow 2026`;
+  const description = taskflow.description;
+
   return {
-    title: `${taskflow?.title || "Developer"} Taskflow 2026 — taskflow.sh`,
-    description: taskflow?.description || "Step by step guide to learning.",
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -34,15 +49,14 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   const taskflow = taskflows.find((tf) => tf.slug === slug);
   if (!taskflow) notFound();
   const content = taskflowContent[slug];
-  
   const title = taskflow.title;
+  const relatedGuides = guides.filter((g) => g.roadmapSlug === slug);
 
   return (
     <>
       <Navbar />
       <main className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
-        {/* Breadcrumb */}
-        <nav className="text-text-secondary text-sm" aria-label="Breadcrumb font-medium">
+        <nav className="text-text-secondary text-sm" aria-label="Breadcrumb">
           <Link href="/taskflows" className="hover:text-text-primary transition-colors">
             All Taskflows
           </Link>
@@ -50,13 +64,12 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
           <span className="text-text-primary font-semibold">{title}</span>
         </nav>
 
-        {/* Header */}
         <header className="mt-4 pb-6 border-b border-border">
           <h1 className="text-4xl font-extrabold text-text-primary leading-tight tracking-tight">
             {title} Developer Taskflow
           </h1>
           <p className="text-text-secondary mt-2 font-semibold">
-            {taskflow?.description || `Step by step guide to becoming a ${title} developer`}
+            {taskflow.description || `Step by step guide to becoming a ${title} developer`}
           </p>
         </header>
 
@@ -66,7 +79,6 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Interactive Diagram or Placeholder Box */}
         {content ? (
           <div className="mt-10">
             <LazyTaskflowDiagram content={content} />
@@ -76,27 +88,23 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
             <p className="text-text-secondary text-lg font-bold">
               Interactive taskflow diagram coming soon
             </p>
-            <p className="text-text-secondary/60 text-sm mt-2">
-              Check back soon
-            </p>
+            <p className="text-text-secondary/60 text-sm mt-2">Check back soon</p>
           </div>
         )}
 
-        {/* Related Guides */}
-        {guides.filter((g) => g.roadmapSlug === slug).length > 0 && (
+        {relatedGuides.length > 0 && (
           <div className="mt-12 pt-10 border-t border-border">
-            <h2 className="text-2xl font-bold text-text-primary mb-6 tracking-tight">Related Guides</h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-6 tracking-tight">
+              Related Guides
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {guides
-                .filter((g) => g.roadmapSlug === slug)
-                .map((g) => (
-                  <GuideCard key={g.slug} guide={g} />
-                ))}
+              {relatedGuides.map((g) => (
+                <GuideCard key={g.slug} guide={g} />
+              ))}
             </div>
           </div>
         )}
 
-        {/* Back Link */}
         <div className="mt-10">
           <Link
             href="/taskflows"
@@ -110,4 +118,3 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
     </>
   );
 }
-

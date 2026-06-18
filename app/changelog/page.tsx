@@ -70,7 +70,7 @@ export default function ChangelogPage() {
           Changelog
         </h1>
         <p className="text-text-secondary mt-2 font-medium">
-          A record of everything that's been added, updated, or improved in TaskFlow.
+          A record of everything that&apos;s been added, updated, or improved in TaskFlow.
         </p>
 
         <div className="mt-10 relative">
