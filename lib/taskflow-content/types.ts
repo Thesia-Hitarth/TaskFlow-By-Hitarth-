@@ -9,6 +9,7 @@ export interface ResourceLink {
 export interface TaskflowContentNode {
   id: string;
   kind: NodeKind;
+  parentId?: string;
   label: string;
   description: string;
   links?: ResourceLink[];

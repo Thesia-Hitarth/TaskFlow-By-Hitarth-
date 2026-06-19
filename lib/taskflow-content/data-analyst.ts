@@ -15,6 +15,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-excel",
       kind: "subtopic",
+      parentId: "da-foundations",
       label: "Excel",
       description: "Excel organizes and handles business data workbook files. Master writing lookup functions (VLOOKUP, XLOOKUP), designing pivot tables, scripting macros, and formatting dataset trends.",
       links: [{ title: "Microsoft Excel Support", url: "https://support.microsoft.com/en-us/excel" }],
@@ -23,6 +24,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-statistics-basics",
       kind: "subtopic",
+      parentId: "da-foundations",
       label: "Statistics Basics",
       description: "Statistics help analyze data distribution metrics and run estimations. Study variance calculations, normal curves rules, sampling metrics, confidence intervals, and hypothesis tests parameters.",
       links: [{ title: "Khan Academy Statistics", url: "https://www.khanacademy.org/math/statistics-probability" }],
@@ -31,6 +33,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-sql",
       kind: "subtopic",
+      parentId: "da-foundations",
       label: "SQL",
       description: "SQL is the universal language for querying relational databases. Master table filters (WHERE), groupings parameters (GROUP BY), aggregate functions (SUM, AVG), subqueries structures, and joins configurations.",
       links: [{ title: "PostgreSQL Tutorial", url: "https://www.postgresqltutorial.com/" }],
@@ -48,6 +51,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-python-pandas",
       kind: "subtopic",
+      parentId: "da-data-manipulation",
       label: "Python (Pandas)",
       description: "Pandas processes structured datasets inside Python scripts. Learn DataFrame data structures, filtering data values, grouping columns, merging table sets, and restructuring datasets indices.",
       links: [{ title: "Pandas Documentation", url: "https://pandas.pydata.org/docs/" }],
@@ -56,6 +60,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-data-cleaning",
       kind: "subtopic",
+      parentId: "da-data-manipulation",
       label: "Data Cleaning",
       description: "Data cleaning resolves anomalies inside raw files. Learn handling missing values (NaN), parsing date strings formats, dropping duplicate data rows, and identifying outlying values.",
       links: [{ title: "Pandas Cleaning Guide", url: "https://pandas.pydata.org/docs/user_guide/index.html" }],
@@ -64,6 +69,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-etl-basics",
       kind: "subtopic",
+      parentId: "da-data-manipulation",
       label: "ETL Basics",
       description: "Extract, Transform, and Load (ETL) pipelines ingest raw files and write to database servers. Study pipeline stages, configuring scheduler runs, and managing data schema changes.",
       links: [{ title: "AWS ETL Concept Guide", url: "https://aws.amazon.com/what-is/etl/" }],
@@ -81,6 +87,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-tableau",
       kind: "subtopic",
+      parentId: "da-visualization",
       label: "Tableau",
       description: "Tableau designs interactive business intelligence dashboards. Master connecting data resources, configuring data fields, mapping locations, designing charts, and setting up dashboard filters.",
       links: [{ title: "Tableau Help Center", url: "https://help.tableau.com/" }],
@@ -89,6 +96,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-power-bi",
       kind: "subtopic",
+      parentId: "da-visualization",
       label: "Power BI",
       description: "Microsoft Power BI integrates enterprise data sources into visual reports. Learn creating data relationships, writing DAX expressions, configuring report views, and publishing dashboards.",
       links: [{ title: "Microsoft Power BI Docs", url: "https://learn.microsoft.com/en-us/power-bi/" }],
@@ -97,6 +105,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-matplotlib-seaborn",
       kind: "subtopic",
+      parentId: "da-visualization",
       label: "Matplotlib/Seaborn",
       description: "Matplotlib and Seaborn render data charts programmatically inside Python. Study line plots configurations, distribution histograms, correlation heatmaps, scatter plots, and exporting charts formats.",
       links: [{ title: "Seaborn Documentation", url: "https://seaborn.pydata.org/" }],
@@ -114,6 +123,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-ab-testing",
       kind: "subtopic",
+      parentId: "da-analysis-techniques",
       label: "A/B Testing",
       description: "A/B testing checks product changes variations against controls. Study target metrics selection rules, calculating sample sizes, determining significance thresholds (p-values), and running tests.",
       links: [{ title: "Harvard A/B Testing Guide", url: "https://hbr.org/2017/06/a-refresher-on-ab-testing" }],
@@ -122,6 +132,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-regression-analysis",
       kind: "subtopic",
+      parentId: "da-analysis-techniques",
       label: "Regression Analysis",
       description: "Regression models predict linear trends based on data variables. Learn fitting regression lines, calculating residuals, evaluating model error, and interpreting coefficients outputs.",
       links: [{ title: "Scikit-Learn Linear Models", url: "https://scikit-learn.org/stable/modules/linear_model.html" }],
@@ -130,6 +141,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-cohort-analysis",
       kind: "subtopic",
+      parentId: "da-analysis-techniques",
       label: "Cohort Analysis",
       description: "Cohort analysis checks retention behaviors of specific groups over time. Learn user cohort groupings, retention grid matrices, tracking lifecycle metrics, and interpreting retention drop-offs.",
       links: [{ title: "Optimizely Cohort Guide", url: "https://www.optimizely.com/optimization-glossary/cohort-analysis/" }],
@@ -147,6 +159,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-dashboards",
       kind: "subtopic",
+      parentId: "da-communication",
       label: "Dashboards",
       description: "Dashboard interfaces display business metrics in real-time. Learn configuring data schedules, selecting key metrics (KPIs), designing clean grid layouts, and managing viewer credentials.",
       links: [{ title: "Google Looker Studio", url: "https://lookerstudio.google.com/" }],
@@ -155,6 +168,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-storytelling",
       kind: "subtopic",
+      parentId: "da-communication",
       label: "Storytelling with Data",
       description: "Data storytelling explains context trends clearly using visual tools. Master crafting narratives, removing visual clutter from slides, and highlighting evidence paths clearly.",
       links: [{ title: "Storytelling with Data Book", url: "https://www.storytellingwithdata.com/" }],
@@ -163,6 +177,7 @@ export const dataAnalystTaskflow: TaskflowContent = {
     {
       id: "da-reporting",
       kind: "subtopic",
+      parentId: "da-communication",
       label: "Reporting",
       description: "Reporting translates metrics into summaries. Learn writing briefs, organizing reports, suggesting test plans, and detailing metric changes impacts.",
       links: [{ title: "Harvard Business Writing", url: "https://hbr.org/topic/business-writing" }],

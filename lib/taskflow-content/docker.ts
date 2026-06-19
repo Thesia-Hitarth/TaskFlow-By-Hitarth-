@@ -15,6 +15,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-images-containers",
       kind: "subtopic",
+      parentId: "docker-basics",
       label: "Images & Containers",
       description: "Images act as read-only blueprints while containers run writeable instances. Master difference between static image templates, container runtime layers, copy-on-write mechanisms, and container lifecycles.",
       links: [{ title: "Docker Guides: Get Started", url: "https://docs.docker.com/get-started/docker-concepts/the-basics/" }],
@@ -23,6 +24,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-dockerfile",
       kind: "subtopic",
+      parentId: "docker-basics",
       label: "Dockerfile",
       description: "A Dockerfile compiles image layers. Study key instructions (FROM, RUN, COPY, ADD, CMD, ENTRYPOINT, EXPOSE, ENV), layer caching, build context, and configuring working directories.",
       links: [{ title: "Dockerfile Reference Guide", url: "https://docs.docker.com/reference/dockerfile/" }],
@@ -31,6 +33,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-cli",
       kind: "subtopic",
+      parentId: "docker-basics",
       label: "Docker CLI",
       description: "The Docker CLI manages container tasks. Master essential command loops (docker build, docker run, docker exec, docker ps, docker logs, docker system prune), and port mappings.",
       links: [{ title: "Docker CLI Commands Docs", url: "https://docs.docker.com/reference/cli/docker/" }],
@@ -48,6 +51,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-volumes",
       kind: "subtopic",
+      parentId: "docker-networking-storage",
       label: "Volumes",
       description: "Volumes persist container data outside container lifecycles. Learn creating volumes, mapping paths, backup routines, sharing volumes, and managing storage drivers.",
       links: [{ title: "Docker Volumes Documentation", url: "https://docs.docker.com/storage/volumes/" }],
@@ -56,6 +60,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-bind-mounts",
       kind: "subtopic",
+      parentId: "docker-networking-storage",
       label: "Bind Mounts",
       description: "Bind mounts mount host directories directly into containers. Master differences between volumes and bind mounts, configuring mounts for development code hot-reloads, and managing file permissions.",
       links: [{ title: "Docker Bind Mounts Guide", url: "https://docs.docker.com/storage/bind-mounts/" }],
@@ -64,6 +69,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-networks",
       kind: "subtopic",
+      parentId: "docker-networking-storage",
       label: "Docker Networks",
       description: "Networks connect containers together. Study bridge network settings, host networking, overlay configurations, DNS name resolution in custom networks, and managing network ports.",
       links: [{ title: "Docker Network Overview", url: "https://docs.docker.com/network/" }],
@@ -81,6 +87,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-compose-yml",
       kind: "subtopic",
+      parentId: "docker-compose",
       label: "docker-compose.yml",
       description: "The Compose file defines a service stack configuration. Study yaml syntax, declaring services, configuring networks mappings, mounting volumes, and setting service dependencies (depends_on).",
       links: [{ title: "Docker Compose Specification", url: "https://docs.docker.com/compose/compose-file/" }],
@@ -89,6 +96,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-multi-container",
       kind: "subtopic",
+      parentId: "docker-compose",
       label: "Multi-container Apps",
       description: "Multi-container applications connect service nodes. Learn routing database requests, structuring microservices stacks, initializing databases, and orchestration using Compose commands.",
       links: [{ title: "Docker Compose Overview", url: "https://docs.docker.com/compose/" }],
@@ -97,6 +105,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-env-variables",
       kind: "subtopic",
+      parentId: "docker-compose",
       label: "Environment Variables",
       description: "Environment variables configure dynamic service values. Study loading .env file records, passing variables parameters, configuring database keys, and structuring dynamic configs.",
       links: [{ title: "Docker Compose Environment Variables", url: "https://docs.docker.com/compose/environment-variables/" }],
@@ -114,6 +123,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-multi-stage-builds",
       kind: "subtopic",
+      parentId: "docker-optimization",
       label: "Multi-stage Builds",
       description: "Multi-stage builds compile code in temporary builder stages and copy outputs to clean runtimes. Master separating build dependencies from final release images to reduce vulnerabilities.",
       links: [{ title: "Docker Multi-stage Builds Guide", url: "https://docs.docker.com/build/building/multi-stage/" }],
@@ -122,6 +132,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-image-size-reduction",
       kind: "subtopic",
+      parentId: "docker-optimization",
       label: "Image Size Reduction",
       description: "Smaller images compile and deploy faster. Study using lightweight base distributions (Alpine, distroless), combining commands to reduce layers, ignoring build files (.dockerignore), and cleaning caches.",
       links: [{ title: "Docker Build Optimization Tips", url: "https://docs.docker.com/build/cache/" }],
@@ -130,6 +141,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-caching-layers",
       kind: "subtopic",
+      parentId: "docker-optimization",
       label: "Caching Layers",
       description: "Docker cache speeds up image compilation. Learn to order instructions from least-frequently to most-frequently changed (copying package manifests before code), and configuring caching rules.",
       links: [{ title: "Docker Cache Allocation", url: "https://docs.docker.com/build/cache/garbage-collection/" }],
@@ -147,6 +159,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-registries",
       kind: "subtopic",
+      parentId: "docker-production",
       label: "Docker Registries",
       description: "Registries host and distribute image packages. Learn uploading images to Docker Hub or AWS ECR, managing tags, configuring private repositories access, and automated image builds.",
       links: [{ title: "Docker Hub Registry Docs", url: "https://docs.docker.com/docker-hub/" }],
@@ -155,6 +168,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-health-checks",
       kind: "subtopic",
+      parentId: "docker-production",
       label: "Health Checks",
       description: "Container health checks verify if internal applications run correctly. Master writing HEALTHCHECK test parameters in Dockerfiles, monitoring state flags, and configuring retry limits.",
       links: [{ title: "Docker Reference: HEALTHCHECK Instruction", url: "https://docs.docker.com/reference/dockerfile/#healthcheck" }],
@@ -163,6 +177,7 @@ export const dockerTaskflow: TaskflowContent = {
     {
       id: "docker-security-scanning",
       kind: "subtopic",
+      parentId: "docker-production",
       label: "Security Scanning",
       description: "Security scanning identifies vulnerabilities within base packages. Study image scanning workflows using Docker Scout, running containers with non-root user permissions, and signing images.",
       links: [{ title: "Docker Scout Overview", url: "https://docs.docker.com/scout/" }],

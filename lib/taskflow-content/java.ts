@@ -15,6 +15,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-syntax-variables",
       kind: "subtopic",
+      parentId: "java-basics",
       label: "Syntax & Variables",
       description: "Syntax controls variables typing and execution structures. Study dynamic vs static variables, class scoping blocks, package statements, primitive types (int, boolean), and main routines definitions.",
       links: [{ title: "Oracle Java Tutorial: Language Basics", url: "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/index.html" }],
@@ -23,6 +24,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-oop-basics",
       kind: "subtopic",
+      parentId: "java-basics",
       label: "OOP Basics",
       description: "Object-Oriented Programming (OOP) architectures encapsulate data parameters inside objects. Study classes Blueprints, object constructors, getter/setter patterns, inheritance, and encapsulation overrides.",
       links: [{ title: "Oracle Java Tutorial: OOP Concepts", url: "https://docs.oracle.com/javase/tutorial/java/concepts/index.html" }],
@@ -31,6 +33,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-methods",
       kind: "subtopic",
+      parentId: "java-basics",
       label: "Methods",
       description: "Methods encapsulate class behavior parameters. Learn to define argument arrays, return types variables, method overloading, public vs private keywords, and static method boundaries.",
       links: [{ title: "Oracle Java Tutorial: Defining Methods", url: "https://docs.oracle.com/javase/tutorial/java/javaOO/methods.html" }],
@@ -48,6 +51,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-interfaces-abstract",
       kind: "subtopic",
+      parentId: "java-core-concepts",
       label: "Interfaces & Abstract Classes",
       description: "Interfaces declare dynamic class behaviors contracts. Learn implementing interface rules, abstract classes definitions, inheritance bounds, and overriding default methods.",
       links: [{ title: "Oracle Java Tutorial: Interfaces", url: "https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html" }],
@@ -56,6 +60,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-exception-handling",
       kind: "subtopic",
+      parentId: "java-core-concepts",
       label: "Exception Handling",
       description: "Exceptions catch runtime errors before JVM crashes. Differentiate checked exceptions from unchecked errors, use try/catch/finally scopes, throw errors, and write custom exception classes.",
       links: [{ title: "Oracle Java Tutorial: Exceptions", url: "https://docs.oracle.com/javase/tutorial/essential/exceptions/" }],
@@ -64,6 +69,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-collections",
       kind: "subtopic",
+      parentId: "java-core-concepts",
       label: "Collections Framework",
       description: "The Collections framework manages heap data sets. Learn array allocations (ArrayList), linked nodes, value hashing lookups (HashSet, HashMap), sorting lists, and iterating collections.",
       links: [{ title: "Oracle Java Tutorial: Collections", url: "https://docs.oracle.com/javase/tutorial/collections/" }],
@@ -81,6 +87,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-generics",
       kind: "subtopic",
+      parentId: "java-advanced",
       label: "Generics",
       description: "Generics check type safety during compile times. Learn generic type parameters (<T>), bounding generics, wildcard constraints, generic class definitions, and type erasure.",
       links: [{ title: "Oracle Java Tutorial: Generics", url: "https://docs.oracle.com/javase/tutorial/java/generics/" }],
@@ -89,6 +96,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-streams-api",
       kind: "subtopic",
+      parentId: "java-advanced",
       label: "Streams API",
       description: "Streams handle pipeline actions on collections data. Master map/filter operations, reducing values, collector conversions, lazy evaluation pipelines, and parallel streams speedup.",
       links: [{ title: "Oracle Java Documentation: Streams", url: "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/package-summary.html" }],
@@ -97,6 +105,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-lambda-expressions",
       kind: "subtopic",
+      parentId: "java-advanced",
       label: "Lambda Expressions",
       description: "Lambda expressions write inline functions logic blocks. Study single abstract method interfaces, lambda arguments syntax, variables scoping, and method reference parameters.",
       links: [{ title: "Oracle Java Tutorial: Lambda Expressions", url: "https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html" }],
@@ -114,6 +123,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-threads",
       kind: "subtopic",
+      parentId: "java-concurrency",
       label: "Threads",
       description: "Threads manage concurrent code execution paths. Master subclassing Thread, implementing Runnable structures, starting tasks, sleep commands, and thread lifecycle schedules.",
       links: [{ title: "Oracle Java Tutorial: Defining and Starting a Thread", url: "https://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html" }],
@@ -122,6 +132,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-executors",
       kind: "subtopic",
+      parentId: "java-concurrency",
       label: "Executors",
       description: "Executors manage asynchronous task scheduling pools. Study ThreadPoolExecutor settings, submitting Callable tasks, returning Future results, and shutting down pool resources.",
       links: [{ title: "Oracle Java Tutorial: Executor Interfaces", url: "https://docs.oracle.com/javase/tutorial/essential/concurrency/executors.html" }],
@@ -130,6 +141,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-synchronized-locks",
       kind: "subtopic",
+      parentId: "java-concurrency",
       label: "synchronized & Locks",
       description: "Synchronization protects concurrent resource accesses. Learn using synchronized methods, thread locking objects, ReentrantLock interfaces, and preventing deadlock states.",
       links: [{ title: "Oracle Java Tutorial: Synchronization", url: "https://docs.oracle.com/javase/tutorial/essential/concurrency/sync.html" }],
@@ -147,6 +159,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-maven-gradle",
       kind: "subtopic",
+      parentId: "java-ecosystem",
       label: "Maven/Gradle",
       description: "Maven and Gradle build and package Java applications. Study xml/groovy configuration files, package dependencies scopes, task loops executions, and compiling jar archives.",
       links: [{ title: "Apache Maven Project", url: "https://maven.apache.org/" }],
@@ -155,6 +168,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-spring-boot",
       kind: "subtopic",
+      parentId: "java-ecosystem",
       label: "Spring Boot",
       description: "Spring Boot builds production-ready backend web servers. Study dependency injection models, mapping REST routers, connecting databases, and configuring properties.",
       links: [{ title: "Spring Boot Docs", url: "https://spring.io/projects/spring-boot" }],
@@ -163,6 +177,7 @@ export const javaTaskflow: TaskflowContent = {
     {
       id: "java-junit",
       kind: "subtopic",
+      parentId: "java-ecosystem",
       label: "JUnit",
       description: "JUnit executes automated code test checks. Learn writing test annotations (@Test, @BeforeEach), asserting conditions outputs, mocking dependencies, and generating coverage parameters.",
       links: [{ title: "JUnit 5 Documentation", url: "https://junit.org/junit5/docs/current/user-guide/" }],

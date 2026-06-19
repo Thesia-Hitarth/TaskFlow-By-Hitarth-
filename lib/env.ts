@@ -1,6 +1,9 @@
 // lib/env.ts
 if (typeof window === "undefined") {
   const isBuild = process.env.NEXT_PHASE === "phase-production-build";
+  // NOTE: These names follow NextAuth v5's auto-env-detection convention
+  // (AUTH_<PROVIDER>_ID / AUTH_<PROVIDER>_SECRET), NOT the v4-style
+  // GITHUB_ID/GITHUB_SECRET. Do not rename without updating auth.ts providers config.
   const required = [
     "AUTH_SECRET",
     "DATABASE_URL",

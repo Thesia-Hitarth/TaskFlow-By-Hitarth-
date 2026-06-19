@@ -22,6 +22,8 @@ function writeLocal(slug: string, progress: Record<string, NodeStatus>) {
   window.dispatchEvent(new CustomEvent("taskflow-progress-update", { detail: { slug } }));
 }
 
+// NOTE: next-auth v5 auto-detects AUTH_<PROVIDER>_ID and AUTH_<PROVIDER>_SECRET env vars
+// for GitHub and Google without needing explicit credentials config inside auth.ts.
 export function useTaskflowProgress(slug: string) {
   const { status: sessionStatus } = useSession();
   const isAuthed = sessionStatus === "authenticated";
@@ -44,10 +46,8 @@ export function useTaskflowProgress(slug: string) {
         setIsLoaded(true);
       }
     } else {
-      Promise.resolve().then(() => {
-        setProgress(readLocal(slug));
-        setIsLoaded(true);
-      });
+      setProgress(readLocal(slug));
+      setIsLoaded(true);
     }
   }, [slug, isAuthed]);
 

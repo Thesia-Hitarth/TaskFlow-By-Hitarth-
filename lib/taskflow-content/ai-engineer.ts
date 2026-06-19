@@ -15,6 +15,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-python",
       kind: "subtopic",
+      parentId: "ai-foundations",
       label: "Python",
       description: "Python is the core programming language for artificial intelligence. Master object definitions, virtual environments, data formatting operations, and essential data libraries (NumPy, Pandas, SciPy) to clean, analyze, and shape dataset structures.",
       links: [{ title: "Python Documentation", url: "https://docs.python.org/3/" }],
@@ -23,6 +24,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-linear-algebra",
       kind: "subtopic",
+      parentId: "ai-foundations",
       label: "Linear Algebra",
       description: "Linear Algebra represents datasets as multidimensional spaces. Study vector dot products, matrix multiplication, systems of equations, eigenvalues, and dimensional reduction techniques like Principal Component Analysis (PCA) to manipulate model inputs.",
       links: [{ title: "MIT Linear Algebra Course", url: "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/" }],
@@ -31,6 +33,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-probability-stats",
       kind: "subtopic",
+      parentId: "ai-foundations",
       label: "Probability & Statistics",
       description: "Probability and Statistics shape how models calculate outputs. Study probability distributions, hypothesis checking, Bayes' theorem, regression estimators, statistical significance testing, and sample classifications to analyze data distributions.",
       links: [{ title: "Khan Academy Statistics and Probability", url: "https://www.khanacademy.org/math/statistics-probability" }],
@@ -48,6 +51,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-supervised-learning",
       kind: "subtopic",
+      parentId: "ml-basics",
       label: "Supervised Learning",
       description: "Supervised learning models make predictions from labeled training inputs. Master regression equations (Linear/Logistic), decision trees, ensemble configurations (Random Forests, Gradient Boosting), and classification margins (Support Vector Machines).",
       links: [{ title: "Scikit-Learn Supervised Learning docs", url: "https://scikit-learn.org/stable/supervised_learning.html" }],
@@ -56,6 +60,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-unsupervised-learning",
       kind: "subtopic",
+      parentId: "ml-basics",
       label: "Unsupervised Learning",
       description: "Unsupervised learning groups unlabeled dataset structures automatically. Study clustering techniques (K-Means, Hierarchical), density estimations, association rule discovery, and data dimensionality reduction algorithms.",
       links: [{ title: "Scikit-Learn Unsupervised Learning docs", url: "https://scikit-learn.org/stable/unsupervised_learning.html" }],
@@ -64,6 +69,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-model-evaluation",
       kind: "subtopic",
+      parentId: "ml-basics",
       label: "Model Evaluation",
       description: "Model Evaluation inspects predictive models accuracy, precision, recall, and bias metrics. Learn cross-validation techniques, confusion matrices, ROC/AUC curve charts, and parameter tuning strategies.",
       links: [{ title: "Scikit-Learn Model Evaluation docs", url: "https://scikit-learn.org/stable/modules/model_evaluation.html" }],
@@ -81,6 +87,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-neural-networks",
       kind: "subtopic",
+      parentId: "deep-learning",
       label: "Neural Networks",
       description: "Neural Networks chain layers of activation functions to approximate complex transformations. Master gradient descent formulas, feedforward layers, loss functions, activation curves (ReLU, Sigmoid), and weights updates rules.",
       links: [{ title: "Deep Learning Book", url: "https://www.deeplearningbook.org/" }],
@@ -89,6 +96,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-pytorch",
       kind: "subtopic",
+      parentId: "deep-learning",
       label: "PyTorch",
       description: "PyTorch is an open-source machine learning framework emphasizing dynamic tensor structures. Master tensor manipulation APIs, automatic gradients computation, compiling neural layers, loading dataset batches, and GPU execution parameters.",
       links: [{ title: "PyTorch Documentation Guide", url: "https://pytorch.org/docs/stable/index.html" }],
@@ -97,6 +105,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-tensorflow",
       kind: "subtopic",
+      parentId: "deep-learning",
       label: "TensorFlow",
       description: "TensorFlow is a robust ecosystem for machine learning models pipelines compilation. Master Keras layers configurations, computation graph optimization, saving model states, and compiling runtime targets for web or mobile devices.",
       links: [{ title: "TensorFlow Documentation Guide", url: "https://www.tensorflow.org/api_docs" }],
@@ -114,6 +123,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-transformers",
       kind: "subtopic",
+      parentId: "llms-prompting",
       label: "Transformers",
       description: "Transformers utilize self-attention mechanisms to analyze sequential data sequences. Study encoder-decoder configurations, tokenization algorithms, attention calculation matrices, and LLM model architectures like GPT and BERT.",
       links: [{ title: "Hugging Face Transformers Docs", url: "https://huggingface.co/docs/transformers/index" }],
@@ -122,6 +132,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-prompt-engineering",
       kind: "subtopic",
+      parentId: "llms-prompting",
       label: "Prompt Engineering",
       description: "Prompt Engineering structures query context to extract precise model answers. Learn context construction strategies, few-shot prompting patterns, Chain-of-Thought (CoT) reasoning, system instruction blocks, and output formatting variables.",
       links: [{ title: "Prompt Engineering Guide", url: "https://www.promptingguide.ai/" }],
@@ -130,6 +141,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-fine-tuning",
       kind: "subtopic",
+      parentId: "llms-prompting",
       label: "Fine-tuning",
       description: "Fine-tuning optimizes pre-trained models weights targeting specific data domains. Master parameter-efficient methods (LoRA, QLoRA), data pre-processing steps, training validation loops, and checking tuned models metrics.",
       links: [{ title: "Hugging Face Fine-tuning Guide", url: "https://huggingface.co/docs/transformers/training" }],
@@ -147,6 +159,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-vector-databases",
       kind: "subtopic",
+      parentId: "ai-deployment-tools",
       label: "Vector Databases",
       description: "Vector Databases catalog high-dimensional semantic embeddings for fast retrieval. Master database setups (Pinecone, Chroma, Milvus), indexing similarity algorithms (Cosine, Euclidean), storing embeddings, and managing real-time lookups.",
       links: [{ title: "Pinecone Documentation", url: "https://docs.pinecone.io/home" }],
@@ -155,6 +168,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-langchain",
       kind: "subtopic",
+      parentId: "ai-deployment-tools",
       label: "LangChain",
       description: "LangChain orchestrates modular workflows combining LLM models, vector datasets, and client interfaces. Learn how to script memory sequences, construct Retrieval-Augmented Generation (RAG) loops, design modular agent structures, and execute external tools.",
       links: [{ title: "LangChain Documentation Portal", url: "https://python.langchain.com/docs/introduction/" }],
@@ -163,6 +177,7 @@ export const aiEngineerTaskflow: TaskflowContent = {
     {
       id: "ai-mlops-basics",
       kind: "subtopic",
+      parentId: "ai-deployment-tools",
       label: "MLOps Basics",
       description: "MLOps manages models releases, tracking, versioning, and endpoint latency monitoring. Study pipeline orchestrations, model tracking databases (MLflow), automated deploy runs, and telemetry diagnostics.",
       links: [{ title: "MLflow Documentation Guide", url: "https://mlflow.org/docs/latest/index.html" }],

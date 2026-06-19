@@ -15,6 +15,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-app-router",
       kind: "subtopic",
+      parentId: "next-fundamentals",
       label: "App Router",
       description: "The App Router handles web routing paths using nested folders structures. Study page files locations, layout boundaries, template files, dynamic routes configurations, and navigation hooks.",
       links: [{ title: "Next.js App Router Guide", url: "https://nextjs.org/docs/app" }],
@@ -23,6 +24,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-pages-layouts",
       kind: "subtopic",
+      parentId: "next-fundamentals",
       label: "Pages & Layouts",
       description: "Pages display view templates while Layouts wrap child pages with shared elements. Learn nested layouts design, state persistence, error boundaries, and loading screen integration.",
       links: [{ title: "Next.js Pages and Layouts Docs", url: "https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts" }],
@@ -31,6 +33,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-server-components",
       kind: "subtopic",
+      parentId: "next-fundamentals",
       label: "Server Components",
       description: "React Server Components (RSC) execute on servers to reduce browser bundle payloads. Study 'use client' scoping rules, importing client widgets inside server trees, data fetches, and hydration rules.",
       links: [{ title: "Next.js Server Components Docs", url: "https://nextjs.org/docs/app/building-your-application/rendering/server-components" }],
@@ -48,6 +51,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-server-actions",
       kind: "subtopic",
+      parentId: "next-data-fetching",
       label: "Server Actions",
       description: "Server Actions run asynchronous database updates directly from forms tags. Master securing server mutations, validating client fields (Zod), revalidating page caches, and handling loading statuses.",
       links: [{ title: "Next.js Server Actions Docs", url: "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations" }],
@@ -56,6 +60,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-fetch-caching",
       kind: "subtopic",
+      parentId: "next-data-fetching",
       label: "Fetch Caching",
       description: "Next.js overrides fetch commands to cache request results. Learn revalidation intervals (Incremental Static Regeneration), caching options overrides, and opt-out routes configuration.",
       links: [{ title: "Next.js Data Fetching and Caching", url: "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching" }],
@@ -64,6 +69,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-static-dynamic",
       kind: "subtopic",
+      parentId: "next-data-fetching",
       label: "Static vs Dynamic Rendering",
       description: "Static rendering builds pages during compile times, while dynamic routes compile per user query. Study dynamic function triggers (cookies, searchParams) and tuning route settings.",
       links: [{ title: "Next.js Rendering Modes Docs", url: "https://nextjs.org/docs/app/building-your-application/rendering" }],
@@ -81,6 +87,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-dynamic-routes",
       kind: "subtopic",
+      parentId: "next-routing",
       label: "Dynamic Routes",
       description: "Dynamic routes parse dynamic URL variables. Study folder brackets parsing ([id]), catching all subpaths ([...slug]), generating static paths variables (generateStaticParams), and reading page parameters.",
       links: [{ title: "Next.js Dynamic Routes Docs", url: "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes" }],
@@ -89,6 +96,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-route-groups",
       kind: "subtopic",
+      parentId: "next-routing",
       label: "Route Groups",
       description: "Route groups organize folder locations without adding paths names in URLs. Learn folder naming via parentheses ((auth)), routing layouts nesting, and managing auth subpages layouts.",
       links: [{ title: "Next.js Route Groups Docs", url: "https://nextjs.org/docs/app/building-your-application/routing/route-groups" }],
@@ -97,6 +105,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-middleware",
       kind: "subtopic",
+      parentId: "next-routing",
       label: "Middleware",
       description: "Middleware intercepts incoming requests before routes resolve. Learn redirecting paths, adding custom HTTP request headers, inspecting session cookies, and route matching controls.",
       links: [{ title: "Next.js Middleware Docs", url: "https://nextjs.org/docs/app/building-your-application/routing/middleware" }],
@@ -114,6 +123,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-image-optimization",
       kind: "subtopic",
+      parentId: "next-optimization",
       label: "Image Optimization",
       description: "The Image component wraps standard HTML img tags to compress files dynamically. Study layout shift prevention, serving modern image extensions (WebP, AVIF), and dynamic image sizing.",
       links: [{ title: "Next.js Image Component Docs", url: "https://nextjs.org/docs/app/building-your-application/optimizing/images" }],
@@ -122,6 +132,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-font-optimization",
       kind: "subtopic",
+      parentId: "next-optimization",
       label: "Font Optimization",
       description: "Next.js downloads Google or local font files during build times to pack them locally. Learn custom font inclusions, font display fallback configs, and using Tailwind class setups.",
       links: [{ title: "Next.js Font Optimization Docs", url: "https://nextjs.org/docs/app/building-your-application/optimizing/fonts" }],
@@ -130,6 +141,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-metadata-api",
       kind: "subtopic",
+      parentId: "next-optimization",
       label: "Metadata API",
       description: "The Metadata API injects HTML head parameters. Master static metadata configurations, dynamic metadata generation (generateMetadata), injecting social sharing cards, and managing sitemaps.",
       links: [{ title: "Next.js Metadata API Docs", url: "https://nextjs.org/docs/app/building-your-application/optimizing/metadata" }],
@@ -147,6 +159,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-env-variables",
       kind: "subtopic",
+      parentId: "next-deployment",
       label: "Environment Variables",
       description: "Environment variables isolate keys. Differentiate private server-only variable keys from client-exposed parameters prefixed with NEXT_PUBLIC, and manage local dev dot-env configurations.",
       links: [{ title: "Next.js Env Variables Docs", url: "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables" }],
@@ -155,6 +168,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-vercel-deployment",
       kind: "subtopic",
+      parentId: "next-deployment",
       label: "Vercel Deployment",
       description: "Vercel is the native cloud host for Next.js app builds. Learn connecting Git repositories setups, automated deploy configurations, rollbacks audits, analytics dashboards, and edge caching settings.",
       links: [{ title: "Vercel Next.js Deployment Guide", url: "https://nextjs.org/docs/app/building-your-application/deploying" }],
@@ -163,6 +177,7 @@ export const nextjsTaskflow: TaskflowContent = {
     {
       id: "next-edge-runtime",
       kind: "subtopic",
+      parentId: "next-deployment",
       label: "Edge Runtime",
       description: "The Edge Runtime runs server scripts globally near users. Study lightweight API executions, cold start mitigations, supported node APIs, and configuring routes runtime flags.",
       links: [{ title: "Next.js Edge Runtime Docs", url: "https://nextjs.org/docs/app/api-reference/edge" }],

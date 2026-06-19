@@ -15,6 +15,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-technical-writing",
       kind: "subtopic",
+      parentId: "devrel-foundations",
       label: "Technical Writing",
       description: "Technical Writing simplifies complex system features into accessible guides. Learn structural grammar layouts, organizing tutorial hierarchies, formatting code blocks, styling guides, and structuring quickstarts.",
       links: [{ title: "Google Technical Writing Courses", url: "https://developers.google.com/tech-writing" }],
@@ -23,6 +24,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-public-speaking",
       kind: "subtopic",
+      parentId: "devrel-foundations",
       label: "Public Speaking",
       description: "Public Speaking conveys technical products value at conferences or meetups. Master slide designing, crafting narratives, managing live coding demonstrations, timing setups, and matching presentations to developer levels.",
       links: [{ title: "Toastmasters International", url: "https://www.toastmasters.org/" }],
@@ -31,6 +33,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-community-building",
       kind: "subtopic",
+      parentId: "devrel-foundations",
       label: "Community Building",
       description: "Community Building cultivates spaces where developers collaborate, support peers, and share feedback. Learn moderation models, structuring member programs, configuring code-of-conduct guidelines, and organizing meetups.",
       links: [{ title: "FeverBee Community Resources", url: "https://www.feverbee.com/" }],
@@ -48,6 +51,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-blogging",
       kind: "subtopic",
+      parentId: "content-creation",
       label: "Blogging",
       description: "Blogging documents solutions to technical developer problems. Learn search engine optimization (SEO) indexing, technical layout structures, storytelling, and publishing articles to Dev.to or Medium.",
       links: [{ title: "Dev.to Community", url: "https://dev.to" }],
@@ -56,6 +60,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-video-tutorials",
       kind: "subtopic",
+      parentId: "content-creation",
       label: "Video Tutorials",
       description: "Video tutorials guide developers visually through installation and integration steps. Master screen capture setups, video editing, voiceover recording, and publishing lessons on YouTube or TikTok.",
       links: [{ title: "Wistia Video Marketing Guides", url: "https://wistia.com/learn" }],
@@ -64,6 +69,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-documentation",
       kind: "subtopic",
+      parentId: "content-creation",
       label: "Documentation",
       description: "Documentation is the primary landing manual of any developer tool. Master API reference layouts, reference writing conventions, conceptual explainers formatting, and documentation frameworks (Docusaurus, Sphinx).",
       links: [{ title: "Write the Docs Website", url: "https://www.writethedocs.org/" }],
@@ -81,6 +87,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-sdks-apis",
       kind: "subtopic",
+      parentId: "developer-tools",
       label: "SDKs & APIs",
       description: "SDKs encapsulate complex HTTP API requests into simple, language-native method classes. Study semantic versioning, SDK configuration standards, custom wrapper libraries design, and REST/GraphQL interface setups.",
       links: [{ title: "API Academy Reference", url: "https://apiacademy.co/" }],
@@ -89,6 +96,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-sample-apps",
       kind: "subtopic",
+      parentId: "developer-tools",
       label: "Sample Apps",
       description: "Sample Apps model complete product integrations in real-world scenarios. Build production-style boilerplates, write integration tests, configure local databases, and set up dynamic frontend forms.",
       links: [{ title: "GitHub Guide to Sample Repos", url: "https://docs.github.com/en/repositories" }],
@@ -97,6 +105,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-code-examples",
       kind: "subtopic",
+      parentId: "developer-tools",
       label: "Code Examples",
       description: "Code Examples are copy-pasteable script blocks validating simple features integrations. Write short scripts, document environment configs, write comments, and manage gists repos.",
       links: [{ title: "GitHub Gist Service", url: "https://gist.github.com" }],
@@ -114,6 +123,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-discord-slack",
       kind: "subtopic",
+      parentId: "community-engagement",
       label: "Discord/Slack",
       description: "Discord and Slack host day-to-day developer questions and help queries. Master channel structuring, community moderation guidelines, automation bots setups, and hosting AMA events.",
       links: [{ title: "Discord Developer Portal", url: "https://discord.com/developers/docs/intro" }],
@@ -122,6 +132,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-conferences",
       kind: "subtopic",
+      parentId: "community-engagement",
       label: "Conferences",
       description: "Conferences bring developer networks together face-to-face. Learn booth operations, run hackathons, manage feedback loops, speak on panels, and network with platform developers.",
       links: [{ title: "DevRelCon conferences", url: "https://devrel.net/" }],
@@ -130,6 +141,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-open-source",
       kind: "subtopic",
+      parentId: "community-engagement",
       label: "Open Source Contributions",
       description: "Open Source contributions build trust and foster collaboration. Master license classifications, pull request triage, writing contributor guidelines, and maintaining open libraries on GitHub.",
       links: [{ title: "Open Source Initiative Docs", url: "https://opensource.org/" }],
@@ -147,6 +159,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-developer-surveys",
       kind: "subtopic",
+      parentId: "metrics-feedback",
       label: "Developer Surveys",
       description: "Developer surveys measure tool adoption rates, community sentiment, and friction points. Learn survey design principles, data collection bias checks, and parsing feedback lists.",
       links: [{ title: "Stack Overflow Developer Survey Portal", url: "https://survey.stackoverflow.co/" }],
@@ -155,6 +168,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-analytics",
       kind: "subtopic",
+      parentId: "metrics-feedback",
       label: "Analytics",
       description: "Analytics track metrics like documentation traffic, page view duration, sample downloads, and API key activations. Master using Google Analytics, dashboard grids, and tracking conversion channels.",
       links: [{ title: "Google Analytics Academy", url: "https://analytics.google.com/analytics/academy/" }],
@@ -163,6 +177,7 @@ export const devrelTaskflow: TaskflowContent = {
     {
       id: "dr-feedback-loops",
       kind: "subtopic",
+      parentId: "metrics-feedback",
       label: "Feedback Loops",
       description: "Feedback loops channel developer friction points directly to internal product managers. Learn to triage feature requests, write bug tickets, track product roadmaps, and communicate updates to the community.",
       links: [{ title: "Product Management: Feedback Loops", url: "https://www.mindtheproduct.com/" }],

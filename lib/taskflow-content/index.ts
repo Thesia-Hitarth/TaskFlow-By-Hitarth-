@@ -66,3 +66,25 @@ export const taskflowContent: Record<string, TaskflowContent> = {
   java: javaTaskflow,
   cpp: cppTaskflow,
 };
+
+// Validate parentId constraints at build/import time (BUG-32)
+for (const [slug, content] of Object.entries(taskflowContent)) {
+  const milestoneIds = new Set(
+    content.nodes.filter((n) => n.kind === "milestone").map((n) => n.id)
+  );
+
+  for (const node of content.nodes) {
+    if (node.kind === "subtopic") {
+      if (!node.parentId) {
+        throw new Error(
+          `Validation Error: Subtopic "${node.id}" in taskflow "${slug}" is missing a "parentId".`
+        );
+      }
+      if (!milestoneIds.has(node.parentId)) {
+        throw new Error(
+          `Validation Error: Subtopic "${node.id}" in taskflow "${slug}" has invalid parentId "${node.parentId}".`
+        );
+      }
+    }
+  }
+}

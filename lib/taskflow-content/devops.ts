@@ -15,6 +15,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "os-linux",
       kind: "subtopic",
+      parentId: "os",
       label: "Linux Basics",
       description: "Linux is the standard operating system for hosting cloud applications. Master terminal command layouts, user privileges settings (chmod, chown), file system descriptors, and standard bash configuration scripts.",
       links: [{ title: "Linux Foundation Docs", url: "https://www.linuxfoundation.org/" }],
@@ -23,6 +24,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "os-process",
       kind: "subtopic",
+      parentId: "os",
       label: "Process Management",
       description: "Process management tracks program execution threads in memory. Learn process scheduling states, listing active tasks (ps, top), sending signaling flags, and managing background jobs configurations.",
       links: [{ title: "Linux Process Guide", url: "https://tldp.org/LDP/lpg/" }],
@@ -31,6 +33,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "os-net",
       kind: "subtopic",
+      parentId: "os",
       label: "Networking Basics",
       description: "Computer networks connect resources across routing tables. Master standard protocol loops (TCP/UDP), IP address routing boundaries, DNS name server path lookups, and host port allocations.",
       links: [{ title: "Network Troubleshooting Guide", url: "https://www.netacad.com/" }],
@@ -48,6 +51,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "vcs-git",
       kind: "subtopic",
+      parentId: "vcs",
       label: "Git",
       description: "Git is the industry-standard version control tool. Master staging loops (add, commit), branching states checks, merging codes paths, rebasing commits, and resolving merge conflicts.",
       links: [{ title: "Git Docs", url: "https://git-scm.com/doc" }],
@@ -56,6 +60,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "vcs-trunk",
       kind: "subtopic",
+      parentId: "vcs",
       label: "Trunk-Based Development",
       description: "Trunk-Based Development encourages merging small changes frequently into a primary branch. This practice mitigates large code divergence lags and avoids long, painful merge conflict resolutions.",
       links: [{ title: "Trunk Based Development Guide", url: "https://trunkbaseddevelopment.com/" }],
@@ -73,6 +78,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "script-bash",
       kind: "subtopic",
+      parentId: "scripting",
       label: "Bash",
       description: "Bash scripts coordinate native OS terminal commands. Learn script logic loops, variables assignments, capturing command execution responses, and parsing file streams.",
       links: [{ title: "GNU Bash manual", url: "https://www.gnu.org/software/bash/manual/" }],
@@ -81,6 +87,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "script-python",
       kind: "subtopic",
+      parentId: "scripting",
       label: "Python",
       description: "Python compiles complex automated scripts easily. Master variables scopes, file IO parameters, HTTP requests queries, JSON parsing libraries, and scripting network APIs configurations.",
       links: [{ title: "Python Documentation", url: "https://docs.python.org/3/" }],
@@ -98,6 +105,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "cicd-gha",
       kind: "subtopic",
+      parentId: "cicd",
       label: "GitHub Actions",
       description: "GitHub Actions integrates automation triggers natively with repositories. Master writing YAML configurations, managing workflow triggers, caching dependencies, and deploying images to cloud servers.",
       links: [{ title: "GitHub Actions docs", url: "https://docs.github.com/en/actions" }],
@@ -106,6 +114,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "cicd-jenkins",
       kind: "subtopic",
+      parentId: "cicd",
       label: "Jenkins",
       description: "Jenkins is a highly customizable extensible automation server. Study writing declarative Jenkinsfiles, managing master/slave node configurations, and scripting custom plugin pipelines.",
       links: [{ title: "Jenkins Website", url: "https://www.jenkins.io/" }],
@@ -123,6 +132,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "cont-docker",
       kind: "subtopic",
+      parentId: "containers",
       label: "Docker",
       description: "Docker isolates development environments using container layers. Learn writing Dockerfiles instructions (FROM, COPY, RUN, CMD), layer caching, configuring networks, and managing volumes.",
       links: [{ title: "Docker Docs", url: "https://docs.docker.com/" }],
@@ -131,6 +141,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "cont-registries",
       kind: "subtopic",
+      parentId: "containers",
       label: "Container Registries",
       description: "Registries host and distribute image packages. Learn uploading images to Docker Hub or AWS ECR, managing tags, configuring private repositories access, and automated image builds.",
       links: [{ title: "Docker Hub Website", url: "https://hub.docker.com/" }],
@@ -148,6 +159,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "orch-k8s",
       kind: "subtopic",
+      parentId: "orchestration",
       label: "Kubernetes",
       description: "Kubernetes automates container orchestration across host clusters. Study pod scheduling, configuring services, ingress network rules, secret parameters configurations, and auditing cluster logs.",
       links: [{ title: "Kubernetes Website", url: "https://kubernetes.io/" }],
@@ -156,6 +168,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "orch-helm",
       kind: "subtopic",
+      parentId: "orchestration",
       label: "Helm",
       description: "Helm is the package manager for Kubernetes. Master Helm chart layouts, value overrides file parameters, release installations, upgrading stacks, and rolling back release states.",
       links: [{ title: "Helm Website", url: "https://helm.sh/" }],
@@ -173,6 +186,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "iac-terraform",
       kind: "subtopic",
+      parentId: "iac",
       label: "Terraform",
       description: "Terraform provisions cloud infrastructure using declarative configuration files. Study HCL variables mapping, state tracking directories, module compositions, planning steps, and apply runs.",
       links: [{ title: "Terraform Website", url: "https://www.terraform.io/" }],
@@ -181,6 +195,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "iac-ansible",
       kind: "subtopic",
+      parentId: "iac",
       label: "Ansible",
       description: "Ansible manages remote configurations agentlessly using YAML playbooks. Study writing playbook tasks, configuring host inventories lists, using variables, and executing playbooks.",
       links: [{ title: "Ansible Website", url: "https://www.ansible.com/" }],
@@ -198,6 +213,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "mon-prometheus",
       kind: "subtopic",
+      parentId: "monitoring",
       label: "Prometheus",
       description: "Prometheus gathers telemetry metrics data inside time-series databases. Study query expressions configuration (PromQL), setting scrape rules, and configuring alert thresholds.",
       links: [{ title: "Prometheus Website", url: "https://prometheus.io/" }],
@@ -206,6 +222,7 @@ export const devopsTaskflow: TaskflowContent = {
     {
       id: "mon-grafana",
       kind: "subtopic",
+      parentId: "monitoring",
       label: "Grafana",
       description: "Grafana visualizes system metric databases. Learn configuring data resource queries, mapping charts grids, managing dashboards panels, and configuring custom alerts integrations.",
       links: [{ title: "Grafana Website", url: "https://grafana.com/" }],

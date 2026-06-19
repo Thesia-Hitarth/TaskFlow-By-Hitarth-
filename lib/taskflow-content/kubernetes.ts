@@ -15,6 +15,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-pods",
       kind: "subtopic",
+      parentId: "k8s-basics",
       label: "Pods",
       description: "Pods are the smallest deployable units in Kubernetes. Study pod definitions, multi-container configurations (sidecars), mapping ports, container log streams, and lifecycle event callbacks.",
       links: [{ title: "Kubernetes Pods Documentation", url: "https://kubernetes.io/docs/concepts/workloads/pods/" }],
@@ -23,6 +24,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-nodes",
       kind: "subtopic",
+      parentId: "k8s-basics",
       label: "Nodes",
       description: "Nodes represent physical or virtual worker hosts within clusters. Learn worker node processes (kubelet, kube-proxy, runtime), node resources metrics, scheduling allocations, and managing node failures.",
       links: [{ title: "Kubernetes Nodes Documentation", url: "https://kubernetes.io/docs/concepts/architecture/nodes/" }],
@@ -31,6 +33,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-cluster-architecture",
       kind: "subtopic",
+      parentId: "k8s-basics",
       label: "Cluster Architecture",
       description: "Cluster architecture links control plane nodes to worker hosts. Master API server operations, database logs coordination via etcd, scheduler bindings, controller managers loops, and node networking.",
       links: [{ title: "Kubernetes Architecture", url: "https://kubernetes.io/docs/concepts/architecture/" }],
@@ -48,6 +51,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-deployments",
       kind: "subtopic",
+      parentId: "k8s-workloads",
       label: "Deployments",
       description: "Deployments manage stateless container updates declaratively. Learn rolling updates configurations, fallback histories tracking, pod scaling limits, and target replica sets management.",
       links: [{ title: "Kubernetes Deployments Docs", url: "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" }],
@@ -56,6 +60,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-replicasets",
       kind: "subtopic",
+      parentId: "k8s-workloads",
       label: "ReplicaSets",
       description: "ReplicaSets guarantee a specified number of replica pods run at all times. Study pod selector filters, matching labels configurations, scaling triggers, and node scheduling rules.",
       links: [{ title: "Kubernetes ReplicaSets Docs", url: "https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/" }],
@@ -64,6 +69,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-statefulsets",
       kind: "subtopic",
+      parentId: "k8s-workloads",
       label: "StatefulSets",
       description: "StatefulSets manage workloads that require persistent identities and data storage. Learn ordered deployment steps, unique network identifiers (headless services), and persistent volume template mappings.",
       links: [{ title: "Kubernetes StatefulSets Docs", url: "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/" }],
@@ -81,6 +87,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-services",
       kind: "subtopic",
+      parentId: "k8s-networking",
       label: "Services",
       description: "Services route network traffic to ephemeral pod IPs. Study service types (ClusterIP, NodePort, LoadBalancer), selector parameters, service DNS resolution, and endpoint configurations.",
       links: [{ title: "Kubernetes Services Docs", url: "https://kubernetes.io/docs/concepts/services-networking/service/" }],
@@ -89,6 +96,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-ingress",
       kind: "subtopic",
+      parentId: "k8s-networking",
       label: "Ingress",
       description: "Ingress routes external HTTP/S requests to cluster services. Learn ingress controller setups (NGINX), path rules configurations, TLS certificate installations, and SSL termination.",
       links: [{ title: "Kubernetes Ingress Docs", url: "https://kubernetes.io/docs/concepts/services-networking/ingress/" }],
@@ -97,6 +105,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-configmaps-secrets",
       kind: "subtopic",
+      parentId: "k8s-networking",
       label: "ConfigMaps & Secrets",
       description: "ConfigMaps and Secrets separate configurations from code templates. Learn storing config files, mounting secret folders, encoding keys in base64, and injection via environment variables.",
       links: [{ title: "Kubernetes ConfigMaps Guide", url: "https://kubernetes.io/docs/concepts/configuration/configmap/" }],
@@ -114,6 +123,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-persistent-volumes",
       kind: "subtopic",
+      parentId: "k8s-storage",
       label: "Persistent Volumes",
       description: "Persistent Volumes (PVs) represent physical disks provisioned by cluster administrators. Learn PV configuration settings, storage capacity boundaries, access types (ReadWriteOnce, ReadWriteMany), and volume reclaim rules.",
       links: [{ title: "Kubernetes Persistent Volumes Docs", url: "https://kubernetes.io/docs/concepts/storage/persistent-volumes/" }],
@@ -122,6 +132,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-pvc",
       kind: "subtopic",
+      parentId: "k8s-storage",
       label: "Persistent Volume Claims",
       description: "Persistent Volume Claims (PVCs) request storage allocations from PV resources. Study PVC resource requests, access modes selectors, mapping claims to Pod specifications, and monitoring disk usage.",
       links: [{ title: "Kubernetes Storage Claims Guide", url: "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims" }],
@@ -130,6 +141,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-storage-classes",
       kind: "subtopic",
+      parentId: "k8s-storage",
       label: "Storage Classes",
       description: "Storage Classes enable dynamic provision of cloud disk storage on-demand. Master storage provisioner plugins settings, reclaim policy rules, mount configurations, and dynamic PVC bindings.",
       links: [{ title: "Kubernetes Storage Classes Guide", url: "https://kubernetes.io/docs/concepts/storage/storage-classes/" }],
@@ -147,6 +159,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-helm",
       kind: "subtopic",
+      parentId: "k8s-operations",
       label: "Helm",
       description: "Helm is the package manager for Kubernetes. Master Helm chart layouts, value overrides file parameters, release installations, upgrading stacks, and rolling back release states.",
       links: [{ title: "Helm Documentation", url: "https://helm.sh/docs/" }],
@@ -155,6 +168,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-kubectl",
       kind: "subtopic",
+      parentId: "k8s-operations",
       label: "kubectl",
       description: "kubectl is the command line tool to control clusters. Learn command options (get, describe, logs, exec, apply, delete), formatting console outputs, and querying resource metrics.",
       links: [{ title: "kubectl Reference Manual", url: "https://kubernetes.io/docs/reference/kubectl/" }],
@@ -163,6 +177,7 @@ export const kubernetesTaskflow: TaskflowContent = {
     {
       id: "k8s-monitoring-logging",
       kind: "subtopic",
+      parentId: "k8s-operations",
       label: "Monitoring & Logging",
       description: "Monitoring track resource bounds. Learn scraping metrics using Prometheus, building dashboards with Grafana, exporting container logs, and diagnosing system faults.",
       links: [{ title: "Kubernetes Logging Architecture", url: "https://kubernetes.io/docs/concepts/cluster-administration/logging/" }],

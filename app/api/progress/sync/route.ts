@@ -11,9 +11,9 @@ function getAllowedOrigin(): string {
 
 function isValidOrigin(req: Request): boolean {
   const origin = req.headers.get("origin");
-  if (!origin) return true; // same-origin server-side request
+  if (!origin) return true;
   const allowedOrigin = getAllowedOrigin();
-  return origin.startsWith(allowedOrigin);
+  return origin === allowedOrigin;
 }
 
 const VALID_STATUSES = new Set(["pending", "in-progress", "done", "skipped"]);
@@ -68,17 +68,16 @@ export async function POST(request: Request) {
     }
   }
 
-  // Perform bulk updates / deletes
-  for (const [nodeId, status] of Object.entries(progress)) {
-    // Map status string to DB enum value
+  // Perform bulk updates / deletes inside a database transaction (BUG-33)
+  const operations = Object.entries(progress).map(([nodeId, status]) => {
     const dbStatus = (status === "in-progress" ? "in_progress" : status) as NodeStatus;
 
     if (status === "pending") {
-      await prisma.userProgress.deleteMany({
+      return prisma.userProgress.deleteMany({
         where: { userId: session.user.id, taskflowSlug: slug, nodeId },
       });
     } else {
-      await prisma.userProgress.upsert({
+      return prisma.userProgress.upsert({
         where: {
           userId_taskflowSlug_nodeId: { userId: session.user.id, taskflowSlug: slug, nodeId },
         },
@@ -86,7 +85,9 @@ export async function POST(request: Request) {
         create: { userId: session.user.id, taskflowSlug: slug, nodeId, status: dbStatus },
       });
     }
-  }
+  });
+
+  await prisma.$transaction(operations);
 
   return NextResponse.json({ ok: true });
 }

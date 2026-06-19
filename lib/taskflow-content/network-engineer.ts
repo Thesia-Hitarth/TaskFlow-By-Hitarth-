@@ -15,6 +15,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-osi-model",
       kind: "subtopic",
+      parentId: "ne-foundations",
       label: "OSI Model",
       description: "The OSI model deconstructs networking functions into 7 layers. Study Layer 1 (Physical links) up to Layer 7 (Application requests), mapping data frames, segments, and packets transformations.",
       links: [{ title: "ISO OSI Model Specification", url: "https://www.iso.org/standard/20269.html" }],
@@ -23,6 +24,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-tcp-ip",
       kind: "subtopic",
+      parentId: "ne-foundations",
       label: "TCP/IP",
       description: "TCP/IP controls host communications over networks. Study TCP three-way handshake loops, sequence verification mechanisms, UDP lightweight transport, packet structures, and routing configurations.",
       links: [{ title: "IETF RFC 793 (TCP)", url: "https://datatracker.ietf.org/doc/html/rfc793" }],
@@ -31,6 +33,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-subnetting",
       kind: "subtopic",
+      parentId: "ne-foundations",
       label: "Subnetting",
       description: "Subnetting segments networks into logical subnets. Master CIDR notation parameters, calculating network/broadcast addresses, defining host limits, and configuring subnets.",
       links: [{ title: "Cisco Subnetting Guide", url: "https://www.cisco.com/c/en/us/support/docs/ip/routing-information-protocol-rip/13788-3.html" }],
@@ -48,6 +51,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-routers",
       kind: "subtopic",
+      parentId: "ne-devices",
       label: "Routers",
       description: "Routers direct traffic packets between distinct network networks. Study dynamic routing tables configurations (OSPF, BGP), interface parameters, and gateway configurations.",
       links: [{ title: "Cisco Routing Solutions", url: "https://www.cisco.com/c/en/us/products/routers/index.html" }],
@@ -56,6 +60,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-switches",
       kind: "subtopic",
+      parentId: "ne-devices",
       label: "Switches",
       description: "Switches direct frames within local area network (LAN) segments. Learn MAC address table lookups, configuring Virtual Local Area Networks (VLANs), Spanning Tree Protocol (STP), and trunking.",
       links: [{ title: "Cisco Switching Solutions", url: "https://www.cisco.com/c/en/us/products/switches/index.html" }],
@@ -64,6 +69,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-firewalls",
       kind: "subtopic",
+      parentId: "ne-devices",
       label: "Firewalls",
       description: "Firewalls filter network traffic based on configured security rule parameters. Study stateful packet inspections, zone architectures, configuring security logs, and managing blocklists.",
       links: [{ title: "Palo Alto Firewalls Guide", url: "https://www.paloaltonetworks.com/cyberpedia/what-is-a-firewall" }],
@@ -81,6 +87,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-dns",
       kind: "subtopic",
+      parentId: "ne-protocols",
       label: "DNS",
       description: "The Domain Name System (DNS) resolves domains names to IP addresses. Study DNS record classifications (A, AAAA, CNAME, MX), recursive resolution paths, caching rules, and server configurations.",
       links: [{ title: "IETF RFC 1035 (DNS)", url: "https://datatracker.ietf.org/doc/html/rfc1035" }],
@@ -89,6 +96,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-dhcp",
       kind: "subtopic",
+      parentId: "ne-protocols",
       label: "DHCP",
       description: "DHCP assigns network configurations to clients dynamically. Learn DORA IP allocation steps, lease duration configurations, gateway parameters distribution, and DHCP relay configurations.",
       links: [{ title: "IETF RFC 2131 (DHCP)", url: "https://datatracker.ietf.org/doc/html/rfc2131" }],
@@ -97,6 +105,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-vpn",
       kind: "subtopic",
+      parentId: "ne-protocols",
       label: "VPN",
       description: "VPN tunnels connect networks securely over public networks. Study IPSec encryption configurations, OpenVPN parameters, encapsulation protocols, tunnel metrics, and access controls.",
       links: [{ title: "OpenVPN Documentation", url: "https://openvpn.net/community-resources/" }],
@@ -114,6 +123,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-acls",
       kind: "subtopic",
+      parentId: "ne-network-security",
       label: "ACLs",
       description: "Access Control Lists filter traffic based on configured source and port ranges. Learn standard and extended ACL configurations, wildcard mask metrics, and assigning filter rules.",
       links: [{ title: "Cisco ACL Configurations", url: "https://www.cisco.com/c/en/us/support/docs/ip/access-lists/26448-10.html" }],
@@ -122,6 +132,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-nat",
       kind: "subtopic",
+      parentId: "ne-network-security",
       label: "NAT",
       description: "Network Address Translation maps private local subnets to public IPs. Learn static/dynamic NAT mappings, Port Address Translation (PAT) settings, and configuring translation rules.",
       links: [{ title: "IETF RFC 3022 (NAT)", url: "https://datatracker.ietf.org/doc/html/rfc3022" }],
@@ -130,6 +141,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-ids-ips",
       kind: "subtopic",
+      parentId: "ne-network-security",
       label: "IDS/IPS",
       description: "Intrusion Detection and Prevention Systems analyze packet payloads for threat patterns. Study signature scanning, traffic parsing steps, alert configurations, and mitigation rules using Snort.",
       links: [{ title: "Snort IDS Website", url: "https://www.snort.org/" }],
@@ -147,6 +159,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-wireshark",
       kind: "subtopic",
+      parentId: "ne-tools-certs",
       label: "Wireshark",
       description: "Wireshark captures and inspects real-time network packets. Master packet filters writing, capturing HTTP/S TCP handshakes, tracing streams, diagnosing packet loss, and parsing network protocol data packets.",
       links: [{ title: "Wireshark Q&A Wiki", url: "https://wiki.wireshark.org/" }],
@@ -155,6 +168,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-cisco-ccna",
       kind: "subtopic",
+      parentId: "ne-tools-certs",
       label: "Cisco CCNA",
       description: "Cisco Certified Network Associate validates foundational network skills. Study CCNA test objectives, routing configurations, VLAN configurations, subnet calculations, and basic device commands.",
       links: [{ title: "Cisco CCNA Overview", url: "https://www.cisco.com/c/en/us/training-events/training-certifications/certifications/associate/ccna.html" }],
@@ -163,6 +177,7 @@ export const networkEngineerTaskflow: TaskflowContent = {
     {
       id: "ne-network-monitoring",
       kind: "subtopic",
+      parentId: "ne-tools-certs",
       label: "Network Monitoring",
       description: "Monitoring systems collect network device health metrics. Study SNMP configuration rules, tracking link bandwidth, graphing packet drops, and managing alert thresholds.",
       links: [{ title: "Zabbix Monitoring System", url: "https://www.zabbix.com/" }],

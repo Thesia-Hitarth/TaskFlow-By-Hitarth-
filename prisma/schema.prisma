@@ -73,3 +73,9 @@ model UserProgress {
   @@unique([userId, taskflowSlug, nodeId])
   @@index([userId, taskflowSlug])
 }
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

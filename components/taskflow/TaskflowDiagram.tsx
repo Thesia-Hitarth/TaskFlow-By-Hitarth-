@@ -117,16 +117,13 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
       style: { strokeWidth: 2 },
     }));
 
-    // 2. Milestone-to-subtopic connections (assigned dynamically based on sequence order in content nodes)
+    // 2. Milestone-to-subtopic connections (assigned explicitly via parentId) (BUG-32)
     const flowEdges: Edge[] = [];
-    let currentMilestoneId = "";
     for (const node of content.nodes) {
-      if (node.kind === "milestone") {
-        currentMilestoneId = node.id;
-      } else if (node.kind === "subtopic" && currentMilestoneId) {
+      if (node.kind === "subtopic" && node.parentId) {
         flowEdges.push({
-          id: `edge-${currentMilestoneId}-${node.id}`,
-          source: currentMilestoneId,
+          id: `edge-${node.parentId}-${node.id}`,
+          source: node.parentId,
           target: node.id,
           sourceHandle: "right",
           targetHandle: "left",

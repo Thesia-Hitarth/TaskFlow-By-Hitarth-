@@ -15,6 +15,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-variables-types",
       kind: "subtopic",
+      parentId: "rust-basics",
       label: "Variables & Types",
       description: "Variables are immutable by default in Rust. Master variables declaration (let, let mut), primitive types (integers, floats, boolean, char), compound types (arrays, tuples), and constant definitions.",
       links: [{ title: "The Rust Book: Variables and Mutability", url: "https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html" }],
@@ -23,6 +24,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-ownership",
       kind: "subtopic",
+      parentId: "rust-basics",
       label: "Ownership",
       description: "Ownership ensures memory safety without a garbage collector. Study ownership parameters rules, variable scopes, value moves patterns, copying data, and heap allocations.",
       links: [{ title: "The Rust Book: What is Ownership?", url: "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html" }],
@@ -31,6 +33,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-borrowing-references",
       kind: "subtopic",
+      parentId: "rust-basics",
       label: "Borrowing & References",
       description: "References access memory values without taking ownership. Learn shared references (&T), exclusive mutable references (&mut T), borrow checker rules, and preventing data races.",
       links: [{ title: "The Rust Book: References and Borrowing", url: "https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html" }],
@@ -48,6 +51,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-functions",
       kind: "subtopic",
+      parentId: "rust-control-flow-structs",
       label: "Functions",
       description: "Functions encapsulate logic blocks. Study input argument annotations, return types definitions, expressions vs statement evaluations rules, and writing custom method helpers.",
       links: [{ title: "The Rust Book: Functions", url: "https://doc.rust-lang.org/book/ch03-03-how-functions-work.html" }],
@@ -56,6 +60,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-structs-enums",
       kind: "subtopic",
+      parentId: "rust-control-flow-structs",
       label: "Structs & Enums",
       description: "Structs group attributes while Enums declare multiple data variants. Master data structs definitions, implementing method methods (impl), tuple structs, and data-carrying enums.",
       links: [{ title: "The Rust Book: Structs", url: "https://doc.rust-lang.org/book/ch05-00-structs.html" }],
@@ -64,6 +69,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-pattern-matching",
       kind: "subtopic",
+      parentId: "rust-control-flow-structs",
       label: "Pattern Matching",
       description: "Pattern matching evaluates enums variants safely at compile-time. Study match keyword configurations, exhaustiveness guarantees, if-let shortcuts, variables binding, and pattern guards.",
       links: [{ title: "The Rust Book: Patterns and Matching", url: "https://doc.rust-lang.org/book/ch18-00-patterns.html" }],
@@ -81,6 +87,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-vectors-hashmaps",
       kind: "subtopic",
+      parentId: "rust-collections-errors",
       label: "Vectors & HashMaps",
       description: "Vectors allocate contiguous heap memory lists, while HashMaps store key-value mappings. Master indexing arrays, reading keys safely, allocating memory, and iterating collections.",
       links: [{ title: "The Rust Book: Common Collections", url: "https://doc.rust-lang.org/book/ch08-00-common-collections.html" }],
@@ -89,6 +96,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-result-option",
       kind: "subtopic",
+      parentId: "rust-collections-errors",
       label: "Result & Option",
       description: "Result handles potential runtime failures, while Option wraps nullable variables values. Learn to unpack variants safely, use unwrap fallbacks, and prevent runtime panics.",
       links: [{ title: "The Rust Book: Error Handling", url: "https://doc.rust-lang.org/book/ch09-00-error-handling.html" }],
@@ -97,6 +105,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-error-propagation",
       kind: "subtopic",
+      parentId: "rust-collections-errors",
       label: "Error Propagation",
       description: "The question mark operator forwards errors to calling functions easily. Study propagation rules, mapping error types, creating custom error structures, and compiling safe workflows.",
       links: [{ title: "The Rust Book: Recoverable Errors with Result", url: "https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#a-shortcut-for-propagating-errors-the--operator" }],
@@ -114,6 +123,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-traits-generics",
       kind: "subtopic",
+      parentId: "rust-advanced",
       label: "Traits & Generics",
       description: "Traits define shared behaviors, and generics enable abstract types parameters. Learn custom traits declarations, generic constraints mapping, and compiling generic classes.",
       links: [{ title: "The Rust Book: Generic Types, Traits, and Lifetimes", url: "https://doc.rust-lang.org/book/ch10-00-generics-traits-and-lifetimes.html" }],
@@ -122,6 +132,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-lifetimes",
       kind: "subtopic",
+      parentId: "rust-advanced",
       label: "Lifetimes",
       description: "Lifetimes instruct the compiler on reference validation scopes. Master lifetime parameter configurations ('a), compiler elution rules, struct references, and avoiding dangling pointers.",
       links: [{ title: "The Rust Book: Validating References with Lifetimes", url: "https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html" }],
@@ -130,6 +141,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-closures-iterators",
       kind: "subtopic",
+      parentId: "rust-advanced",
       label: "Closures & Iterators",
       description: "Closures are anonymous scripts functions, and Iterators loop over collections. Learn closures values capture bounds (Fn, FnMut, FnOnce), map/filter actions on iterators, and optimizing loops.",
       links: [{ title: "The Rust Book: Functional Language Features", url: "https://doc.rust-lang.org/book/ch13-00-functional-features.html" }],
@@ -147,6 +159,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-cargo",
       kind: "subtopic",
+      parentId: "rust-tooling",
       label: "Cargo",
       description: "Cargo is Rust's package and build manager. Study Cargo.toml files configuration, compile configurations, binary options setup, workspace partitions, and publishing crates libraries.",
       links: [{ title: "The Cargo Book", url: "https://doc.rust-lang.org/cargo/" }],
@@ -155,6 +168,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-crates",
       kind: "subtopic",
+      parentId: "rust-tooling",
       label: "Crates.io",
       description: "Crates.io is the standard packages registry. Learn auditing crates source files, version bindings configuration, resolving package requirements, and managing local offline registries.",
       links: [{ title: "Crates.io Package Registry", url: "https://crates.io/" }],
@@ -163,6 +177,7 @@ export const rustTaskflow: TaskflowContent = {
     {
       id: "rust-testing",
       kind: "subtopic",
+      parentId: "rust-tooling",
       label: "Testing",
       description: "Testing validates logic correctness. Learn writing unit test checks, configuring integration test folders, matching assert conditions, and executing cargo test sweeps.",
       links: [{ title: "The Rust Book: Writing Automated Tests", url: "https://doc.rust-lang.org/book/ch11-00-testing.html" }],

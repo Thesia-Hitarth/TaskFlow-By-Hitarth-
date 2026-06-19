@@ -15,6 +15,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-init",
       kind: "subtopic",
+      parentId: "git-basics",
       label: "Init",
       description: "git init creates a new local repository folder. Master repository structures, configuring user keys, cloning remote directories (git clone), and configuring tracking targets.",
       links: [{ title: "Git Reference: git init", url: "https://git-scm.com/docs/git-init" }],
@@ -23,6 +24,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-add-commit",
       kind: "subtopic",
+      parentId: "git-basics",
       label: "Add & Commit",
       description: "git add stages files, and git commit saves a snapshot. Learn how staging areas work, writing descriptive commit messages, and committing changed lines.",
       links: [{ title: "Git Reference: git commit", url: "https://git-scm.com/docs/git-commit" }],
@@ -31,6 +33,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-status-log",
       kind: "subtopic",
+      parentId: "git-basics",
       label: "Status & Log",
       description: "git status reports uncommitted files, while git log audits repository history. Master reading file status flags, viewing log graphs, and filtering history logs.",
       links: [{ title: "Git Reference: git log", url: "https://git-scm.com/docs/git-log" }],
@@ -48,6 +51,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-branches",
       kind: "subtopic",
+      parentId: "git-branching",
       label: "Branches",
       description: "Branches are pointer lines referencing code commits. Study branch creation (git branch), switching workspaces (git checkout, git switch), list branches, and deleting branches.",
       links: [{ title: "Git Reference: git branch", url: "https://git-scm.com/docs/git-branch" }],
@@ -56,6 +60,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-merging",
       kind: "subtopic",
+      parentId: "git-branching",
       label: "Merging",
       description: "git merge combines code branches history records. Master fast-forward merge paths, creating merge commits, choosing target branches, and keeping branch structures clean.",
       links: [{ title: "Git Reference: git merge", url: "https://git-scm.com/docs/git-merge" }],
@@ -64,6 +69,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-rebasing",
       kind: "subtopic",
+      parentId: "git-branching",
       label: "Rebasing",
       description: "git rebase re-applies commits from one branch on top of another base tip. Learn clean commit history generation, interactive rebasing, and avoiding rebase runs on public branches.",
       links: [{ title: "Git Reference: git rebase", url: "https://git-scm.com/docs/git-rebase" }],
@@ -81,6 +87,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-pull-requests",
       kind: "subtopic",
+      parentId: "git-collaboration",
       label: "Pull Requests",
       description: "Pull Requests (PRs) submit branch changes for team review. Master writing descriptive descriptions, configuring reviewers, resolving review comments, and merging commits.",
       links: [{ title: "GitHub Docs: Pull Requests", url: "https://docs.github.com/en/pull-requests" }],
@@ -89,6 +96,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-code-review",
       kind: "subtopic",
+      parentId: "git-collaboration",
       label: "Code Review",
       description: "Code reviews audit code changes before integration. Study reviewing line differences (diffs), suggesting changes directly, configuring approvals rules, and checking build statuses.",
       links: [{ title: "GitHub Docs: Reviewing PRs", url: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests" }],
@@ -97,6 +105,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-forking",
       kind: "subtopic",
+      parentId: "git-collaboration",
       label: "Forking",
       description: "Forking duplicates a remote repository to submit pull requests externally. Learn configuring upstream remote targets, synchronizing forks, and managing permissions.",
       links: [{ title: "GitHub Docs: Fork a Repo", url: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks" }],
@@ -114,6 +123,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-issues",
       kind: "subtopic",
+      parentId: "git-github-features",
       label: "Issues",
       description: "GitHub Issues tracks tasks and project planning. Learn templates setup, assigning label flags, linking issues to code commits, and project boards configurations.",
       links: [{ title: "GitHub Docs: Issues Management", url: "https://docs.github.com/en/issues" }],
@@ -122,6 +132,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-actions",
       kind: "subtopic",
+      parentId: "git-github-features",
       label: "Actions",
       description: "GitHub Actions automates workflow tasks (CI/CD). Study yaml workflow designs, triggers settings (push, pull_request), checkout actions configurations, caching settings, and deployment runs.",
       links: [{ title: "GitHub Actions Docs", url: "https://docs.github.com/en/actions" }],
@@ -130,6 +141,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-pages",
       kind: "subtopic",
+      parentId: "git-github-features",
       label: "GitHub Pages",
       description: "GitHub Pages hosts static html websites from repository branches. Learn custom domain name mapping, configuring static build files, and deployment rules.",
       links: [{ title: "GitHub Pages Documentation", url: "https://pages.github.com/" }],
@@ -147,6 +159,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-stash",
       kind: "subtopic",
+      parentId: "git-advanced",
       label: "Git Stash",
       description: "git stash saves uncommitted modifications to clear the working directory. Learn stashing files (git stash push), listing stashes, re-applying changes (git stash pop), and branch creation.",
       links: [{ title: "Git Reference: git stash", url: "https://git-scm.com/docs/git-stash" }],
@@ -155,6 +168,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-cherry-pick",
       kind: "subtopic",
+      parentId: "git-advanced",
       label: "Cherry-pick",
       description: "git cherry-pick copies specific commits from one branch to another. Master commit hash selections, resolving copy conflicts, and maintaining branch sanity.",
       links: [{ title: "Git Reference: git cherry-pick", url: "https://git-scm.com/docs/git-cherry-pick" }],
@@ -163,6 +177,7 @@ export const gitGithubTaskflow: TaskflowContent = {
     {
       id: "git-resolving-conflicts",
       kind: "subtopic",
+      parentId: "git-advanced",
       label: "Resolving Conflicts",
       description: "Merge conflicts occur when overlapping code lines are modified. Master conflict markers identification (<<<<<<<, =======, >>>>>>>), selecting changes, and completing merge runs.",
       links: [{ title: "GitHub Docs: Merge Conflicts", url: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts" }],

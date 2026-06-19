@@ -15,6 +15,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-html",
       kind: "subtopic",
+      parentId: "frontend-fundamentals",
       label: "HTML",
       description: "HyperText Markup Language represents the fundamental structure of all web documents. Master semantic HTML tags, document object model structuring, SEO metadata parameters, forms validation, and accessibility conventions (ARIA) to build clean, indexable, and universally usable web layouts.",
       links: [{ title: "MDN HTML Guide", url: "https://developer.mozilla.org/en-US/docs/Web/HTML" }],
@@ -23,6 +24,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-css",
       kind: "subtopic",
+      parentId: "frontend-fundamentals",
       label: "CSS",
       description: "Cascading Style Sheets control visual presentation and layout structures. Learn specificity, the cascade, box model dynamics, modern positioning systems (Flexbox and CSS Grid), custom variables, responsive typography, media queries, transition animations, and CSS preprocessors/frameworks.",
       links: [{ title: "MDN CSS Guide", url: "https://developer.mozilla.org/en-US/docs/Web/CSS" }],
@@ -31,6 +33,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-javascript",
       kind: "subtopic",
+      parentId: "frontend-fundamentals",
       label: "JavaScript",
       description: "JavaScript powers frontend dynamic behavior and event control loops. Deep dive into variables scoping, DOM manipulation APIs, event delegation, closures, prototype inheritance chains, modern ES6+ features (destructuring, ES Modules), and asynchronous processing (Promises, async/await, Fetch API).",
       links: [{ title: "MDN JavaScript Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript" }],
@@ -48,6 +51,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-nodejs",
       kind: "subtopic",
+      parentId: "backend-fundamentals",
       label: "Node.js",
       description: "Node.js is an open-source, event-driven JavaScript runtime built on Chrome's V8 engine. Study its asynchronous non-blocking model, the event loop phases, core modules (fs, path, http, process), package managers configurations, and building high-performance network service daemons.",
       links: [{ title: "Node.js Website", url: "https://nodejs.org/" }],
@@ -56,6 +60,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-databases",
       kind: "subtopic",
+      parentId: "backend-fundamentals",
       label: "Databases",
       description: "Explore data storage paradigms by learning relational databases (SQL, like PostgreSQL) and non-relational databases (NoSQL, like MongoDB). Master schema design, indexes tuning, query normalization, transaction safety rules, and connecting applications to persistent storage pools.",
       links: [{ title: "PostgreSQL Website", url: "https://www.postgresql.org/" }],
@@ -64,6 +69,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-rest-apis",
       kind: "subtopic",
+      parentId: "backend-fundamentals",
       label: "REST APIs",
       description: "RESTful Application Programming Interfaces act as standard data gates. Learn path parameters design, HTTP request verbs (GET, POST, PUT, DELETE), standard response status codes, header configurations, JSON payload exchanges, and API documentation tools.",
       links: [{ title: "REST API Tutorial", url: "https://restfulapi.net/" }],
@@ -81,6 +87,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-react",
       kind: "subtopic",
+      parentId: "frontend-framework",
       label: "React",
       description: "React is a component-driven user interface library utilizing a Virtual DOM. Master component state, hook parameters (useState, useEffect, useMemo), virtual tree comparisons, custom hooks design, routing, performance optimization, and context state APIs.",
       links: [{ title: "React Website", url: "https://react.dev/" }],
@@ -89,6 +96,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-vue",
       kind: "subtopic",
+      parentId: "frontend-framework",
       label: "Vue",
       description: "Vue is an approachable, reactive frontend framework. Study the Composition API (ref, reactive, computed), template syntax compilation, directives, component custom events, transitions, Pinia state stores, and Vite integration setups.",
       links: [{ title: "Vue.js Website", url: "https://vuejs.org/" }],
@@ -97,6 +105,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-angular",
       kind: "subtopic",
+      parentId: "frontend-framework",
       label: "Angular",
       description: "Angular is a comprehensive, TypeScript-based web framework. Learn modular structures, component styling templates, service classes injector rules, reactive forms controls, RxJS pipelines operations, client-side routing, and HTTP client modules.",
       links: [{ title: "Angular Website", url: "https://angular.dev/" }],
@@ -114,6 +123,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-express",
       kind: "subtopic",
+      parentId: "backend-framework",
       label: "Express",
       description: "Express is a minimal and flexible Node.js web application framework. Master request-response routing middleware chains, parsing body objects, routing configurations, error handling blocks, database connectors integration, and custom security headers setup.",
       links: [{ title: "Express Docs", url: "https://expressjs.com/" }],
@@ -122,6 +132,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-django",
       kind: "subtopic",
+      parentId: "backend-framework",
       label: "Django",
       description: "Django is a high-level Python web framework enforcing rapid developer output. Explore its Object-Relational Mapper (ORM), built-in admin dashboard panels, user authentication templates, security configurations, dynamic routing structures, and REST framework integration.",
       links: [{ title: "Django Project Website", url: "https://www.djangoproject.com/" }],
@@ -130,6 +141,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-springboot",
       kind: "subtopic",
+      parentId: "backend-framework",
       label: "Spring Boot",
       description: "Spring Boot simplifies Java enterprise server configurations. Study dependency injection models, JPA database operations, REST controller endpoints routing, security filters configurations, microservices integration, and Maven/Gradle packaging files.",
       links: [{ title: "Spring Boot Docs", url: "https://spring.io/projects/spring-boot" }],
@@ -147,6 +159,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-docker",
       kind: "subtopic",
+      parentId: "deployment",
       label: "Docker",
       description: "Docker isolates full stack application code, library packages, and environmental configuration runtimes. Master writing multi-stage Dockerfiles, managing container ports, volumes data persistence, bridge networking, and compose multi-container environments.",
       links: [{ title: "Docker Website", url: "https://www.docker.com/" }],
@@ -155,6 +168,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-cicd",
       kind: "subtopic",
+      parentId: "deployment",
       label: "CI/CD",
       description: "Continuous Integration and Continuous Deployment processes automate testing and deployment steps. Configure testing stages on Git triggers, docker image packaging, and deployment routines targeting production servers automatically.",
       links: [{ title: "GitHub Actions Docs", url: "https://docs.github.com/en/actions" }],
@@ -163,6 +177,7 @@ export const fullStackTaskflow: TaskflowContent = {
     {
       id: "fs-cloud-hosting",
       kind: "subtopic",
+      parentId: "deployment",
       label: "Cloud Hosting",
       description: "Cloud hosting delivers computing instances to serve application payloads. Compare platforms like AWS, GCP, Vercel, and render scripts. Master DNS settings, SSL certificate configuration, server load scaling, and environment variable parameters.",
       links: [{ title: "Vercel Website", url: "https://vercel.com/" }],

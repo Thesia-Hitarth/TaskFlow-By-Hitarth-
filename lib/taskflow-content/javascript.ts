@@ -15,6 +15,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-syntax-variables",
       kind: "subtopic",
+      parentId: "js-basics",
       label: "Syntax & Variables",
       description: "Declare variables and control lexical scopes inside scripts. Master variable declarations using modern const and let scoping flags, understand hoisting parameters, legacy var variables, and naming protocols.",
       links: [{ title: "MDN JS Grammar", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types" }],
@@ -23,6 +24,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-data-types",
       kind: "subtopic",
+      parentId: "js-basics",
       label: "Data Types",
       description: "Data types organize script variables categories. Study primitive types (String, Number, Boolean, Null, Undefined, Symbol, BigInt) and differentiate them from reference structures like objects and arrays.",
       links: [{ title: "MDN JS Data Structures", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures" }],
@@ -31,6 +33,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-functions",
       kind: "subtopic",
+      parentId: "js-basics",
       label: "Functions",
       description: "Functions write reusable blocks of logic code. Study basic function declarations, dynamic parameters handling, return outputs configurations, arrow functions syntax, lexical context binds, and default parameters.",
       links: [{ title: "MDN JS Functions Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions" }],
@@ -48,6 +51,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-loops",
       kind: "subtopic",
+      parentId: "js-control-flow",
       label: "Loops",
       description: "Loops repeat execution code blocks while conditions match. Study classic for loops, while iterators, modern list traversals (for...of, for...in), array helpers mapping, and controlling loop steps.",
       links: [{ title: "MDN JS Loops Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration" }],
@@ -56,6 +60,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-conditionals",
       kind: "subtopic",
+      parentId: "js-control-flow",
       label: "Conditionals",
       description: "Conditionals select logical paths based on Boolean checks. Master if/else statement blocks, nested checks, ternary evaluation formulas, logical short-circuiting operators, and clean switch cases structures.",
       links: [{ title: "MDN JS Control Flow", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling" }],
@@ -64,6 +69,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-error-handling",
       kind: "subtopic",
+      parentId: "js-control-flow",
       label: "Error Handling",
       description: "Error handling prevents runtime script crashes by capturing exceptions. Study using try/catch/finally blocks, throwing custom Error objects, and managing asynchronous exceptions.",
       links: [{ title: "MDN JS Error Reference", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error" }],
@@ -81,6 +87,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-closures",
       kind: "subtopic",
+      parentId: "js-advanced-concepts",
       label: "Closures",
       description: "Closures capture outer functional scopes variables inside nested execution scopes. Study lexical bindings, creating private variables parameters, custom state modules, and handling memory leaks.",
       links: [{ title: "MDN JS Closures Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures" }],
@@ -89,6 +96,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-prototypes",
       kind: "subtopic",
+      parentId: "js-advanced-concepts",
       label: "Prototypes",
       description: "Prototypes delegate classes behaviors across parent templates. Learn prototype inheritance chains, object properties mapping, class structures compiles, and binding context methods.",
       links: [{ title: "MDN JS Prototypes Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain" }],
@@ -97,6 +105,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-async-await",
       kind: "subtopic",
+      parentId: "js-advanced-concepts",
       label: "Async/Await",
       description: "Async/Await writes clean, sequential asynchronous loops built on Promises. Learn Promise state maps, chaining resolve callbacks, using await keywords inside functions, and catching async errors.",
       links: [{ title: "MDN JS Async/Await Guide", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous" }],
@@ -114,6 +123,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-dom",
       kind: "subtopic",
+      parentId: "js-browser-apis",
       label: "DOM",
       description: "The Document Object Model (DOM) is the interactive node tree of web documents. Master selecting element nodes, altering styles attributes dynamically, listening to events, and inserting custom components.",
       links: [{ title: "MDN Document Object Model", url: "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model" }],
@@ -122,6 +132,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-fetch-api",
       kind: "subtopic",
+      parentId: "js-browser-apis",
       label: "Fetch API",
       description: "The Fetch API queries backend servers asynchronously. Learn creating request objects, setting HTTP header parameters, parsing JSON response bodies, and catching network failure states.",
       links: [{ title: "MDN Fetch API Guide", url: "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" }],
@@ -130,6 +141,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-localstorage",
       kind: "subtopic",
+      parentId: "js-browser-apis",
       label: "LocalStorage",
       description: "LocalStorage persists stringified data objects across browser reloads. Learn reading and writing key-value data mappings, storage size constraints, and differentiating sessionStorage.",
       links: [{ title: "MDN Window LocalStorage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" }],
@@ -147,6 +159,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-es-modules",
       kind: "subtopic",
+      parentId: "js-modern-js",
       label: "ES Modules",
       description: "ES Modules export and import script resources across separate documents files. Learn namespace scoping rules, default exports, relative path imports, and dynamic scripts loading.",
       links: [{ title: "MDN JS Modules Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules" }],
@@ -155,6 +168,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-destructuring",
       kind: "subtopic",
+      parentId: "js-modern-js",
       label: "Destructuring",
       description: "Destructuring extracts array lists indexes or object properties into single variable flags. Master parameter destructuring, default value fallbacks, and handling nested objects properties extraction.",
       links: [{ title: "MDN JS Destructuring", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment" }],
@@ -163,6 +177,7 @@ export const javascriptTaskflow: TaskflowContent = {
     {
       id: "js-spread-rest",
       kind: "subtopic",
+      parentId: "js-modern-js",
       label: "Spread/Rest",
       description: "Spread and Rest operators copy data structures and aggregate argument variables. Learn array/object copying loops, merge structures configurations, and parsing dynamic arguments lists using the dot-dot-dot syntax.",
       links: [{ title: "MDN Spread Syntax Reference", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax" }],

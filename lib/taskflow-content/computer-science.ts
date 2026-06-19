@@ -15,6 +15,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-binary-number-systems",
       kind: "subtopic",
+      parentId: "cs-foundations",
       label: "Binary & Number Systems",
       description: "Binary, octal, and hexadecimal systems represent integers inside computer registers. Learn bitwise operations, converting number bases (decimal to binary/hex), and signed integer representations.",
       links: [{ title: "Khan Academy: Binary Numbers", url: "https://www.khanacademy.org/computing/computers-and-internet/x1a2d56a7:digital-information/x1a2d56a7:binary-numbers/a:bits-and-binary" }],
@@ -23,6 +24,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-logic-gates",
       kind: "subtopic",
+      parentId: "cs-foundations",
       label: "Logic Gates",
       description: "Logic gates represent Boolean operations physically using electrical signals. Study fundamental gates (AND, OR, NOT, XOR), universal logic gates (NAND, NOR), and logic minimization formulas.",
       links: [{ title: "Logic Gates Guide", url: "https://www.sciencedirect.com/topics/engineering/logic-gates" }],
@@ -31,6 +33,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-computer-architecture",
       kind: "subtopic",
+      parentId: "cs-foundations",
       label: "Computer Architecture",
       description: "Computer architecture specifies how instruction sets are executed. Study CPU instruction execution cycles (fetch, decode, execute), register allocations, caches hierarchies, and memory controllers.",
       links: [{ title: "CPU Architecture Overview", url: "https://www.sciencedirect.com/topics/computer-science/computer-architecture" }],
@@ -48,6 +51,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-arrays-linked-lists",
       kind: "subtopic",
+      parentId: "cs-data-structures",
       label: "Arrays & Linked Lists",
       description: "Arrays store contiguous blocks of memory, while linked lists allocate memory dynamically using pointer links. Study time complexity differences, memory allocations, and list traversals.",
       links: [{ title: "GeeksforGeeks Data Structures Guide", url: "https://www.geeksforgeeks.org/data-structures/" }],
@@ -56,6 +60,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-stacks-queues",
       kind: "subtopic",
+      parentId: "cs-data-structures",
       label: "Stacks & Queues",
       description: "Stacks manage LIFO (Last In First Out) buffers, while queues organize FIFO (First In First Out) pipelines. Learn stack stack overflows, queue buffers, priority queues, and double-ended queues.",
       links: [{ title: "GeeksforGeeks: Stack and Queue", url: "https://www.geeksforgeeks.org/stack-data-structure/" }],
@@ -64,6 +69,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-trees-graphs",
       kind: "subtopic",
+      parentId: "cs-data-structures",
       label: "Trees & Graphs",
       description: "Trees manage hierarchical data layouts, while graphs link arbitrary nodes. Learn Binary Search Trees (BST), graph traversals (Breadth-First Search, Depth-First Search), and pathfinding algorithms.",
       links: [{ title: "GeeksforGeeks: Graph Data Structure", url: "https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/" }],
@@ -81,6 +87,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-sorting-algorithms",
       kind: "subtopic",
+      parentId: "cs-algorithms",
       label: "Sorting Algorithms",
       description: "Sorting algorithms re-order elements lists. Study divide-and-conquer strategies (Quick Sort, Merge Sort), quadratic algorithms (Bubble Sort, Insertion Sort), and heapsort optimizations.",
       links: [{ title: "GeeksforGeeks: Sorting Algorithms", url: "https://www.geeksforgeeks.org/sorting-algorithms/" }],
@@ -89,6 +96,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-searching-algorithms",
       kind: "subtopic",
+      parentId: "cs-algorithms",
       label: "Searching Algorithms",
       description: "Searching algorithms scan lists for target elements. Study logarithmic searches on sorted arrays (Binary Search), linear checks, hash collisions resolutions, and index lookups.",
       links: [{ title: "GeeksforGeeks: Searching Algorithms", url: "https://www.geeksforgeeks.org/searching-algorithms/" }],
@@ -97,6 +105,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-recursion",
       kind: "subtopic",
+      parentId: "cs-algorithms",
       label: "Recursion",
       description: "Recursion resolves problems by making self-referential function calls. Master base-case definition rules, managing call stacks size, tracking recursive trees, and memoization techniques.",
       links: [{ title: "GeeksforGeeks: Recursion", url: "https://www.geeksforgeeks.org/introduction-to-recursion-data-structure-and-algorithm-tutorials/" }],
@@ -114,6 +123,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-big-o-notation",
       kind: "subtopic",
+      parentId: "cs-complexity",
       label: "Big-O Notation",
       description: "Big-O notation describes upper bounds on code growth rates mathematically. Master log time bounds (O(log n)), linear bounds (O(n)), quadratic loops (O(n²)), and exponential limits.",
       links: [{ title: "MIT Big O Guide", url: "https://web.mit.edu/16.070/www/lecture/big_o.pdf" }],
@@ -122,6 +132,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-time-space-complexity",
       kind: "subtopic",
+      parentId: "cs-complexity",
       label: "Time vs Space Complexity",
       description: "Time complexity measures operations counts, while space complexity tracks memory utilization. Learn algorithm optimization trade-offs, garbage collection behaviors, and memory footprint calculations.",
       links: [{ title: "GeeksforGeeks: Analysis of Algorithms", url: "https://www.geeksforgeeks.org/analysis-of-algorithms-set-1-asymptotic-analysis/" }],
@@ -130,6 +141,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-algorithm-analysis",
       kind: "subtopic",
+      parentId: "cs-complexity",
       label: "Algorithm Analysis",
       description: "Algorithm analysis evaluates resource consumption in best, average, and worst cases. Learn counting operations loops, analyzing recurrences, and proving algorithm limits.",
       links: [{ title: "Berkeley: Algorithmic Complexity", url: "https://inst.eecs.berkeley.edu/~cs61bl/su15/materials/lab/lab13.html" }],
@@ -147,6 +159,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-operating-systems-basics",
       kind: "subtopic",
+      parentId: "cs-theory",
       label: "Operating Systems Basics",
       description: "OS software manages hardware resources. Learn virtual memory pagination, CPU process scheduling, thread synchronization parameters, race conditions mitigations, and file system descriptors.",
       links: [{ title: "OS Three Easy Pieces", url: "https://pages.cs.wisc.edu/~remzi/OSTEP/" }],
@@ -155,6 +168,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-databases-theory",
       kind: "subtopic",
+      parentId: "cs-theory",
       label: "Databases Theory",
       description: "Database theory details structured data designs. Study ACID transaction guarantees, schema normal forms, lock settings, index optimizations, and query compilation stages.",
       links: [{ title: "Stanford Database Course", url: "https://online.stanford.edu/courses/soe-ydatabases-databases" }],
@@ -163,6 +177,7 @@ export const computerScienceTaskflow: TaskflowContent = {
     {
       id: "cs-compilers-basics",
       kind: "subtopic",
+      parentId: "cs-theory",
       label: "Compilers Basics",
       description: "Compilers translate human-readable source code into machine instructions. Study lexical parsing tokens, constructing Abstract Syntax Trees (ASTs), code optimization routines, and code generation.",
       links: [{ title: "Stanford Compiler Class Notes", url: "https://web.stanford.edu/class/archive/cs/cs143/cs143.1128/" }],

@@ -15,6 +15,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-select",
       kind: "subtopic",
+      parentId: "sql-basics",
       label: "SELECT Statements",
       description: "SELECT statements project specific table fields or computed values. Learn querying columns lists, renaming outputs via aliases (AS), removing duplicates via DISTINCT, and performing basic math calculations.",
       links: [{ title: "PostgreSQL SELECT Docs", url: "https://www.postgresql.org/docs/current/sql-select.html" }],
@@ -23,6 +24,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-where-filtering",
       kind: "subtopic",
+      parentId: "sql-basics",
       label: "WHERE & Filtering",
       description: "WHERE clauses filter records matching logical criteria. Master using comparison operators, combining conditions (AND, OR, NOT), wildcard string searches (LIKE, ILIKE), range queries (BETWEEN), and checking null options.",
       links: [{ title: "PostgreSQL WHERE Clause", url: "https://www.postgresql.org/docs/current/queries-tableexpressions.html#QUERIES-WHERE" }],
@@ -31,6 +33,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-sorting-limiting",
       kind: "subtopic",
+      parentId: "sql-basics",
       label: "Sorting & Limiting",
       description: "ORDER BY and LIMIT clauses organize and slice result sets. Learn sorting records ascending/descending, sorting by multiple columns, limiting return rows count, and configuring offset parameters (OFFSET) for page pagination.",
       links: [{ title: "PostgreSQL LIMIT and OFFSET", url: "https://www.postgresql.org/docs/current/queries-limit.html" }],
@@ -48,6 +51,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-inner-outer-joins",
       kind: "subtopic",
+      parentId: "sql-joins-relationships",
       label: "Inner/Outer Joins",
       description: "Joins combine fields from multiple tables based on relational fields. Master INNER JOIN intersection matches, LEFT/RIGHT outer joins, FULL outer joins, self joins, and cross joins mappings.",
       links: [{ title: "PostgreSQL Joins Guide", url: "https://www.postgresql.org/docs/current/tutorial-join.html" }],
@@ -56,6 +60,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-foreign-keys",
       kind: "subtopic",
+      parentId: "sql-joins-relationships",
       label: "Foreign Keys",
       description: "Foreign keys validate referential integrity between tables. Study primary-to-foreign mappings, setting delete cascades (ON DELETE CASCADE), restrict constraints, and maintaining data synchronization.",
       links: [{ title: "PostgreSQL Foreign Keys", url: "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK" }],
@@ -64,6 +69,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-subqueries",
       kind: "subtopic",
+      parentId: "sql-joins-relationships",
       label: "Subqueries",
       description: "Subqueries are queries nested inside SELECT, FROM, or WHERE loops. Master using subqueries within comparison checks, checking lists (IN, ANY, ALL), using correlated subqueries, and checking existence (EXISTS).",
       links: [{ title: "PostgreSQL Subqueries", url: "https://www.postgresql.org/docs/current/functions-subquery.html" }],
@@ -81,6 +87,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-groupby",
       kind: "subtopic",
+      parentId: "sql-aggregation",
       label: "GROUP BY",
       description: "GROUP BY partitions query records into groups matching shared column values. Study grouping keys, sorting grouped outputs, grouping by multiple columns, and handling database schema rules.",
       links: [{ title: "PostgreSQL GROUP BY Clause", url: "https://www.postgresql.org/docs/current/queries-tableexpressions.html#QUERIES-GROUP" }],
@@ -89,6 +96,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-aggregate-functions",
       kind: "subtopic",
+      parentId: "sql-aggregation",
       label: "Aggregate Functions",
       description: "Aggregate functions compute single summary values from groups of table records. Master calculating sums (SUM), averages (AVG), records counts (COUNT), range bounds (MIN, MAX), and handling null fields.",
       links: [{ title: "PostgreSQL Aggregate Functions", url: "https://www.postgresql.org/docs/current/functions-aggregate.html" }],
@@ -97,6 +105,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-having",
       kind: "subtopic",
+      parentId: "sql-aggregation",
       label: "HAVING",
       description: "HAVING clauses filter aggregated results after GROUP BY calculations have completed. Learn difference between pre-filtering rows (WHERE) and post-filtering groups (HAVING) matching conditions.",
       links: [{ title: "PostgreSQL HAVING Clause", url: "https://www.postgresql.org/docs/current/queries-tableexpressions.html#QUERIES-HAVING" }],
@@ -114,6 +123,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-indexes",
       kind: "subtopic",
+      parentId: "sql-advanced",
       label: "Indexes",
       description: "Indexes accelerate query lookups on table rows. Study index creation (CREATE INDEX), B-Tree structures, unique index properties, multi-column indexes, and examining query execution plans (EXPLAIN).",
       links: [{ title: "PostgreSQL Indexes Guide", url: "https://www.postgresql.org/docs/current/indexes.html" }],
@@ -122,6 +132,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-views",
       kind: "subtopic",
+      parentId: "sql-advanced",
       label: "Views",
       description: "Views are virtual schemas saved from query outputs. Learn creating view definitions, writing queries referencing views, managing materialized views, and updating schema records.",
       links: [{ title: "PostgreSQL CREATE VIEW", url: "https://www.postgresql.org/docs/current/sql-createview.html" }],
@@ -130,6 +141,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-transactions",
       kind: "subtopic",
+      parentId: "sql-advanced",
       label: "Transactions",
       description: "Transactions run groups of updates atomically to satisfy ACID principles. Master transaction commands (BEGIN, COMMIT, ROLLBACK), setting savepoints, and managing isolation levels.",
       links: [{ title: "PostgreSQL Transactions", url: "https://www.postgresql.org/docs/current/tutorial-transactions.html" }],
@@ -147,6 +159,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-postgresql",
       kind: "subtopic",
+      parentId: "sql-database-systems",
       label: "PostgreSQL",
       description: "PostgreSQL is an advanced, highly reliable open-source object-relational database. Learn its compliance with standard SQL, support for JSON data types, custom triggers execution, and replication models.",
       links: [{ title: "PostgreSQL Documentation", url: "https://www.postgresql.org/docs/" }],
@@ -155,6 +168,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-mysql",
       kind: "subtopic",
+      parentId: "sql-database-systems",
       label: "MySQL",
       description: "MySQL is a popular open-source relational database management system. Study its storage engines (InnoDB, MyISAM), replication configurations, indexing strategies, and configurations within web environments.",
       links: [{ title: "MySQL Reference Manual", url: "https://dev.mysql.com/doc/" }],
@@ -163,6 +177,7 @@ export const sqlTaskflow: TaskflowContent = {
     {
       id: "sql-sqlite",
       kind: "subtopic",
+      parentId: "sql-database-systems",
       label: "SQLite",
       description: "SQLite is a lightweight, serverless database engine contained within a single file. Learn its zero-configuration setup, local storage usage on mobile and testing environments, and limitations.",
       links: [{ title: "SQLite Documentation Portal", url: "https://www.sqlite.org/docs.html" }],

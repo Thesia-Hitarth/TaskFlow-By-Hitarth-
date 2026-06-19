@@ -15,6 +15,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-jsx",
       kind: "subtopic",
+      parentId: "react-fundamentals",
       label: "JSX",
       description: "JSX embeds XML markup tags inside JavaScript code. Learn tag compilation mechanisms, mapping properties variables, expression interpolation rules, list keys constraints, and visual fragment tags.",
       links: [{ title: "React Docs: Writing Markup with JSX", url: "https://react.dev/learn/writing-markup-with-jsx" }],
@@ -23,6 +24,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-components",
       kind: "subtopic",
+      parentId: "react-fundamentals",
       label: "Components",
       description: "Components are reusable functional units that output view trees. Study component structure design, functional definitions rules, handling lifecycle stages, nesting child modules, and modular exports.",
       links: [{ title: "React Docs: Your First Component", url: "https://react.dev/learn/your-first-component" }],
@@ -31,6 +33,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-props-state",
       kind: "subtopic",
+      parentId: "react-fundamentals",
       label: "Props & State",
       description: "Props pass immutable attributes down, while State tracks mutable local values. Master rendering loops triggers, immutable state guidelines, state hoisting, and props types check conventions.",
       links: [{ title: "React Docs: State a Component's Memory", url: "https://react.dev/learn/state-a-components-memory" }],
@@ -48,6 +51,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-usestate",
       kind: "subtopic",
+      parentId: "react-hooks",
       label: "useState",
       description: "useState declares reactive variable fields inside components. Study setter dispatcher functions, asynchronous state updates schedules, lazy state initializers, and modifying complex objects.",
       links: [{ title: "React Docs: useState Hook Reference", url: "https://react.dev/reference/react/useState" }],
@@ -56,6 +60,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-useeffect",
       kind: "subtopic",
+      parentId: "react-hooks",
       label: "useEffect",
       description: "useEffect coordinates external synchronization events. Learn dependency arrays configurations, execution sequences, cleanup functions runs, API fetches triggers, and preventing infinite loop states.",
       links: [{ title: "React Docs: Synchronizing with Effects", url: "https://react.dev/learn/synchronizing-with-effects" }],
@@ -64,6 +69,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-usecontext",
       kind: "subtopic",
+      parentId: "react-hooks",
       label: "useContext",
       description: "useContext reads shared values from provider trees. Learn context initialization, wrapping parent providers, triggering updates on consumers, and building custom consumer hooks.",
       links: [{ title: "React Docs: useContext Hook Reference", url: "https://react.dev/reference/react/useContext" }],
@@ -81,6 +87,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-router",
       kind: "subtopic",
+      parentId: "react-routing-state",
       label: "React Router",
       description: "React Router links browser address routes to component views. Study routing paths layout, nested routing trees, parameter maps reading (useParams), dynamic redirects, and router hooks.",
       links: [{ title: "React Router Website", url: "https://reactrouter.com/" }],
@@ -89,6 +96,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-state-redux-zustand",
       kind: "subtopic",
+      parentId: "react-routing-state",
       label: "Redux/Zustand",
       description: "Redux and Zustand manage global store records. Study action dispatchers patterns, reducer state updates, store state selectors, and debugging state updates using devtools.",
       links: [{ title: "Zustand Documentation", url: "https://zustand.docs.pmnd.rs/" }],
@@ -97,6 +105,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-context-api",
       kind: "subtopic",
+      parentId: "react-routing-state",
       label: "Context API",
       description: "The Context API distributes values globally inside React component hierarchies. Learn provider configurations, consumer hook configurations, and optimizing rendering updates.",
       links: [{ title: "React Docs: Passing Data Deeply with Context", url: "https://react.dev/learn/passing-data-deeply-with-context" }],
@@ -114,6 +123,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-memoization",
       kind: "subtopic",
+      parentId: "react-performance",
       label: "Memoization",
       description: "Memoization caches computed parameters to avoid redundant rendering runs. Learn React.memo configurations, useMemo calculations caches, and useCallback reference caches.",
       links: [{ title: "React Docs: memo Reference", url: "https://react.dev/reference/react/memo" }],
@@ -122,6 +132,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-code-splitting",
       kind: "subtopic",
+      parentId: "react-performance",
       label: "Code Splitting",
       description: "Code splitting divides client bundles into smaller assets. Study dynamic bundling configurations, route-based lazy imports, and reducing initial load latencies.",
       links: [{ title: "React Docs: Code Splitting Guide", url: "https://legacy.reactjs.org/docs/code-splitting.html" }],
@@ -130,6 +141,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-lazy",
       kind: "subtopic",
+      parentId: "react-performance",
       label: "React.lazy",
       description: "React.lazy imports components dynamically at runtime. Master lazy import declarations, wrapping components inside Suspense containers, and fallback layout loading indicators.",
       links: [{ title: "React Docs: lazy Reference", url: "https://react.dev/reference/react/lazy" }],
@@ -147,6 +159,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-testing",
       kind: "subtopic",
+      parentId: "react-ecosystem",
       label: "Testing (RTL)",
       description: "React Testing Library verifies component behaviors by matching user interactions. Learn queries selections, firing events, asserting DOM states, and mocking fetch calls.",
       links: [{ title: "React Testing Library Docs", url: "https://testing-library.com/docs/react-testing-library/intro/" }],
@@ -155,6 +168,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-nextjs",
       kind: "subtopic",
+      parentId: "react-ecosystem",
       label: "Next.js",
       description: "Next.js is a full-stack React framework. Master directory app routers setups, server component rendering, routing middleware parameters, data caching strategies, and static site generations.",
       links: [{ title: "Next.js Documentation", url: "https://nextjs.org/docs" }],
@@ -163,6 +177,7 @@ export const reactTaskflow: TaskflowContent = {
     {
       id: "react-component-libraries",
       kind: "subtopic",
+      parentId: "react-ecosystem",
       label: "Component Libraries",
       description: "Component libraries provide accessible, pre-styled interface widgets. Explore Radix UI primitives, Tailwind UI setups, UI variables configurations, and responsive theme parameters.",
       links: [{ title: "Radix UI Primitives", url: "https://www.radix-ui.com/" }],

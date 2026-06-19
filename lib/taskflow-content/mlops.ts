@@ -15,6 +15,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-python",
       kind: "subtopic",
+      parentId: "mlops-foundations",
       label: "Python",
       description: "Python is the core scripting language of machine learning infrastructure. Study dynamic scripting, package packaging pipelines, virtual environments isolation, and data analysis packages (NumPy, Pandas).",
       links: [{ title: "Python Documentation", url: "https://docs.python.org/3/" }],
@@ -23,6 +24,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-lifecycle",
       kind: "subtopic",
+      parentId: "mlops-foundations",
       label: "ML Lifecycle",
       description: "The machine learning lifecycle tracks model versions from design to feedback loops. Learn validation dataset design, hyperparameter optimization steps, feature creation, and data compliance standards.",
       links: [{ title: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course" }],
@@ -31,6 +33,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-git",
       kind: "subtopic",
+      parentId: "mlops-foundations",
       label: "Git",
       description: "Git tracks model definitions and code base repository histories. Learn branch collaboration, pull request flows, code reviews, and resolving conflicts to build collaborative setups.",
       links: [{ title: "Git Documentation", url: "https://git-scm.com/doc" }],
@@ -48,6 +51,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-mlflow",
       kind: "subtopic",
+      parentId: "mlops-experiment-tracking",
       label: "MLflow",
       description: "MLflow manages experiments logs and model packaging configurations. Master logging hyperparameter inputs, tracking metric parameters, registering models, and serving artifact bundles.",
       links: [{ title: "MLflow Documentation", url: "https://mlflow.org/docs/latest/index.html" }],
@@ -56,6 +60,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-wandb",
       kind: "subtopic",
+      parentId: "mlops-experiment-tracking",
       label: "Weights & Biases",
       description: "Weights & Biases visualizes training runs and aggregates metrics dashboards. Learn to log neural gradients, compare training parameters, generate visualizations, and version assets.",
       links: [{ title: "Weights & Biases Docs", url: "https://docs.wandb.ai/" }],
@@ -64,6 +69,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-dvc",
       kind: "subtopic",
+      parentId: "mlops-experiment-tracking",
       label: "DVC",
       description: "Data Version Control (DVC) versions datasets and model binaries. Master hash index mappings, caching large datasets, tracking storage repositories (S3, GCP), and orchestrating data runs.",
       links: [{ title: "DVC Documentation", url: "https://dvc.org/doc" }],
@@ -81,6 +87,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-airflow",
       kind: "subtopic",
+      parentId: "mlops-pipelines",
       label: "Airflow",
       description: "Apache Airflow schedules complex data workflows using Directed Acyclic Graphs (DAGs). Learn task relations mapping, scheduling options, tracking task logs, and configuring worker task managers.",
       links: [{ title: "Apache Airflow Docs", url: "https://airflow.apache.org/docs/" }],
@@ -89,6 +96,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-kubeflow",
       kind: "subtopic",
+      parentId: "mlops-pipelines",
       label: "Kubeflow",
       description: "Kubeflow orchestrates containerized machine learning pipelines on top of Kubernetes. Master designing pipeline tasks, managing storage mounts, and tracking execution runs metrics.",
       links: [{ title: "Kubeflow Documentation", url: "https://www.kubeflow.org/docs/" }],
@@ -97,6 +105,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-feature-stores",
       kind: "subtopic",
+      parentId: "mlops-pipelines",
       label: "Feature Stores",
       description: "Feature stores distribute features consistently across training and real-time inference layers. Study feature ingestion, low-latency key lookups, and tracking features definitions using Feast.",
       links: [{ title: "Feast Feature Store", url: "https://docs.feast.dev/" }],
@@ -114,6 +123,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-docker",
       kind: "subtopic",
+      parentId: "mlops-deployment",
       label: "Docker",
       description: "Docker packages training runtimes and web dependencies into container packages. Master multi-stage Dockerfiles writing, port configuration, container volumes, and Compose setups.",
       links: [{ title: "Docker Docs", url: "https://docs.docker.com/" }],
@@ -122,6 +132,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-kubernetes",
       kind: "subtopic",
+      parentId: "mlops-deployment",
       label: "Kubernetes",
       description: "Kubernetes automates container operations. Learn pod scheduling, configuring ingress endpoints, managing scaling policies, distributing secret variables, and auditing cluster logs.",
       links: [{ title: "Kubernetes Documentation", url: "https://kubernetes.io/docs/home/" }],
@@ -130,6 +141,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-model-serving",
       kind: "subtopic",
+      parentId: "mlops-deployment",
       label: "Model Serving",
       description: "Model serving platforms expose model predictions via endpoints. Study inference systems (Triton, Seldon, FastAPI), load optimization, batch requests, and scaling predictions.",
       links: [{ title: "Triton Inference Server", url: "https://github.com/triton-inference-server/server" }],
@@ -147,6 +159,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-drift-detection",
       kind: "subtopic",
+      parentId: "mlops-monitoring",
       label: "Model Drift Detection",
       description: "Model drift degrades prediction accuracy as real-world distributions shift. Learn data drift verification, tracking concept shifts, logging input metrics, and setting alert triggers.",
       links: [{ title: "Evidently AI Docs", url: "https://docs.evidentlyai.com/" }],
@@ -155,6 +168,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-prometheus",
       kind: "subtopic",
+      parentId: "mlops-monitoring",
       label: "Prometheus",
       description: "Prometheus collects container system metrics. Master data scraping, configuring alert metrics rules, monitoring latency metrics, and building Grafana analytics dashboard grids.",
       links: [{ title: "Prometheus Documentation", url: "https://prometheus.io/docs/introduction/overview/" }],
@@ -163,6 +177,7 @@ export const mlopsTaskflow: TaskflowContent = {
     {
       id: "mlops-logging",
       kind: "subtopic",
+      parentId: "mlops-monitoring",
       label: "Logging",
       description: "Logging aggregates execution traces to debug runtime failures. Study log rotation settings, log aggregation formats, trace correlation, and handling debug outputs safely.",
       links: [{ title: "Python Logging Library", url: "https://docs.python.org/3/library/logging.html" }],

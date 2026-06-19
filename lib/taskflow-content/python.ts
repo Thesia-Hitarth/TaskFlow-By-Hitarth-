@@ -15,6 +15,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-syntax-variables",
       kind: "subtopic",
+      parentId: "py-basics",
       label: "Syntax & Variables",
       description: "Syntax controls variables assignments and interpreter calculations. Study whitespace indentation constraints, commenting models, dynamic variables assignment, and standard identifier conventions.",
       links: [{ title: "Python Tutorial: Informal Introduction", url: "https://docs.python.org/3/tutorial/introduction.html" }],
@@ -23,6 +24,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-data-types",
       kind: "subtopic",
+      parentId: "py-basics",
       label: "Data Types",
       description: "Data types organize data values inside running scripts. Learn primitive types (int, float, bool, str) and built-in sequences like lists, dictionaries, tuples, and sets.",
       links: [{ title: "Python Standard Types", url: "https://docs.python.org/3/library/stdtypes.html" }],
@@ -31,6 +33,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-control-flow",
       kind: "subtopic",
+      parentId: "py-basics",
       label: "Control Flow",
       description: "Control flow directs logical branches dynamically. Study conditional triggers (if, elif, else), loop checks (for, while), loop control variables (break, continue), and range functions.",
       links: [{ title: "Python Tutorial: Control Flow Tools", url: "https://docs.python.org/3/tutorial/controlflow.html" }],
@@ -48,6 +51,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-functions",
       kind: "subtopic",
+      parentId: "py-functions-oop",
       label: "Functions",
       description: "Functions encapsulate logical routines. Learn function definitions (def), variable scopes, returning multiple outputs, argument parsing configurations (*args, **kwargs), and lambda expressions.",
       links: [{ title: "Python Tutorial: Defining Functions", url: "https://docs.python.org/3/tutorial/controlflow.html#defining-functions" }],
@@ -56,6 +60,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-classes",
       kind: "subtopic",
+      parentId: "py-functions-oop",
       label: "Classes",
       description: "Classes structure objects blueprints for object-oriented designs. Learn Initializer configurations (__init__), class inheritance, instance methods, properties encapsulation, and magic methods.",
       links: [{ title: "Python Tutorial: Classes", url: "https://docs.python.org/3/tutorial/classes.html" }],
@@ -64,6 +69,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-modules-packages",
       kind: "subtopic",
+      parentId: "py-functions-oop",
       label: "Modules & Packages",
       description: "Modules separate namespaces across separate files. Study importing package directories, using pip wrappers, configuring paths, and formatting initialization scripts.",
       links: [{ title: "Python Tutorial: Modules", url: "https://docs.python.org/3/tutorial/modules.html" }],
@@ -81,6 +87,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-file-io",
       kind: "subtopic",
+      parentId: "py-data-handling",
       label: "File I/O",
       description: "File I/O processes disk files streams. Learn file open modes (r, w, a), reading lines, buffering large files, and using context managers (with statements) to release file handles.",
       links: [{ title: "Python Tutorial: Reading and Writing Files", url: "https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files" }],
@@ -89,6 +96,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-json",
       kind: "subtopic",
+      parentId: "py-data-handling",
       label: "JSON",
       description: "JSON APIs parse and format web data packages. Study converting dict structures to JSON strings (dumps), writing files (dump), parsing streams (load), and handling custom classes serialization.",
       links: [{ title: "Python JSON Library", url: "https://docs.python.org/3/library/json.html" }],
@@ -97,6 +105,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-virtual-environments",
       kind: "subtopic",
+      parentId: "py-data-handling",
       label: "Virtual Environments",
       description: "Virtual environments isolate package dependencies versions. Study using venv wrappers to isolate runtimes, installing scripts via pip, and exporting packages lists.",
       links: [{ title: "Python Tutorial: Virtual Environments", url: "https://docs.python.org/3/tutorial/venv.html" }],
@@ -114,6 +123,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-numpy",
       kind: "subtopic",
+      parentId: "py-libraries",
       label: "NumPy",
       description: "NumPy processes high-performance multidimensional arrays. Master matrix calculations commands, broadcasting rules, vector operations, indexing arrays, and numerical functions.",
       links: [{ title: "NumPy Documentation Guide", url: "https://numpy.org/doc/stable/" }],
@@ -122,6 +132,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-pandas",
       kind: "subtopic",
+      parentId: "py-libraries",
       label: "Pandas",
       description: "Pandas cleans and reorganizes table data. Learn DataFrame configurations, filtering data rows, grouping columns, merging table sheets, and handling missing indexes.",
       links: [{ title: "Pandas Getting Started Guides", url: "https://pandas.pydata.org/docs/getting_started/index.html" }],
@@ -130,6 +141,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-requests",
       kind: "subtopic",
+      parentId: "py-libraries",
       label: "Requests",
       description: "Requests queries API servers over HTTP layers. Learn configuring get/post parameters, sending request headers, parsing JSON outputs, and managing session cookies.",
       links: [{ title: "Requests Documentation Portal", url: "https://requests.readthedocs.io/" }],
@@ -147,6 +159,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-flask",
       kind: "subtopic",
+      parentId: "py-frameworks",
       label: "Flask",
       description: "Flask is a lightweight micro-framework. Master configuring application routing, handling parameters paths, returning template files, and setting up middleware controls.",
       links: [{ title: "Flask Documentation Portal", url: "https://flask.palletsprojects.com/" }],
@@ -155,6 +168,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-django",
       kind: "subtopic",
+      parentId: "py-frameworks",
       label: "Django",
       description: "Django is a batteries-included full-stack framework. Learn configuring ORM databases, managing admin consoles, parsing templates, and integrating REST API frameworks.",
       links: [{ title: "Django Documentation", url: "https://docs.djangoproject.com/" }],
@@ -163,6 +177,7 @@ export const pythonTaskflow: TaskflowContent = {
     {
       id: "py-fastapi",
       kind: "subtopic",
+      parentId: "py-frameworks",
       label: "FastAPI",
       description: "FastAPI is a fast web framework utilizing type tags. Learn path validation using Pydantic, rendering OpenAPI documentation automatically, scripting asynchronous handlers, and optimizing endpoints speed.",
       links: [{ title: "FastAPI Documentation Guide", url: "https://fastapi.tiangolo.com/" }],

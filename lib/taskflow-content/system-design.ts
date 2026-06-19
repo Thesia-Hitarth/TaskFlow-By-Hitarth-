@@ -15,6 +15,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-scalability-basics",
       kind: "subtopic",
+      parentId: "sd-foundations",
       label: "Scalability Basics",
       description: "Scalability models support increasing user queries. Compare vertical scaling (resizing CPU/RAM resources on single hosts) to horizontal scaling (adding host nodes behind traffic directors).",
       links: [{ title: "System Design Primer: Scalability", url: "https://github.com/donnemartin/system-design-primer#index-of-system-design-topics" }],
@@ -23,6 +24,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-latency-throughput",
       kind: "subtopic",
+      parentId: "sd-foundations",
       label: "Latency vs Throughput",
       description: "Latency measures single query durations, while throughput measures database transaction rates. Learn tracking latency percentiles (p95, p99), optimization, and network bounds.",
       links: [{ title: "System Design Primer: Latency vs Throughput", url: "https://github.com/donnemartin/system-design-primer#latency-vs-throughput" }],
@@ -31,6 +33,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-cap-theorem",
       kind: "subtopic",
+      parentId: "sd-foundations",
       label: "CAP Theorem",
       description: "The CAP Theorem states distributed databases can only guarantee two of Consistency, Availability, or Partition Tolerance. Study design trade-offs, PACELC updates, and selecting databases.",
       links: [{ title: "System Design Primer: CAP Theorem", url: "https://github.com/donnemartin/system-design-primer#cap-theorem" }],
@@ -48,6 +51,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-load-balancing",
       kind: "subtopic",
+      parentId: "sd-networking-concepts",
       label: "Load Balancing",
       description: "Load Balancers distribute queries across server nodes pools. Study algorithms (round robin, least connections, hash), Layer 4 vs Layer 7 routing, and software solutions (NGINX, HAProxy).",
       links: [{ title: "NGINX Load Balancing Guide", url: "https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/" }],
@@ -56,6 +60,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-cdn",
       kind: "subtopic",
+      parentId: "sd-networking-concepts",
       label: "CDN",
       description: "Content Delivery Networks cache static page assets near users globally. Study caching edge rules, pull/push synchronization settings, cache invalidations, and origin server protections.",
       links: [{ title: "Cloudflare CDN Overview", url: "https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" }],
@@ -64,6 +69,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-dns",
       kind: "subtopic",
+      parentId: "sd-networking-concepts",
       label: "DNS",
       description: "The Domain Name System translates domains names to IP destinations. Study geolocation record routing, server failovers settings, DNS caching parameters, and load balancing configurations.",
       links: [{ title: "Cloudflare DNS Guide", url: "https://www.cloudflare.com/learning/dns/what-is-dns/" }],
@@ -81,6 +87,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-sql-nosql",
       kind: "subtopic",
+      parentId: "sd-data-storage",
       label: "SQL vs NoSQL",
       description: "Compare relational schemas to non-relational document or key-value stores. Study ACID transaction guarantees, schema flexibility levels, and scaling constraints.",
       links: [{ title: "AWS Databases Comparison", url: "https://aws.amazon.com/nosql/" }],
@@ -89,6 +96,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-database-sharding",
       kind: "subtopic",
+      parentId: "sd-data-storage",
       label: "Database Sharding",
       description: "Sharding partitions large data tables horizontally across multiple database hosts. Learn sharding keys selection, hash-based partitions, directory settings, and managing joins.",
       links: [{ title: "Mongo Sharding Overview", url: "https://www.mongodb.com/docs/manual/sharding/" }],
@@ -97,6 +105,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-replication",
       kind: "subtopic",
+      parentId: "sd-data-storage",
       label: "Replication",
       description: "Replication duplicates database changes to replica database nodes. Study leader-follower architectures, synchronous vs asynchronous updates, consistency lags, and managing server failovers.",
       links: [{ title: "PostgreSQL Replication Guide", url: "https://www.postgresql.org/docs/current/warm-standby.html" }],
@@ -114,6 +123,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-caching-strategies",
       kind: "subtopic",
+      parentId: "sd-caching-messaging",
       label: "Caching Strategies",
       description: "Caching preserves high-speed access to frequent query records. Learn cache-aside configurations, write-through rules, cache eviction policies (LRU, LFU), and data synchronization.",
       links: [{ title: "Redis Documentation Portal", url: "https://redis.io/docs/latest/" }],
@@ -122,6 +132,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-message-queues",
       kind: "subtopic",
+      parentId: "sd-caching-messaging",
       label: "Message Queues",
       description: "Message queues coordinate work tasks between decoupled services nodes. Study broker pipelines configurations (RabbitMQ), task worker scaling, message acknowledgments, and retry mechanisms.",
       links: [{ title: "RabbitMQ Documentation Guide", url: "https://www.rabbitmq.com/documentation.html" }],
@@ -130,6 +141,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-pubsub",
       kind: "subtopic",
+      parentId: "sd-caching-messaging",
       label: "Pub/Sub",
       description: "Publish-Subscribe systems broadcast event streams to multiple subscriber queues concurrently. Learn log partitioning structures (Apache Kafka), consumer group configurations, and retention rules.",
       links: [{ title: "Apache Kafka Documentation Guide", url: "https://kafka.apache.org/documentation/" }],
@@ -147,6 +159,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-microservices",
       kind: "subtopic",
+      parentId: "sd-architecture-patterns",
       label: "Microservices",
       description: "Microservices segment application logical boundaries into independent network services. Learn decoupling database modules, service discovery patterns, HTTP/gRPC communications, and distributed tracing.",
       links: [{ title: "Microservices.io Architecture Patterns", url: "https://microservices.io/" }],
@@ -155,6 +168,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-api-gateway",
       kind: "subtopic",
+      parentId: "sd-architecture-patterns",
       label: "API Gateway",
       description: "API Gateways act as centralized portals directing incoming client traffic. Learn route rewriting rules, auth token verifications, query monitoring, and SSL certificate offloading.",
       links: [{ title: "Kong API Gateway docs", url: "https://docs.konghq.com/" }],
@@ -163,6 +177,7 @@ export const systemDesignTaskflow: TaskflowContent = {
     {
       id: "sd-rate-limiting",
       kind: "subtopic",
+      parentId: "sd-architecture-patterns",
       label: "Rate Limiting",
       description: "Rate limiters restrict request counts to protect database systems from traffic surges. Study throttling algorithms (token bucket, leaky bucket), distributed counters, and HTTP headers.",
       links: [{ title: "Cloudflare Rate Limiting Guide", url: "https://www.cloudflare.com/learning/bots/what-is-rate-limiting/" }],

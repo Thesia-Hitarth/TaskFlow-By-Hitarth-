@@ -15,6 +15,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-template-syntax",
       kind: "subtopic",
+      parentId: "vue-fundamentals",
       label: "Template Syntax",
       description: "Template syntax binds variables to HTML structures. Learn HTML interpolations (mustache tags), attribute bindings (v-bind), event listener attachments (v-on), loops (v-for), and conditionals (v-if).",
       links: [{ title: "Vue.js Template Syntax Guide", url: "https://vuejs.org/guide/essentials/template-syntax.html" }],
@@ -23,6 +24,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-reactivity-basics",
       kind: "subtopic",
+      parentId: "vue-fundamentals",
       label: "Reactivity",
       description: "Reactivity tracks variables edits to trigger Virtual DOM updates. Study reactive proxy mechanisms, dependency collections, mapping state mutations, and Vue's internal scheduler.",
       links: [{ title: "Vue.js Reactivity Fundamentals", url: "https://vuejs.org/guide/essentials/reactivity-fundamentals.html" }],
@@ -31,6 +33,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-components-props",
       kind: "subtopic",
+      parentId: "vue-fundamentals",
       label: "Components & Props",
       description: "Components separate layout blocks, and Props distribute values downwards. Master declaring component options, validating input props, and sending child events ($emit) back to parent views.",
       links: [{ title: "Vue.js Component Basics", url: "https://vuejs.org/guide/essentials/component-basics.html" }],
@@ -48,6 +51,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-ref-reactive",
       kind: "subtopic",
+      parentId: "vue-composition-api",
       label: "ref & reactive",
       description: "ref and reactive declare reactive scopes variables. Differentiate ref primitive wrappers (.value) from reactive proxies objects, compile variables bindings, and handle objects destructuring.",
       links: [{ title: "Vue.js ref() and reactive() API", url: "https://vuejs.org/api/reactivity-core.html" }],
@@ -56,6 +60,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-computed-watch",
       kind: "subtopic",
+      parentId: "vue-composition-api",
       label: "computed & watch",
       description: "Computed values cache calculations, while Watch runs side effect callbacks on variables changes. Study computed dependency trees tracking, deep watchers configuration, and lazy watches.",
       links: [{ title: "Vue.js Computed Properties", url: "https://vuejs.org/guide/essentials/computed.html" }],
@@ -64,6 +69,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-lifecycle-hooks",
       kind: "subtopic",
+      parentId: "vue-composition-api",
       label: "Lifecycle Hooks",
       description: "Lifecycle hooks run logic during specific component phases. Learn to hook initializations (onMounted), monitor update runs (onUpdated), and clean up memory allocations (onUnmounted).",
       links: [{ title: "Vue.js Lifecycle Hooks Guide", url: "https://vuejs.org/guide/essentials/lifecycle.html" }],
@@ -81,6 +87,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-router",
       kind: "subtopic",
+      parentId: "vue-state-routing",
       label: "Vue Router",
       description: "Vue Router handles single-page routing paths mappings. Master dynamic paths matching, route history settings, navigation guards configurations, routing parameters, and lazy loading subpages.",
       links: [{ title: "Vue Router Documentation", url: "https://router.vuejs.org/" }],
@@ -89,6 +96,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-pinia",
       kind: "subtopic",
+      parentId: "vue-state-routing",
       label: "Pinia",
       description: "Pinia is the standard state store for Vue. Learn to declare modular stores (state, getters, actions), read store parameters in components, trigger mutations, and compile setup-store syntax.",
       links: [{ title: "Pinia Documentation Portal", url: "https://pinia.vuejs.org/" }],
@@ -97,6 +105,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-provide-inject",
       kind: "subtopic",
+      parentId: "vue-state-routing",
       label: "Provide/Inject",
       description: "Provide/Inject passes variables down deep component hierarchies. Master avoiding prop-drilling, updating injected values reactively, and configuring key constants.",
       links: [{ title: "Vue.js Provide / Inject Docs", url: "https://vuejs.org/guide/components/provide-inject.html" }],
@@ -114,6 +123,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-slots",
       kind: "subtopic",
+      parentId: "vue-advanced",
       label: "Slots",
       description: "Slots pass HTML layouts into components placeholders. Master default slots configurations, named slots scopes, passing variables up (scoped slots), and designing layouts.",
       links: [{ title: "Vue.js Component Slots Docs", url: "https://vuejs.org/guide/components/slots.html" }],
@@ -122,6 +132,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-custom-directives",
       kind: "subtopic",
+      parentId: "vue-advanced",
       label: "Custom Directives",
       description: "Custom directives bind behaviors directly to DOM element events lifecycles. Study registering directives (v-custom), accessing DOM nodes, reading arguments flags, and handling lifecycle hooks.",
       links: [{ title: "Vue.js Custom Directives Guide", url: "https://vuejs.org/guide/reusability/custom-directives.html" }],
@@ -130,6 +141,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-teleport",
       kind: "subtopic",
+      parentId: "vue-advanced",
       label: "Teleport",
       description: "Teleport renders template HTML fragments outside of components root nodes. Learn projecting overlays to body targets, managing DOM trees, and controlling CSS scopes.",
       links: [{ title: "Vue.js Teleport Component Docs", url: "https://vuejs.org/guide/built-ins/teleport.html" }],
@@ -147,6 +159,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-nuxtjs",
       kind: "subtopic",
+      parentId: "vue-ecosystem",
       label: "Nuxt.js",
       description: "Nuxt.js is a full-stack Vue framework. Master directory route mapping, server-side rendering (SSR), static generations, data fetch optimizations, and SEO configs.",
       links: [{ title: "Nuxt.js Documentation Portal", url: "https://nuxt.com/" }],
@@ -155,6 +168,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-testing-vitest",
       kind: "subtopic",
+      parentId: "vue-ecosystem",
       label: "Testing (Vitest)",
       description: "Vitest verifies component and logic module behaviors. Study writing test assertions, mounting components, verifying events triggering, and mocking store parameters.",
       links: [{ title: "Vitest Documentation Guide", url: "https://vitest.dev/" }],
@@ -163,6 +177,7 @@ export const vueTaskflow: TaskflowContent = {
     {
       id: "vue-vite-integration",
       kind: "subtopic",
+      parentId: "vue-ecosystem",
       label: "Vite Integration",
       description: "Vite compiles files assets and manages local dev servers. Study configure.js parameters, managing build files output, resolving path aliases, and compiling assets.",
       links: [{ title: "Vite Guide: Vue Integration", url: "https://vite.dev/guide/" }],

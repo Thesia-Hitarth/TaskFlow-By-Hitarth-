@@ -15,6 +15,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-fs-hierarchy",
       kind: "subtopic",
+      parentId: "linux-basics",
       label: "File System Hierarchy",
       description: "The Filesystem Hierarchy Standard (FHS) specifies directory layouts in Linux. Study path usage like config files in /etc, logs in /var, binaries in /bin and /usr/bin, home folders in /home, and device nodes in /dev.",
       links: [{ title: "FHS Specification", url: "https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html" }],
@@ -23,6 +24,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-basic-commands",
       kind: "subtopic",
+      parentId: "linux-basics",
       label: "Basic Commands",
       description: "Basic commands navigate directories and manipulate file systems. Learn directory changing (cd), listing contents (ls), creating folders (mkdir), copying (cp), moving (mv), deleting files (rm), and search files (find, grep).",
       links: [{ title: "GNU Coreutils Manual", url: "https://www.gnu.org/software/coreutils/manual/coreutils.html" }],
@@ -31,6 +33,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-permissions",
       kind: "subtopic",
+      parentId: "linux-basics",
       label: "Permissions",
       description: "Permissions secure directory access across users and groups. Master binary representation models (rwx), changing user privileges using chmod, modifying file ownership via chown, and managing sudo privileges.",
       links: [{ title: "GNU chmod Reference", url: "https://www.gnu.org/software/coreutils/manual/html_node/chmod-invocation.html" }],
@@ -48,6 +51,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-bash-scripting",
       kind: "subtopic",
+      parentId: "linux-shell",
       label: "Bash Scripting",
       description: "Bash scripting automates tasks. Master variables assignment, conditional checks (if/else), loop routines (for, while), script arguments input, and tracking exit codes values.",
       links: [{ title: "GNU Bash Reference Manual", url: "https://www.gnu.org/software/bash/manual/bash.html" }],
@@ -56,6 +60,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-env-variables",
       kind: "subtopic",
+      parentId: "linux-shell",
       label: "Environment Variables",
       description: "Environment variables configure dynamic settings globally. Study shell profile startup files (.bashrc, .bash_profile), export keyword configurations, PATH definitions, and reading configurations.",
       links: [{ title: "Bash Startup Files Guide", url: "https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html" }],
@@ -64,6 +69,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-pipes-redirection",
       kind: "subtopic",
+      parentId: "linux-shell",
       label: "Pipes & Redirection",
       description: "Pipes and redirections link program input and output. Master redirecting data outputs (stdout via >, stderr via 2>), appending outputs (>>), routing file inputs (<), and chaining commands outputs via pipes (|).",
       links: [{ title: "GNU Bash Redirection", url: "https://www.gnu.org/software/bash/manual/html_node/Redirections.html" }],
@@ -81,6 +87,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-ps-top",
       kind: "subtopic",
+      parentId: "linux-process-management",
       label: "ps & top",
       description: "ps and top audit running processes details. Learn listing process ids (PID), CPU/memory bounds tracking, sending kill signals (kill, killall), and tracing system resource limits.",
       links: [{ title: "procps-ng Utilities docs", url: "https://gitlab.com/procps-ng/procps" }],
@@ -89,6 +96,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-systemd",
       kind: "subtopic",
+      parentId: "linux-process-management",
       label: "systemd",
       description: "systemd manages system services and initialization. Study writing custom service configurations, reloading service daemons (systemctl), managing boot startup settings, and reading logs via journalctl.",
       links: [{ title: "systemd Documentation System", url: "https://systemd.io/" }],
@@ -97,6 +105,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-job-control",
       kind: "subtopic",
+      parentId: "linux-process-management",
       label: "Job Control",
       description: "Job control manages foreground and background shell commands. Learn putting commands in the background (&), pausing jobs (Ctrl+Z), resuming processes (bg, fg), and listing jobs status (jobs).",
       links: [{ title: "GNU Bash Job Control", url: "https://www.gnu.org/software/bash/manual/html_node/Job-Control-Basics.html" }],
@@ -114,6 +123,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-ssh",
       kind: "subtopic",
+      parentId: "linux-networking",
       label: "SSH",
       description: "SSH enables secure shell terminal access. Study key generation commands (ssh-keygen), copying keys to hosts, configuring ssh/sshd configuration parameters, port forwarding, and configuring host profiles.",
       links: [{ title: "OpenSSH Documentation", url: "https://www.openssh.com/manual.html" }],
@@ -122,6 +132,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-curl-wget",
       kind: "subtopic",
+      parentId: "linux-networking",
       label: "curl/wget",
       description: "curl and wget fetch web resources from terminals. Master setting HTTP request header parameters, saving output files, passing payload arguments, and diagnosing endpoint responses.",
       links: [{ title: "curl Documentation Guide", url: "https://curl.se/docs/" }],
@@ -130,6 +141,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-firewall",
       kind: "subtopic",
+      parentId: "linux-networking",
       label: "Firewall (ufw/iptables)",
       description: "Firewalls block incoming ports and route networks interface traffic. Study ufw commands (allow, deny, status), raw iptables chains configuration, NAT rules, and auditing active connections.",
       links: [{ title: "Ubuntu UFW Documentation", url: "https://help.ubuntu.com/community/UFW" }],
@@ -147,6 +159,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-package-managers",
       kind: "subtopic",
+      parentId: "linux-package-management",
       label: "apt/yum",
       description: "apt and yum automate package management in Debian and RedHat distributions. Study updating package indexes, upgrading dependencies packages, installing binaries, and purging files.",
       links: [{ title: "Debian APT Documentation", url: "https://wiki.debian.org/Apt" }],
@@ -155,6 +168,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-compiling-source",
       kind: "subtopic",
+      parentId: "linux-package-management",
       label: "Compiling from Source",
       description: "Compiling source code builds packages manually from raw files. Master dependency checks, running configure scripts, generating compile setups via make, and installing binaries via make install.",
       links: [{ title: "GNU Make Reference", url: "https://www.gnu.org/software/make/manual/make.html" }],
@@ -163,6 +177,7 @@ export const linuxTaskflow: TaskflowContent = {
     {
       id: "linux-package-repositories",
       kind: "subtopic",
+      parentId: "linux-package-management",
       label: "Package Repositories",
       description: "Package repositories reference target servers hosting packages. Study configuring sources.list definitions, adding custom PPA paths, importing pgp signing keys, and auditing repositories.",
       links: [{ title: "Debian SourcesList Wiki", url: "https://wiki.debian.org/SourcesList" }],

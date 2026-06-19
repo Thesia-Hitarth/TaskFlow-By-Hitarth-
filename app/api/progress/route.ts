@@ -13,7 +13,7 @@ function isValidOrigin(req: Request): boolean {
   const origin = req.headers.get("origin");
   if (!origin) return true; // GET requests don't need CSRF checking or same-origin server-side request
   const allowedOrigin = getAllowedOrigin();
-  return origin.startsWith(allowedOrigin);
+  return origin === allowedOrigin;
 }
 
 export async function GET(request: Request) {

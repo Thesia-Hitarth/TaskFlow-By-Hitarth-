@@ -15,6 +15,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-modules",
       kind: "subtopic",
+      parentId: "node-fundamentals",
       label: "Modules",
       description: "Modules separate backend scripts namespaces. Master importing/exporting files using legacy CommonJS require structures or modern ES Modules import/export scripts.",
       links: [{ title: "Node.js Modules Documentation", url: "https://nodejs.org/api/modules.html" }],
@@ -23,6 +24,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-npm",
       kind: "subtopic",
+      parentId: "node-fundamentals",
       label: "npm",
       description: "npm manages project library dependencies. Study package.json settings, semantic library versioning, locking versions structures, devDependencies scopes, and publishing libraries.",
       links: [{ title: "npm Documentation Portal", url: "https://docs.npmjs.com/" }],
@@ -31,6 +33,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-event-loop",
       kind: "subtopic",
+      parentId: "node-fundamentals",
       label: "Event Loop",
       description: "The Event Loop schedules asynchronous operations execution. Master macro/micro tasks queues, process tick stages, thread pool operations, and non-blocking IO cycles.",
       links: [{ title: "Node.js Event Loop Guide", url: "https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-nexttick" }],
@@ -48,6 +51,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-fs",
       kind: "subtopic",
+      parentId: "node-core-modules",
       label: "fs",
       description: "The file system (fs) module reads and writes disk records. Master async promise wrappers, reading folders structures, writing files, streaming pipelines, and handling file permissions.",
       links: [{ title: "Node.js File System API", url: "https://nodejs.org/api/fs.html" }],
@@ -56,6 +60,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-http",
       kind: "subtopic",
+      parentId: "node-core-modules",
       label: "http",
       description: "The http module launches local server listeners. Learn parsing request headers, responding with status codes, managing socket connections, and scripting basic proxies.",
       links: [{ title: "Node.js HTTP API", url: "https://nodejs.org/api/http.html" }],
@@ -64,6 +69,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-path",
       kind: "subtopic",
+      parentId: "node-core-modules",
       label: "path",
       description: "The path module parses directory path strings across operating systems. Study path resolve patterns, joining directory segments, isolating file suffixes, and handling differences between POSIX/Windows.",
       links: [{ title: "Node.js Path API", url: "https://nodejs.org/api/path.html" }],
@@ -81,6 +87,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-express",
       kind: "subtopic",
+      parentId: "node-web-frameworks",
       label: "Express",
       description: "Express is a minimalist web framework for Node.js. Master routing paths mapping, configuring middleware pipelines, parsing request body objects, and structuring router modules.",
       links: [{ title: "Express.js Website", url: "https://expressjs.com/" }],
@@ -89,6 +96,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-fastify",
       kind: "subtopic",
+      parentId: "node-web-frameworks",
       label: "Fastify",
       description: "Fastify is a fast web framework emphasizing JSON schema compilation. Learn registering routes schemas, optimizing serialization, configuring hooks, and plugins architectures.",
       links: [{ title: "Fastify Documentation", url: "https://fastify.dev/" }],
@@ -97,6 +105,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-nestjs",
       kind: "subtopic",
+      parentId: "node-web-frameworks",
       label: "NestJS",
       description: "NestJS structures enterprise server architectures using TypeScript decorators. Study dependency injection models, modules setup, guards authentication filters, and pipe validation schemas.",
       links: [{ title: "NestJS Documentation", url: "https://docs.nestjs.com/" }],
@@ -114,6 +123,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-mongodb",
       kind: "subtopic",
+      parentId: "node-databases",
       label: "MongoDB",
       description: "MongoDB is a document database storing JSON-like records. Learn database driver setups, configuring document schemas via Mongoose, running queries, and indexing collections keys.",
       links: [{ title: "MongoDB Driver Manual", url: "https://www.mongodb.com/docs/drivers/node/current/" }],
@@ -122,6 +132,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-postgresql",
       kind: "subtopic",
+      parentId: "node-databases",
       label: "PostgreSQL",
       description: "PostgreSQL is a robust relational database engine. Learn database pools setups (pg), executing raw SQL queries, transaction checks, and preventing SQL injection.",
       links: [{ title: "node-postgres Documentation", url: "https://node-postgres.com/" }],
@@ -130,6 +141,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-orms",
       kind: "subtopic",
+      parentId: "node-databases",
       label: "ORMs",
       description: "Object-Relational Mappers (ORMs) query databases using object syntax. Study schema files compilation, database migrations execution, and querying models via Prisma or Drizzle.",
       links: [{ title: "Prisma Documentation", url: "https://www.prisma.io/docs" }],
@@ -147,6 +159,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-authentication",
       kind: "subtopic",
+      parentId: "node-production",
       label: "Authentication",
       description: "Authentication verifies user identities. Study password hashing (bcrypt), signing JSON Web Tokens (JWT), session cookies strategies, and setting up Passport middleware filters.",
       links: [{ title: "Passport.js Guide", url: "https://www.passportjs.org/" }],
@@ -155,6 +168,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-testing",
       kind: "subtopic",
+      parentId: "node-production",
       label: "Testing",
       description: "Testing validates server logic correctness. Master unit testing functions via Jest, mock interfaces configurations, and integration endpoint checks using Supertest.",
       links: [{ title: "Jest Documentation", url: "https://jestjs.io/" }],
@@ -163,6 +177,7 @@ export const nodejsTaskflow: TaskflowContent = {
     {
       id: "node-deployment",
       kind: "subtopic",
+      parentId: "node-production",
       label: "Deployment",
       description: "Deployment serves applications to real-world clients. Learn configuring environment variables, running servers under PM2 process managers, and deploying container images.",
       links: [{ title: "PM2 Process Manager", url: "https://pm2.keymetrics.io/" }],

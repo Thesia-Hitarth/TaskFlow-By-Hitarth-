@@ -15,6 +15,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-kotlin",
       kind: "subtopic",
+      parentId: "language-choice",
       label: "Kotlin",
       description: "Kotlin is Google's recommended type-safe language for Android. Study its concise syntax rules, built-in null safety properties, functional programming operators, data classes definitions, extension functions, and interoperability with Java frameworks.",
       links: [{ title: "Kotlin Docs", url: "https://kotlinlang.org/docs/home.html" }],
@@ -23,6 +24,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-java",
       kind: "subtopic",
+      parentId: "language-choice",
       label: "Java",
       description: "Java is the foundational object-oriented programming language of Android development. Master Java class designs, memory interfaces, threads synchronization, packaging utilities, garbage collection processes, and standard packages integrations.",
       links: [{ title: "Oracle Java Website", url: "https://www.oracle.com/java/" }],
@@ -40,6 +42,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-activities-fragments",
       kind: "subtopic",
+      parentId: "android-basics",
       label: "Activities & Fragments",
       description: "Activities and Fragments represent the structural screen containers of an app. Deep dive into Activity lifecycles (onCreate, onStart, onResume), Fragment transaction managers, task backstack transitions, and dynamic user intent routing.",
       links: [{ title: "Android Activity Guide", url: "https://developer.android.com/guide/components/activities/intro-activities" }],
@@ -48,6 +51,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-layouts-xml",
       kind: "subtopic",
+      parentId: "android-basics",
       label: "Layouts (XML)",
       description: "XML layouts define the legacy view hierarchy tree structure in Android. Learn to configure ConstraintLayout constraints, manage resource qualifiers (strings, sizes, colors) for different screen resolutions, and link views using data binding rules.",
       links: [{ title: "Android XML Layouts", url: "https://developer.android.com/guide/topics/ui/declaring-layout" }],
@@ -56,6 +60,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-jetpack-compose",
       kind: "subtopic",
+      parentId: "android-basics",
       label: "Jetpack Compose",
       description: "Jetpack Compose is Google's modern declarative UI toolkit. Master state tracking (@Composable functions), layouts (Row, Column, Box), UI state hoisting, custom transitions, themes compilation, and integrating Compose views inside legacy XML hierarchies.",
       links: [{ title: "Jetpack Compose Docs", url: "https://developer.android.com/compose" }],
@@ -73,6 +78,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-mvvm",
       kind: "subtopic",
+      parentId: "app-architecture",
       label: "MVVM",
       description: "Model-View-ViewModel is the industry standard architecture for Android. Study data flow separation, repository patterns integration, domain layers setup, and keeping visual controllers clean of business logic formulas.",
       links: [{ title: "Android App Architecture Guide", url: "https://developer.android.com/topic/architecture" }],
@@ -81,6 +87,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-viewmodel-livedata",
       kind: "subtopic",
+      parentId: "app-architecture",
       label: "ViewModel & LiveData",
       description: "ViewModels retain visual state states across screen rotations. Study LiveData and StateFlow observables to update UI elements reactively when backend repository outputs change, preventing memory leakage.",
       links: [{ title: "Android ViewModel Docs", url: "https://developer.android.com/topic/libraries/architecture/viewmodel" }],
@@ -89,6 +96,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-dependency-injection",
       kind: "subtopic",
+      parentId: "app-architecture",
       label: "Dependency Injection (Hilt)",
       description: "Dependency Injection separates class configurations from usage. Master Hilt annotations (@AndroidEntryPoint, @Inject, @Module), scoping rules, injecting network clients, and database instances to build decoupled modules.",
       links: [{ title: "Hilt DI Guide", url: "https://developer.android.com/training/dependency-injection/hilt-android" }],
@@ -106,6 +114,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-room-database",
       kind: "subtopic",
+      parentId: "data-networking",
       label: "Room Database",
       description: "Room is an abstraction layer built on top of local SQLite databases. Master writing Data Access Objects (DAOs), declaring database schemas, handling schema updates, and observing query outputs reactively with flows.",
       links: [{ title: "Room Database Guide", url: "https://developer.android.com/training/data-storage/room" }],
@@ -114,6 +123,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-retrofit",
       kind: "subtopic",
+      parentId: "data-networking",
       label: "Retrofit",
       description: "Retrofit compiles type-safe HTTP client definitions automatically. Learn to design API request interfaces, serialize objects using JSON converters (Moshi, Gson), manage authentication interceptors, and inspect request traces.",
       links: [{ title: "Retrofit Docs", url: "https://square.github.io/retrofit/" }],
@@ -122,6 +132,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-coroutines",
       kind: "subtopic",
+      parentId: "data-networking",
       label: "Coroutines",
       description: "Coroutines manage asynchronous operations in Kotlin. Master launching asynchronous tasks, switching between dispatchers (Main, IO, Default), handling coroutine scopes, canceling processes, and writing sequential-looking asynchronous functions.",
       links: [{ title: "Kotlin Coroutines Overview", url: "https://kotlinlang.org/docs/coroutines-overview.html" }],
@@ -139,6 +150,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-testing",
       kind: "subtopic",
+      parentId: "publishing",
       label: "Testing",
       description: "Android testing guarantees application code safety. Study JUnit unit testing, mock frameworks, Espresso view testing, component isolation testing, and running local instrumentation suites.",
       links: [{ title: "Android Testing Guide", url: "https://developer.android.com/training/testing" }],
@@ -147,6 +159,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-play-store",
       kind: "subtopic",
+      parentId: "publishing",
       label: "Play Store Guidelines",
       description: "Google Play Console enforces policies on apps. Study privacy rules, target API level requirements, metadata packaging, assets formatting, testing tracks configurations, and rollout management.",
       links: [{ title: "Google Play Console Guide", url: "https://play.google.com/console/about/" }],
@@ -155,6 +168,7 @@ export const androidTaskflow: TaskflowContent = {
     {
       id: "andr-app-signing",
       kind: "subtopic",
+      parentId: "publishing",
       label: "App Signing",
       description: "App signing secures application updates using digital keys. Study keystore creations, release build type configurations in Gradle, ProGuard code obfuscation rules, and compiling Android App Bundles (AAB).",
       links: [{ title: "Android App Signing Guide", url: "https://developer.android.com/studio/publish/app-signing" }],

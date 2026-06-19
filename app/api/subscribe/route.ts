@@ -1,4 +1,5 @@
 // app/api/subscribe/route.ts
+import { prisma } from "@/lib/prisma";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -30,8 +31,11 @@ function getAllowedOrigin(): string {
 }
 
 export async function POST(req: Request) {
-  // Rate limiting check
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
+  // Safe client IP extraction (BUG-37)
+  const ip = req.headers.get("x-real-ip")
+    ?? req.headers.get("x-forwarded-for")?.split(",")[0].trim()
+    ?? "127.0.0.1";
+
   if (isRateLimited(ip)) {
     return Response.json(
       { error: "Too many subscription requests. Please try again later in 10 minutes." },
@@ -39,11 +43,11 @@ export async function POST(req: Request) {
     );
   }
 
-  // Validate Origin header to prevent CSRF attacks.
+  // Validate Origin header to prevent CSRF attacks with exact match (BUG-35)
   const origin = req.headers.get("origin");
   const allowedOrigin = getAllowedOrigin();
 
-  if (!origin || !origin.startsWith(allowedOrigin)) {
+  if (!origin || origin !== allowedOrigin) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -64,8 +68,14 @@ export async function POST(req: Request) {
   const normalizedEmail = email.trim().toLowerCase();
 
   try {
-    // TODO: Store subscribers in your database or link to email service (Resend, Mailchimp, ConvertKit, etc.)
-    console.log(`[subscribe] New subscriber: ${normalizedEmail}`);
+    // Persist subscribers in DB (BUG-31)
+    await prisma.subscriber.upsert({
+      where: { email: normalizedEmail },
+      update: {},
+      create: { email: normalizedEmail },
+    });
+
+    console.log(`[subscribe] New subscriber persisted: ${normalizedEmail}`);
 
     return Response.json(
       {
