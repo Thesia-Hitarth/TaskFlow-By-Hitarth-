@@ -78,7 +78,7 @@ export default function Footer() {
         {/* Top row: Logo left, Nav links right */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <Link href="/" className="text-text-primary font-bold text-lg hover:opacity-90 transition-opacity">
-            task-flow-by-hitarth
+            TaskFlow
           </Link>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-secondary">
             <Link href="/taskflows" className="hover:text-text-primary transition-colors font-medium">
@@ -104,7 +104,7 @@ export default function Footer() {
         {/* Bottom row: Copyright left, Socials right */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-border pt-6 mt-2">
           <p className="text-muted text-xs font-semibold">
-            &copy; {new Date().getFullYear()} task-flow-by-hitarth
+            &copy; {new Date().getFullYear()} TaskFlow
           </p>
 
           <div className="flex items-center gap-3">

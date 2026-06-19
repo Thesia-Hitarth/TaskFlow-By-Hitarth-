@@ -11,7 +11,7 @@ export default function TaskflowLegend() {
     <div className="flex flex-wrap gap-4 mb-4 text-xs sm:text-sm text-text-secondary font-semibold">
       {items.map((item) => (
         <div key={item.label} className="flex items-center gap-2">
-          <span className={`h-3 w-3 rounded border ${item.className}`} />
+          <span className={`h-3 w-3 rounded border ${item.className}`} aria-hidden="true" role="presentation" />
           {item.label}
         </div>
       ))}

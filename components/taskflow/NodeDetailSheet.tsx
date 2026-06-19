@@ -38,9 +38,10 @@ export default function NodeDetailSheet({ node, status, onStatusChange, onClose 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-between rounded-xl border border-border px-3.5 py-2.5 text-sm text-text-primary hover:border-accent hover:text-accent bg-card/40 transition-colors duration-200"
+                    aria-label={`${link.title} (opens in new tab)`}
                   >
                     <span className="font-semibold">{link.title}</span>
-                    <ExternalLink className="h-4 w-4 shrink-0" />
+                    <ExternalLink className="h-4 w-4 shrink-0" aria-hidden="true" />
                   </a>
                 ))}
               </div>

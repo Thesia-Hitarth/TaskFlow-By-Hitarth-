@@ -1,16 +1,45 @@
-// BUG-009: Subscribe API route — previously the homepage form had no backend handler.
-// BUG-024: CSRF protection via Origin header validation.
+// app/api/subscribe/route.ts
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Allowed origins for CSRF protection. In production this should be your real domain.
+// Simple in-memory rate limiting map (BUG-09)
+const ipCache = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW = 10 * 60 * 1000; // 10 minutes
+const MAX_REQUESTS = 5;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const record = ipCache.get(ip);
+
+  if (!record) {
+    ipCache.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return false;
+  }
+
+  if (now > record.resetTime) {
+    ipCache.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return false;
+  }
+
+  record.count += 1;
+  return record.count > MAX_REQUESTS;
+}
+
 function getAllowedOrigin(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 }
 
 export async function POST(req: Request) {
-  // BUG-024: Validate Origin header to prevent CSRF attacks.
-  // Browsers always send the Origin header for cross-origin POST requests.
+  // Rate limiting check
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
+  if (isRateLimited(ip)) {
+    return Response.json(
+      { error: "Too many subscription requests. Please try again later in 10 minutes." },
+      { status: 429 }
+    );
+  }
+
+  // Validate Origin header to prevent CSRF attacks.
   const origin = req.headers.get("origin");
   const allowedOrigin = getAllowedOrigin();
 
@@ -35,10 +64,7 @@ export async function POST(req: Request) {
   const normalizedEmail = email.trim().toLowerCase();
 
   try {
-    // TODO: Integrate with an email service (Resend, Mailchimp, ConvertKit, etc.)
-    // For now, we log the subscription for demonstration.
-    // In production, replace this with your email provider SDK call:
-    //   await resend.contacts.create({ email: normalizedEmail, audienceId: '...' });
+    // TODO: Store subscribers in your database or link to email service (Resend, Mailchimp, ConvertKit, etc.)
     console.log(`[subscribe] New subscriber: ${normalizedEmail}`);
 
     return Response.json(

@@ -16,9 +16,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("theme") as Theme | null;
-      if (savedTheme) return savedTheme;
-      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      return document.documentElement.classList.contains("dark") ? "dark" : "light";
     }
     return "dark"; // Default to dark theme for server pre-rendering
   });

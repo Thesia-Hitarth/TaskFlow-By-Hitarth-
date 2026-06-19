@@ -35,13 +35,13 @@ export default function Navbar() {
 
   return (
     <header className={`sticky top-0 z-50 w-full h-[56px] flex items-center justify-between px-4 sm:px-8 transition-all duration-300 ${scrolled
-        ? "bg-surface/85 backdrop-blur-md border-b border-border shadow-xs"
-        : "bg-transparent border-b border-transparent"
+      ? "bg-surface/85 backdrop-blur-md border-b border-border shadow-xs"
+      : "bg-transparent border-b border-transparent"
       }`}>
       {/* Left: Logo & Search */}
       <div className="flex items-center gap-4">
         <Link href="/" className="text-text-primary font-bold text-lg hover:opacity-95 transition-opacity">
-          task-flow-by-hitarth
+          TaskFlow
         </Link>
         <SearchCommand />
       </div>
@@ -51,8 +51,8 @@ export default function Navbar() {
         <Link
           href="/taskflows"
           className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/taskflows")
-              ? "text-text-primary border-accent"
-              : "text-text-secondary hover:text-text-primary border-transparent"
+            ? "text-text-primary border-accent"
+            : "text-text-secondary hover:text-text-primary border-transparent"
             }`}
         >
           Taskflows
@@ -60,8 +60,8 @@ export default function Navbar() {
         <Link
           href="/guides"
           className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/guides")
-              ? "text-text-primary border-accent"
-              : "text-text-secondary hover:text-text-primary border-transparent"
+            ? "text-text-primary border-accent"
+            : "text-text-secondary hover:text-text-primary border-transparent"
             }`}
         >
           Guides
@@ -69,8 +69,8 @@ export default function Navbar() {
         <Link
           href="/best-practices"
           className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/best-practices")
-              ? "text-text-primary border-accent"
-              : "text-text-secondary hover:text-text-primary border-transparent"
+            ? "text-text-primary border-accent"
+            : "text-text-secondary hover:text-text-primary border-transparent"
             }`}
         >
           Best Practices
@@ -78,8 +78,8 @@ export default function Navbar() {
         <Link
           href="/compare"
           className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/compare")
-              ? "text-text-primary border-accent"
-              : "text-text-secondary hover:text-text-primary border-transparent"
+            ? "text-text-primary border-accent"
+            : "text-text-secondary hover:text-text-primary border-transparent"
             }`}
         >
           Compare
@@ -116,7 +116,7 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="bg-surface border-border text-text-primary w-full max-w-[280px] p-6 flex flex-col gap-5 transition-colors duration-200">
               <SheetTitle className="text-text-primary font-bold text-lg border-b border-border pb-3">
-                task-flow-by-hitarth
+                TaskFlow
               </SheetTitle>
               <SheetDescription className="sr-only">
                 Navigation links for mobile viewports
@@ -126,8 +126,8 @@ export default function Navbar() {
                   href="/taskflows"
                   onClick={() => setMenuOpen(false)}
                   className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/taskflows")
-                      ? "text-accent"
-                      : "text-text-secondary hover:text-text-primary"
+                    ? "text-accent"
+                    : "text-text-secondary hover:text-text-primary"
                     }`}
                 >
                   Taskflows
@@ -136,8 +136,8 @@ export default function Navbar() {
                   href="/guides"
                   onClick={() => setMenuOpen(false)}
                   className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/guides")
-                      ? "text-accent"
-                      : "text-text-secondary hover:text-text-primary"
+                    ? "text-accent"
+                    : "text-text-secondary hover:text-text-primary"
                     }`}
                 >
                   Guides
@@ -146,8 +146,8 @@ export default function Navbar() {
                   href="/best-practices"
                   onClick={() => setMenuOpen(false)}
                   className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/best-practices")
-                      ? "text-accent"
-                      : "text-text-secondary hover:text-text-primary"
+                    ? "text-accent"
+                    : "text-text-secondary hover:text-text-primary"
                     }`}
                 >
                   Best Practices
@@ -156,8 +156,8 @@ export default function Navbar() {
                   href="/compare"
                   onClick={() => setMenuOpen(false)}
                   className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/compare")
-                      ? "text-accent"
-                      : "text-text-secondary hover:text-text-primary"
+                    ? "text-accent"
+                    : "text-text-secondary hover:text-text-primary"
                     }`}
                 >
                   Compare

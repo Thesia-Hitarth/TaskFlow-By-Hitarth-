@@ -9,12 +9,14 @@ import { NodeStatus } from "@/lib/taskflow-content/types";
 import MilestoneNode from "./nodes/MilestoneNode";
 import SubtopicNode from "./nodes/SubtopicNode";
 import NodeDetailSheet from "./NodeDetailSheet";
-import TaskflowProgressBar from "./TaskflowProgressBar";
 import TaskflowLegend from "./TaskflowLegend";
 
 interface TaskflowDiagramProps {
   content: TaskflowContent;
 }
+
+// Define OUTSIDE the component, at module level (BUG-30)
+const NODE_TYPES = { milestone: MilestoneNode, subtopic: SubtopicNode };
 
 export default function TaskflowDiagram({ content }: TaskflowDiagramProps) {
   return (
@@ -25,7 +27,6 @@ export default function TaskflowDiagram({ content }: TaskflowDiagramProps) {
 }
 
 function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
-  const nodeTypes = useMemo(() => ({ milestone: MilestoneNode, subtopic: SubtopicNode }), []);
   const { progress, updateStatus } = useTaskflowProgress(content.slug);
 
   const [selected, setSelected] = useState<TaskflowContentNode | null>(null);
@@ -81,7 +82,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
   const calculatedHeight = useMemo(() => {
     if (!containerWidth || !diagramWidth) return diagramHeight;
     const scale = Math.min(1, containerWidth / diagramWidth);
-    return diagramHeight * scale;
+    return Math.max(400, diagramHeight * scale); // Enforce minimum 400px (BUG-15)
   }, [containerWidth, diagramWidth, diagramHeight]);
 
   // Adjust zoom and viewport layout to fit container dimensions programmatically on resize
@@ -89,7 +90,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     if (containerWidth > 0 && calculatedHeight > 0) {
       const timer = setTimeout(() => {
         fitView({ padding: 0.05, minZoom: 0.1, maxZoom: 1 });
-      }, 50);
+      }, 200); // 200ms debounce (BUG-14)
       return () => clearTimeout(timer);
     }
   }, [containerWidth, calculatedHeight, fitView]);
@@ -116,33 +117,23 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
       style: { strokeWidth: 2 },
     }));
 
-    // 2. Milestone-to-subtopic connections (sorted vertically)
-    const milestones = content.nodes
-      .filter((n) => n.kind === "milestone")
-      .sort((a, b) => a.position.y - b.position.y);
-    const subtopics = content.nodes.filter((n) => n.kind === "subtopic");
-
+    // 2. Milestone-to-subtopic connections (assigned dynamically based on sequence order in content nodes)
     const flowEdges: Edge[] = [];
-
-    milestones.forEach((m, idx) => {
-      const nextM = milestones[idx + 1];
-      const minY = m.position.y;
-      const maxY = nextM ? nextM.position.y : Infinity;
-
-      // Filter subtopics in this milestone's Y range
-      const belonging = subtopics.filter((s) => s.position.y >= minY && s.position.y < maxY);
-
-      belonging.forEach((s) => {
+    let currentMilestoneId = "";
+    for (const node of content.nodes) {
+      if (node.kind === "milestone") {
+        currentMilestoneId = node.id;
+      } else if (node.kind === "subtopic" && currentMilestoneId) {
         flowEdges.push({
-          id: `edge-${m.id}-${s.id}`,
-          source: m.id,
-          target: s.id,
+          id: `edge-${currentMilestoneId}-${node.id}`,
+          source: currentMilestoneId,
+          target: node.id,
           sourceHandle: "right",
           targetHandle: "left",
           style: { strokeDasharray: "4 4", strokeWidth: 2 },
         });
-      });
-    });
+      }
+    }
 
     return [...baseEdges, ...flowEdges];
   }, [content.edges, content.nodes]);
@@ -155,11 +146,9 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     [content.nodes]
   );
 
-  const doneCount = Object.values(progress).filter((s) => s === "done").length;
-
   return (
     <div>
-      <TaskflowProgressBar done={doneCount} total={content.nodes.length} />
+      {/* Remove duplicate TaskflowProgressBar (BUG-05) */}
       <TaskflowLegend />
       <div 
         ref={containerRef}
@@ -169,7 +158,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          nodeTypes={nodeTypes}
+          nodeTypes={NODE_TYPES}
           onNodeClick={onNodeClick}
           nodesDraggable={false}
           nodesConnectable={false}
@@ -201,5 +190,3 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     </div>
   );
 }
-
-

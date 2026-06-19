@@ -1,5 +1,5 @@
 "use client";
-import { useRoadmapProgress } from "@/lib/progress";
+import { useTaskflowProgress } from "@/lib/taskflow-progress";
 
 interface Props {
   slug: string;
@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default function RoadmapProgressBar({ slug, totalNodes }: Props) {
-  const { progress, clearProgress } = useRoadmapProgress(slug);
+  const { progress, clearProgress, isLoaded } = useTaskflowProgress(slug);
 
   const done = Object.values(progress).filter((s) => s === "done").length;
   const inProgress = Object.values(progress).filter(
@@ -16,7 +16,13 @@ export default function RoadmapProgressBar({ slug, totalNodes }: Props) {
   const pct =
     totalNodes === 0 ? 0 : Math.round((done / totalNodes) * 100);
 
+  if (!isLoaded) {
+    return <div className="mb-6 h-[116px] w-full rounded-lg border border-border bg-card animate-pulse" />;
+  }
+
   if (totalNodes === 0) return null;
+
+  const hasAnyProgress = Object.keys(progress).length > 0;
 
   return (
     <div className="mb-6 rounded-lg border border-border bg-card p-4">
@@ -58,7 +64,7 @@ export default function RoadmapProgressBar({ slug, totalNodes }: Props) {
             Skipped
           </span>
         </div>
-        {done > 0 && (
+        {hasAnyProgress && (
           <button
             onClick={clearProgress}
             className="text-xs text-text-secondary hover:text-red-400 transition-colors font-semibold cursor-pointer"

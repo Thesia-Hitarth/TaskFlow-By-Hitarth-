@@ -1,3 +1,4 @@
+import "@/lib/env";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -15,17 +16,17 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Developer Taskflows",
-    template: "%s | Developer Taskflows",
+    default: "TaskFlow",
+    template: "%s | TaskFlow",
   },
   description:
     "Community created taskflows, guides and articles to help developers grow in their career.",
   openGraph: {
-    title: "Developer Taskflows",
+    title: "TaskFlow",
     description:
       "Community created taskflows, guides and articles to help developers grow in their career.",
     type: "website",
-    siteName: "Developer Taskflows",
+    siteName: "TaskFlow",
   },
   twitter: {
     card: "summary_large_image",

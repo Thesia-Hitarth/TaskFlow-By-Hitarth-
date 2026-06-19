@@ -25,12 +25,11 @@ export async function generateMetadata({ params }: PageProps) {
   if (!taskflow) return {};
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const title = `${taskflow.title} Taskflow 2026 — task-flow-by-hitarth`;
+  // Remove redundant title suffix (BUG-29)
+  const title = `${taskflow.title} Taskflow 2026`;
   const description =
     taskflow.description || `Step by step guide to becoming a ${taskflow.title} developer.`;
 
-  // BUG-020: Dynamic OG metadata per taskflow so social share links show
-  // the correct title instead of the site-wide "Developer Taskflows" default.
   return {
     title,
     description,
@@ -48,7 +47,6 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-
 export default async function TaskflowDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const taskflow = taskflows.find((tf) => tf.slug === slug);
@@ -56,13 +54,14 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   const content = taskflowContent[slug];
 
   const title = taskflow.title;
+  const headingSuffix = taskflow.type === "role" ? "Developer Taskflow" : "Taskflow"; // (BUG-12)
 
   return (
     <>
       <Navbar />
       <main className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
-        {/* Breadcrumb */}
-        <nav className="text-text-secondary text-sm" aria-label="Breadcrumb font-medium">
+        {/* Breadcrumb (BUG-11) */}
+        <nav className="text-text-secondary text-sm font-medium" aria-label="Breadcrumb">
           <Link href="/taskflows" className="hover:text-text-primary transition-colors">
             All Taskflows
           </Link>
@@ -73,10 +72,10 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
         {/* Header */}
         <header className="mt-4 pb-6 border-b border-border">
           <h1 className="text-4xl font-extrabold text-text-primary leading-tight tracking-tight">
-            {title} Developer Taskflow
+            {title} {headingSuffix}
           </h1>
           <p className="text-text-secondary mt-2 font-semibold">
-            {taskflow?.description || `Step by step guide to becoming a ${title} developer`}
+            {taskflow?.description || `Step by step guide to learning ${title}`}
           </p>
         </header>
 
@@ -130,4 +129,3 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
     </>
   );
 }
-

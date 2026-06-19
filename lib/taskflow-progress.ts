@@ -17,6 +17,7 @@ function readLocal(slug: string): Record<string, NodeStatus> {
 }
 
 function writeLocal(slug: string, progress: Record<string, NodeStatus>) {
+  if (typeof window === "undefined") return;
   localStorage.setItem(PREFIX + slug, JSON.stringify(progress));
   window.dispatchEvent(new CustomEvent("taskflow-progress-update", { detail: { slug } }));
 }
@@ -25,6 +26,7 @@ export function useTaskflowProgress(slug: string) {
   const { status: sessionStatus } = useSession();
   const isAuthed = sessionStatus === "authenticated";
   const [progress, setProgress] = useState<Record<string, NodeStatus>>({});
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const load = useCallback(async () => {
     if (isAuthed) {
@@ -33,19 +35,24 @@ export function useTaskflowProgress(slug: string) {
         if (res.ok) {
           const data = await res.json();
           setProgress(data);
+        } else if (res.status === 401) {
+          setProgress(readLocal(slug));
         }
       } catch (err) {
         console.error("Failed to fetch database progress:", err);
+      } finally {
+        setIsLoaded(true);
       }
     } else {
-      // Wrap in microtask to avoid synchronous setState during effect invocation
       Promise.resolve().then(() => {
         setProgress(readLocal(slug));
+        setIsLoaded(true);
       });
     }
   }, [slug, isAuthed]);
 
   useEffect(() => {
+    setIsLoaded(false);
     load();
 
     const handler = (e: Event) => {
@@ -70,30 +77,72 @@ export function useTaskflowProgress(slug: string) {
   }, [slug, isAuthed, load]);
 
   const updateStatus = useCallback(
-    (nodeId: string, newStatus: NodeStatus) => {
+    async (nodeId: string, newStatus: NodeStatus) => {
+      let prevStatus: NodeStatus = "pending";
+      let nextProgress: Record<string, NodeStatus> = {};
+
       setProgress((prev) => {
+        prevStatus = prev[nodeId] ?? "pending";
         const next = { ...prev };
         if (newStatus === "pending") {
           delete next[nodeId];
         } else {
           next[nodeId] = newStatus;
         }
+        nextProgress = next;
+        return next;
+      });
 
-        if (isAuthed) {
-          fetch("/api/progress", {
+      if (isAuthed) {
+        try {
+          const res = await fetch("/api/progress", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ slug, nodeId, status: newStatus }),
-          }).catch((err) => console.error("Failed to update database progress:", err));
-        } else {
-          writeLocal(slug, next);
+          });
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+          }
+          window.dispatchEvent(new CustomEvent("taskflow-progress-update", { detail: { slug } }));
+        } catch (err) {
+          console.error("Failed to update database progress, reverting:", err);
+          setProgress((prev) => {
+            const next = { ...prev };
+            if (prevStatus === "pending") {
+              delete next[nodeId];
+            } else {
+              next[nodeId] = prevStatus;
+            }
+            return next;
+          });
         }
-
-        return next;
-      });
+      } else {
+        writeLocal(slug, nextProgress);
+      }
     },
     [slug, isAuthed]
   );
 
-  return { progress, updateStatus };
+  const clearProgress = useCallback(async () => {
+    setProgress({});
+    if (isAuthed) {
+      try {
+        const res = await fetch(`/api/progress?slug=${slug}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        window.dispatchEvent(new CustomEvent("taskflow-progress-update", { detail: { slug } }));
+      } catch (err) {
+        console.error("Failed to clear database progress:", err);
+        load();
+      }
+    } else {
+      localStorage.removeItem(PREFIX + slug);
+      window.dispatchEvent(new CustomEvent("taskflow-progress-update", { detail: { slug } }));
+    }
+  }, [slug, isAuthed, load]);
+
+  return { progress, updateStatus, clearProgress, isLoaded };
 }
