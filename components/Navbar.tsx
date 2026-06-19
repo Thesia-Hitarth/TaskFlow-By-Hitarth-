@@ -104,7 +104,7 @@ export default function Navbar() {
           )}
         </Button>
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center justify-end w-[200px]">
           <AuthButtons />
         </div>
         <div className="md:hidden">
