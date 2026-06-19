@@ -15,6 +15,9 @@ function ErrorCard() {
     Verification: "The sign-in link is no longer valid or has expired. Please request a new link.",
     OAuthSignin: "Could not establish a secure handshake with the login provider. Please try again.",
     OAuthCallback: "There was a problem receiving credentials from the login provider. Please try again.",
+    OAuthAccountNotLinked: "This email is already associated with a different sign-in method. Please use the provider you originally signed up with.",
+    SessionRequired: "Please sign in to access this page.",
+    OAuthCreateAccount: "We couldn't create your account with this provider. Please try again or use a different provider.",
     Default: "An unexpected error occurred during authentication. Please try again.",
   };
 

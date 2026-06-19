@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import TaskflowCard from "@/components/TaskflowCard";
 import { taskflows } from "@/lib/taskflows-data";
 import PathRecommender from "@/components/PathRecommender";
+import { changelogEntries } from "@/lib/changelog-data";
 import { track } from "@vercel/analytics";
 
 // Custom inline GitHub icon to avoid lucide-react version export mismatches
@@ -168,89 +169,27 @@ export default function Home() {
             {/* Central vertical line for desktop (starts at center of first dot and ends at center of last dot) */}
             <div className="absolute left-1/2 top-6 bottom-6 w-[1px] bg-border hidden md:block -translate-x-1/2"></div>
 
-            {/* Timeline Item 1: 25 May, 2026 */}
-            <div className="mb-12 relative md:grid md:grid-cols-2 md:gap-8 group">
-              {/* Left Side: Date (Desktop only) */}
-              <div className="hidden md:block text-right pr-8 text-text-secondary text-sm font-semibold self-center group-hover:text-text-primary transition-colors">
-                25 May, 2026
-              </div>
-              {/* Central Circle */}
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-border group-hover:border-accent md:left-1/2 md:translate-x-[-8px] flex items-center justify-center transition-colors">
-                <div className="w-1.5 h-1.5 rounded-full bg-text-secondary group-hover:bg-accent transition-colors"></div>
-              </div>
-              {/* Right Side: Content */}
-              <div className="pl-6 md:pl-8 flex flex-col justify-center">
-                <div className="md:hidden text-text-secondary text-xs font-semibold mb-1 group-hover:text-text-primary transition-colors">
-                  25 May, 2026
+            {changelogEntries.slice(0, 4).map((entry, idx) => (
+              <div key={entry.version} className={`relative md:grid md:grid-cols-2 md:gap-8 group ${idx === 3 ? "" : "mb-12"}`}>
+                {/* Left Side: Date (Desktop only) */}
+                <div className="hidden md:block text-right pr-8 text-text-secondary text-sm font-semibold self-center group-hover:text-text-primary transition-colors">
+                  {entry.date}
                 </div>
-                <div className="text-text-primary font-bold text-base group-hover:text-accent transition-colors">
-                  Network Engineer, Python Guides
+                {/* Central Circle */}
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-border group-hover:border-accent md:left-1/2 md:translate-x-[-8px] flex items-center justify-center transition-colors">
+                  <div className="w-1.5 h-1.5 rounded-full bg-text-secondary group-hover:bg-accent transition-colors"></div>
                 </div>
-              </div>
-            </div>
-
-            {/* Timeline Item 2: 26 Mar, 2026 */}
-            <div className="mb-12 relative md:grid md:grid-cols-2 md:gap-8 group">
-              {/* Left Side: Date (Desktop only) */}
-              <div className="hidden md:block text-right pr-8 text-text-secondary text-sm font-semibold self-center group-hover:text-text-primary transition-colors">
-                26 Mar, 2026
-              </div>
-              {/* Central Circle */}
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-border group-hover:border-accent md:left-1/2 md:translate-x-[-8px] flex items-center justify-center transition-colors">
-                <div className="w-1.5 h-1.5 rounded-full bg-text-secondary group-hover:bg-accent transition-colors"></div>
-              </div>
-              {/* Right Side: Content */}
-              <div className="pl-6 md:pl-8 flex flex-col justify-center">
-                <div className="md:hidden text-text-secondary text-xs font-semibold mb-1 group-hover:text-text-primary transition-colors">
-                  26 Mar, 2026
-                </div>
-                <div className="text-text-primary font-bold text-base group-hover:text-accent transition-colors">
-                  AI Engineer Review
+                {/* Right Side: Content */}
+                <div className="pl-6 md:pl-8 flex flex-col justify-center">
+                  <div className="md:hidden text-text-secondary text-xs font-semibold mb-1 group-hover:text-text-primary transition-colors">
+                    {entry.date}
+                  </div>
+                  <div className="text-text-primary font-bold text-base group-hover:text-accent transition-colors">
+                    {entry.title}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Timeline Item 3: 27 Feb, 2026 */}
-            <div className="mb-12 relative md:grid md:grid-cols-2 md:gap-8 group">
-              {/* Left Side: Date (Desktop only) */}
-              <div className="hidden md:block text-right pr-8 text-text-secondary text-sm font-semibold self-center group-hover:text-text-primary transition-colors">
-                27 Feb, 2026
-              </div>
-              {/* Central Circle */}
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-border group-hover:border-accent md:left-1/2 md:translate-x-[-8px] flex items-center justify-center transition-colors">
-                <div className="w-1.5 h-1.5 rounded-full bg-text-secondary group-hover:bg-accent transition-colors"></div>
-              </div>
-              {/* Right Side: Content */}
-              <div className="pl-6 md:pl-8 flex flex-col justify-center">
-                <div className="md:hidden text-text-secondary text-xs font-semibold mb-1 group-hover:text-text-primary transition-colors">
-                  27 Feb, 2026
-                </div>
-                <div className="text-text-primary font-bold text-base group-hover:text-accent transition-colors">
-                  AI in Guides
-                </div>
-              </div>
-            </div>
-
-            {/* Timeline Item 4: 31 Jan, 2026 */}
-            <div className="relative md:grid md:grid-cols-2 md:gap-8 group">
-              {/* Left Side: Date (Desktop only) */}
-              <div className="hidden md:block text-right pr-8 text-text-secondary text-sm font-semibold self-center group-hover:text-text-primary transition-colors">
-                31 Jan, 2026
-              </div>
-              {/* Central Circle */}
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-background border-2 border-border group-hover:border-accent md:left-1/2 md:translate-x-[-8px] flex items-center justify-center transition-colors">
-                <div className="w-1.5 h-1.5 rounded-full bg-text-secondary group-hover:bg-accent transition-colors"></div>
-              </div>
-              {/* Right Side: Content */}
-              <div className="pl-6 md:pl-8 flex flex-col justify-center">
-                <div className="md:hidden text-text-secondary text-xs font-semibold mb-1 group-hover:text-text-primary transition-colors">
-                  31 Jan, 2026
-                </div>
-                <div className="text-text-primary font-bold text-base group-hover:text-accent transition-colors">
-                  Reviews
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
 
           <div className="text-center mt-12">

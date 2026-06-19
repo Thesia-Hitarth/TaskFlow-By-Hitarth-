@@ -27,27 +27,45 @@ export default function ComparePage() {
 
         {/* Selector row */}
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            { value: leftSlug, onChange: setLeftSlug, label: "Path A" },
-            { value: rightSlug, onChange: setRightSlug, label: "Path B" },
-          ].map(({ value, onChange, label }) => (
-            <div key={label}>
-              <label className="text-xs text-text-secondary uppercase tracking-wider mb-1.5 block font-bold">
-                {label}
-              </label>
-              <select
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                className="w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-text-primary outline-hidden focus:border-accent transition-colors font-medium cursor-pointer"
-              >
-                {allRoadmaps.map((r) => (
-                  <option key={r.slug} value={r.slug}>
-                    {r.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ))}
+          <div>
+            <label className="text-xs text-text-secondary uppercase tracking-wider mb-1.5 block font-bold">
+              Path A
+            </label>
+            <select
+              value={leftSlug}
+              onChange={(e) => {
+                const val = e.target.value;
+                setLeftSlug(val);
+                if (val === rightSlug) {
+                  const remaining = allRoadmaps.find((r) => r.slug !== val);
+                  if (remaining) setRightSlug(remaining.slug);
+                }
+              }}
+              className="w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-text-primary outline-hidden focus:border-accent transition-colors font-medium cursor-pointer"
+            >
+              {allRoadmaps.map((r) => (
+                <option key={r.slug} value={r.slug}>
+                  {r.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-text-secondary uppercase tracking-wider mb-1.5 block font-bold">
+              Path B
+            </label>
+            <select
+              value={rightSlug}
+              onChange={(e) => setRightSlug(e.target.value)}
+              className="w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-text-primary outline-hidden focus:border-accent transition-colors font-medium cursor-pointer"
+            >
+              {allRoadmaps.filter((r) => r.slug !== leftSlug).map((r) => (
+                <option key={r.slug} value={r.slug}>
+                  {r.title}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Comparison table */}

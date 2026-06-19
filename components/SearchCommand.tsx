@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import Fuse from "fuse.js";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ export default function SearchCommand() {
   const [query, setQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const fuse = useMemo(
     () => new Fuse(searchIndex, { keys: ["title", "description"], threshold: 0.35 }),
@@ -22,20 +23,53 @@ export default function SearchCommand() {
     : searchIndex.slice(0, 8);
 
   useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  useEffect(() => {
     setMounted(true);
 
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setOpen((o) => !o);
+        return;
       }
       if (e.key === "Escape") {
         setOpen(false);
+        return;
+      }
+
+      if (e.key === "Tab" && open && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement?.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement?.focus();
+          }
+        }
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [open]);
 
   function go(href: string) {
     setOpen(false);
@@ -60,6 +94,7 @@ export default function SearchCommand() {
           onClick={() => setOpen(false)}
         >
           <div
+            ref={modalRef}
             className="w-full max-w-lg rounded-2xl border border-border bg-surface shadow-2xl mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >

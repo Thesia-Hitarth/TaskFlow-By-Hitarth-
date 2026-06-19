@@ -38,7 +38,6 @@ export default function AuthButtons() {
             width={32}
             height={32}
             className="h-8 w-8 rounded-full border border-border"
-            unoptimized
           />
         ) : (
           <div className="h-8 w-8 rounded-full bg-surface border border-border flex items-center justify-center">

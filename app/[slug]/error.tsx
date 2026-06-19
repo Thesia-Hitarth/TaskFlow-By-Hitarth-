@@ -3,6 +3,7 @@
 // BUG-014: Per-route error boundary for taskflow detail pages.
 // Without this, an error in any taskflow page crashes the entire app to a blank screen.
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function TaskflowError({
   error,
@@ -11,6 +12,10 @@ export default function TaskflowError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error("[taskflow error boundary]", error);
+  }, [error]);
+
   return (
     <main className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 bg-background transition-colors duration-200">
       <span className="text-5xl mb-4" role="img" aria-label="warning">⚠️</span>
@@ -18,7 +23,7 @@ export default function TaskflowError({
         Failed to load taskflow
       </h1>
       <p className="text-text-secondary mt-3 max-w-sm font-medium">
-        {error.message || "An unexpected error occurred while loading this taskflow."}
+        An unexpected error occurred while loading this taskflow.
       </p>
       {error.digest && (
         <p className="text-xs text-text-secondary/60 mt-2 font-mono">

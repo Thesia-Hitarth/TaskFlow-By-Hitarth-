@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function ErrorPage({
   error,
@@ -9,10 +10,14 @@ export default function ErrorPage({
   error: Error;
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error("[app error boundary]", error);
+  }, [error]);
+
   return (
     <main className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 bg-background transition-colors duration-200">
       <h1 className="text-3xl font-extrabold text-text-primary tracking-tight">Something went wrong</h1>
-      <p className="text-text-secondary mt-3 max-w-md font-semibold">{error.message}</p>
+      <p className="text-text-secondary mt-3 max-w-md font-semibold">We hit an unexpected error. Our team has been notified.</p>
       <div className="flex gap-4 mt-6">
         <button
           onClick={reset}

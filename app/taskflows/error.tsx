@@ -2,6 +2,7 @@
 
 // BUG-014: Per-route error boundary for the /taskflows listing route.
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function TaskflowsError({
   error,
@@ -10,6 +11,10 @@ export default function TaskflowsError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error("[taskflows error boundary]", error);
+  }, [error]);
+
   return (
     <main className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 bg-background transition-colors duration-200">
       <span className="text-5xl mb-4" role="img" aria-label="warning">⚠️</span>
@@ -17,7 +22,7 @@ export default function TaskflowsError({
         Failed to load taskflows
       </h1>
       <p className="text-text-secondary mt-3 max-w-sm font-medium">
-        {error.message || "An unexpected error occurred while loading taskflows."}
+        An unexpected error occurred while loading taskflows.
       </p>
       {error.digest && (
         <p className="text-xs text-text-secondary/60 mt-2 font-mono">
