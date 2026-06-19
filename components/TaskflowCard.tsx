@@ -16,7 +16,7 @@ export default function TaskflowCard({ taskflow }: TaskflowCardProps) {
                 {taskflow.title}
               </h3>
               {taskflow.isNew && (
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/30 rounded-full px-2 py-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-500 border border-amber-500/30 rounded-full px-2 py-0.5">
                   New
                 </span>
               )}
@@ -24,10 +24,10 @@ export default function TaskflowCard({ taskflow }: TaskflowCardProps) {
             {taskflow.difficulty && (
               <span className={`text-xs font-medium px-2 py-0.5 rounded-full border shrink-0 ${
                 taskflow.difficulty === "Beginner"
-                  ? "border-green-500/40 text-green-400 bg-green-500/10"
+                  ? "border-green-500/40 text-green-700 dark:text-green-400 bg-green-500/10"
                   : taskflow.difficulty === "Intermediate"
-                  ? "border-yellow-500/40 text-yellow-400 bg-yellow-500/10"
-                  : "border-red-500/40 text-red-400 bg-red-500/10"
+                  ? "border-yellow-500/40 text-amber-700 dark:text-yellow-400 bg-yellow-500/10"
+                  : "border-red-500/40 text-red-700 dark:text-red-400 bg-red-500/10"
               }`}>
                 {taskflow.difficulty}
               </span>

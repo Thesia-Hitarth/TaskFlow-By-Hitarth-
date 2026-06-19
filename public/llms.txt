@@ -1,0 +1,16 @@
+# TaskFlow
+
+TaskFlow is a role-based and skill-based learning roadmap generator and milestone tracker designed to help developers plan their career goals.
+
+## Core Features
+- Role-based learning tracks (Frontend, DevOps, Backend, and more)
+- Interactive milestone diagrams and progress tracking
+- In-depth articles and guides on fundamental development concepts
+- Comparison tool to analyze different learning paths side by side
+
+## Main Links
+- [TaskFlow Homepage](https://task-flow-by-hitarth.vercel.app/)
+- [Taskflows Directory](https://task-flow-by-hitarth.vercel.app/taskflows)
+- [Guides Index](https://task-flow-by-hitarth.vercel.app/guides)
+- [Compare Paths Page](https://task-flow-by-hitarth.vercel.app/compare)
+- [Changelog](https://task-flow-by-hitarth.vercel.app/changelog)

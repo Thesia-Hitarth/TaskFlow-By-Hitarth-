@@ -92,9 +92,9 @@ export default function ComparePage() {
                 rightVal: right.difficulty ?? "—",
                 render: (val: string) => {
                   const colors: Record<string, string> = {
-                    Beginner: "text-green-500 font-bold",
-                    Intermediate: "text-yellow-500 font-bold",
-                    Advanced: "text-red-500 font-bold",
+                    Beginner: "text-green-700 dark:text-green-400 font-bold",
+                    Intermediate: "text-amber-700 dark:text-yellow-400 font-bold",
+                    Advanced: "text-red-700 dark:text-red-400 font-bold",
                   };
                   return (
                     <span className={colors[val] ?? "text-text-secondary font-medium"}>{val}</span>

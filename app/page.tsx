@@ -44,7 +44,7 @@ export default function Home() {
       <main className="flex-1 bg-background transition-colors duration-200">
         {/* Section A: Hero */}
         <section className="pt-24 pb-16 px-4 sm:px-8 max-w-4xl mx-auto text-center flex flex-col items-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 bg-clip-text text-transparent animate-fade-in">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-amber-700 via-orange-600 to-amber-800 dark:from-amber-500 dark:via-orange-500 dark:to-amber-600 bg-clip-text text-transparent animate-fade-in">
             Developer Taskflows
           </h1>
           <p className="text-text-secondary text-lg sm:text-xl max-w-2xl mt-4 leading-relaxed font-medium">
@@ -195,7 +195,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link
               href="/changelog"
-              className="text-sm font-semibold text-accent hover:underline inline-block transition-colors"
+              className="text-sm font-semibold text-amber-800 dark:text-accent hover:underline inline-block transition-colors"
             >
               View full changelog &rarr;
             </Link>

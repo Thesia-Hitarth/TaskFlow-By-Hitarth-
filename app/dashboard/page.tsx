@@ -81,7 +81,7 @@ export default async function DashboardPage() {
             </h2>
             <Link 
               href="/taskflows" 
-              className="text-sm text-amber-500 hover:text-amber-400 transition-colors font-medium flex items-center gap-1"
+              className="text-sm text-amber-700 dark:text-accent hover:text-amber-600 dark:hover:text-amber-400 transition-colors font-medium flex items-center gap-1"
             >
               Explore more <ChevronRight className="h-4 w-4" />
             </Link>
@@ -121,7 +121,7 @@ export default async function DashboardPage() {
                     <div>
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 uppercase tracking-wide">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-500 border border-amber-500/20 uppercase tracking-wide">
                             {meta?.type ?? "track"}
                           </span>
                           <h3 className="text-lg font-bold text-text-primary mt-2 group-hover:text-amber-500 transition-colors duration-200">
@@ -150,7 +150,7 @@ export default async function DashboardPage() {
                       
                       <div className="mt-3 flex items-center justify-between text-xs text-text-secondary font-medium">
                         <span>{done} of {total} nodes completed</span>
-                        <span className="text-amber-500 group-hover:translate-x-0.5 transition-transform duration-200 flex items-center gap-0.5 font-semibold">
+                        <span className="text-amber-700 dark:text-amber-500 group-hover:translate-x-0.5 transition-transform duration-200 flex items-center gap-0.5 font-semibold">
                           Continue Track <ChevronRight className="h-3.5 w-3.5" />
                         </span>
                       </div>
