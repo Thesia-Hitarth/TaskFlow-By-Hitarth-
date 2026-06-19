@@ -59,9 +59,7 @@ export function useTaskflowProgress(slug: string) {
       const detail = (e as CustomEvent).detail;
       if (!isAuthed) {
         if (detail?.slug === slug) {
-          Promise.resolve().then(() => {
-            setProgress(readLocal(slug));
-          });
+          setProgress(readLocal(slug));
         }
       } else {
         if (!detail || !detail.slug || detail.slug === slug) {

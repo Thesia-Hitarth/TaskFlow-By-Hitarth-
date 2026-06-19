@@ -26,6 +26,11 @@ export default auth((req: NextRequest & { auth: { user?: { id?: string } } | nul
     return NextResponse.redirect(signInUrl);
   }
 
+  // Protect /api/progress/* routes — short-circuit with JSON 401 if not authenticated
+  if (pathname.startsWith("/api/progress") && !session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   // Allow the request to proceed
   return NextResponse.next();
 });

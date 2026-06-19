@@ -48,8 +48,8 @@ export default async function DashboardPage() {
                 <GraduationCap className="h-4 w-4" />
                 Student Portal
               </div>
-              <h1 className="text-3xl font-extrabold text-text-primary tracking-tight">
-                Welcome back, {session.user.name ?? session.user.email}
+              <h1 className="text-3xl font-extrabold text-text-primary tracking-tight truncate">
+                Welcome back, {session.user.name ?? session.user.email?.split("@")[0] ?? "there"}
               </h1>
               <p className="text-sm text-text-secondary mt-1 max-w-xl font-medium">
                 Continue your learning tracks and view statistics across your chosen taskflows.
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
                 const meta = taskflows.find((t) => t.slug === slug);
                 const done = Object.values(bySlug[slug]).filter((s) => s === "done").length;
                 const total = content.nodes.length;
-                const pct = Math.round((done / total) * 100);
+                const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
                 return (
                   <Link
