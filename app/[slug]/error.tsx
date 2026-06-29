@@ -1,6 +1,5 @@
 "use client";
 
-// BUG-014: Per-route error boundary for taskflow detail pages.
 // Without this, an error in any taskflow page crashes the entire app to a blank screen.
 import Link from "next/link";
 import { useEffect } from "react";

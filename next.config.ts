@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // BUG-008: Removed @auth/react (non-existent package) from transpilePackages
   transpilePackages: ["next-auth", "@auth/core"],
 
   images: {
@@ -11,7 +10,6 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // BUG-031: Add HTTP security headers to protect against XSS, clickjacking, MIME sniffing
   async headers() {
     return [
       {

@@ -25,7 +25,6 @@ export async function generateMetadata({ params }: PageProps) {
   if (!taskflow) return {};
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  // Remove redundant title suffix (BUG-29)
   const title = `${taskflow.title} Taskflow 2026`;
   const description =
     taskflow.description || `Step by step guide to becoming a ${taskflow.title} developer.`;
@@ -54,13 +53,12 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   const content = taskflowContent[slug];
 
   const title = taskflow.title;
-  const headingSuffix = taskflow.type === "role" ? "Developer Taskflow" : "Taskflow"; // (BUG-12)
+  const headingSuffix = taskflow.type === "role" ? "Developer Taskflow" : "Taskflow";
 
   return (
     <>
       <Navbar />
       <main className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
-        {/* Breadcrumb (BUG-11) */}
         <nav className="text-text-secondary text-sm font-medium" aria-label="Breadcrumb">
           <Link href="/taskflows" className="hover:text-text-primary transition-colors">
             All Taskflows

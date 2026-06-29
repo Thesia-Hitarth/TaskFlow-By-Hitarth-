@@ -43,6 +43,15 @@ model User {
   accounts      Account[]
   sessions      Session[]
   progress      UserProgress[]
+  activities    UserActivity[]
+  badges        UserBadge[]
+  guideViews    GuideView[]
+
+  // Streak tracking
+  streakDays       Int      @default(0)
+  longestStreak    Int      @default(0)
+  lastActivityDate String?  // "2026-06-15"
+  createdAt        DateTime @default(now())
 }
 
 model VerificationToken {
@@ -67,6 +76,7 @@ model UserProgress {
   nodeId       String
   status       NodeStatus
   updatedAt    DateTime   @updatedAt
+  createdAt    DateTime   @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -78,4 +88,48 @@ model Subscriber {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
+}
+
+model UserActivity {
+  id     String @id @default(cuid())
+  userId String
+  date   String // "2026-06-15"
+  count  Int    @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+model Badge {
+  id          String      @id
+  name        String
+  description String
+  emoji       String
+  userBadges  UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+}
+
+model GuideView {
+  id        String   @id @default(cuid())
+  userId    String
+  guideSlug String
+  viewedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, guideSlug])
+  @@index([guideSlug])
 }

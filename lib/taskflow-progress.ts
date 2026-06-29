@@ -122,7 +122,7 @@ export function useTaskflowProgress(slug: string) {
   }, [slug, isAuthed, load]);
 
   const updateStatus = useCallback(
-    async (nodeId: string, newStatus: NodeStatus) => {
+    async (nodeId: string, newStatus: NodeStatus): Promise<{ success: boolean; badgesAwarded?: string[] }> => {
       let prevStatus: NodeStatus = "pending";
       let nextProgress: Record<string, NodeStatus> = {};
 
@@ -148,7 +148,9 @@ export function useTaskflowProgress(slug: string) {
           if (!res.ok) {
             throw new Error(`HTTP ${res.status}`);
           }
+          const data = await res.json();
           window.dispatchEvent(new CustomEvent("taskflow-progress-update", { detail: { slug } }));
+          return { success: true, badgesAwarded: data.badgesAwarded || [] };
         } catch (err) {
           console.error("Failed to update database progress, reverting:", err);
           setProgress((prev) => {
@@ -160,9 +162,11 @@ export function useTaskflowProgress(slug: string) {
             }
             return next;
           });
+          return { success: false, badgesAwarded: [] };
         }
       } else {
         writeLocal(slug, nextProgress);
+        return { success: true, badgesAwarded: [] };
       }
     },
     [slug, isAuthed]

@@ -3,9 +3,8 @@ import { prisma } from "@/lib/prisma";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Simple in-memory rate limiting map (BUG-09)
 const ipCache = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW = 10 * 60 * 1000; // 10 minutes
+const RATE_LIMIT_WINDOW = 10 * 60 * 1000;
 const MAX_REQUESTS = 5;
 
 function isRateLimited(ip: string): boolean {
@@ -31,7 +30,6 @@ function getAllowedOrigin(): string {
 }
 
 export async function POST(req: Request) {
-  // Safe client IP extraction (BUG-37)
   const ip = req.headers.get("x-real-ip")
     ?? req.headers.get("x-forwarded-for")?.split(",")[0].trim()
     ?? "127.0.0.1";
@@ -43,7 +41,6 @@ export async function POST(req: Request) {
     );
   }
 
-  // Validate Origin header to prevent CSRF attacks with exact match (BUG-35)
   const origin = req.headers.get("origin");
   const allowedOrigin = getAllowedOrigin();
 
@@ -68,7 +65,6 @@ export async function POST(req: Request) {
   const normalizedEmail = email.trim().toLowerCase();
 
   try {
-    // Persist subscribers in DB (BUG-31)
     await prisma.subscriber.upsert({
       where: { email: normalizedEmail },
       update: {},

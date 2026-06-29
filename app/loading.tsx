@@ -1,4 +1,3 @@
-// BUG-018: Root loading skeleton — shown during async server component fetches
 export default function Loading() {
   return (
     <main className="flex-1 bg-background transition-colors duration-200">

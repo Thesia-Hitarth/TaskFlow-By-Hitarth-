@@ -13,12 +13,14 @@ import TaskflowLegend from "./TaskflowLegend";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { toPng } from "html-to-image";
 import { Button } from "@/components/ui/button";
+import { getNextNode } from "@/lib/roadmap/getNextNode";
+import { fireCelebration, fireBadgeCelebration } from "@/lib/ui/confetti";
+import { BadgeToast } from "@/components/ui/BadgeToast";
 
 interface TaskflowDiagramProps {
   content: TaskflowContent;
 }
 
-// Define OUTSIDE the component, at module level (BUG-30)
 const NODE_TYPES = { milestone: MilestoneNode, subtopic: SubtopicNode };
 
 // Dynamic fallback metadata generator for nodes
@@ -83,6 +85,16 @@ export default function TaskflowDiagram({ content }: TaskflowDiagramProps) {
 function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
   const { progress, updateStatus } = useTaskflowProgress(content.slug);
   const [selected, setSelected] = useState<TaskflowContentNode | null>(null);
+  const [unlockedBadgeId, setUnlockedBadgeId] = useState<string | null>(null);
+
+  const nextRecommendedNode = useMemo(() => {
+    return getNextNode(content.nodes, content.edges, progress);
+  }, [content.nodes, content.edges, progress]);
+
+  const nextRecommendedParent = useMemo(() => {
+    if (!nextRecommendedNode || !nextRecommendedNode.parentId) return null;
+    return content.nodes.find((n) => n.id === nextRecommendedNode.parentId) || null;
+  }, [nextRecommendedNode, content.nodes]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [collapsedMilestones, setCollapsedMilestones] = useState<Set<string>>(new Set());
@@ -208,7 +220,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     if (containerWidth > 0 && calculatedHeight > 0 && !isNaN(calculatedHeight)) {
       const timer = setTimeout(() => {
         fitView({ padding: 0.05, minZoom: 0.1, maxZoom: 1 });
-      }, 200); // 200ms debounce (BUG-14)
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [containerWidth, calculatedHeight, fitView]);
@@ -365,22 +377,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     [content.nodes, isNodeLocked]
   );
 
-  // Topological recommendation calculator (Next suggested step banner)
-  const nextRecommendedNode = useMemo(() => {
-    const unfinished = content.nodes.find((n) => {
-      if (n.kind !== "subtopic") return false;
-      const status = progress[n.id] ?? "pending";
-      const isCompleted = status === "done" || status === "skipped";
-      return !isCompleted && !isNodeLocked(n.id);
-    });
-    return unfinished || null;
-  }, [content.nodes, progress, isNodeLocked]);
 
-  // Parent milestone of the next recommended node
-  const nextRecommendedParent = useMemo(() => {
-    if (!nextRecommendedNode || !nextRecommendedNode.parentId) return null;
-    return content.nodes.find((n) => n.id === nextRecommendedNode.parentId) || null;
-  }, [nextRecommendedNode, content.nodes]);
 
   // Compute dynamic status to pass to detail sheet (e.g. for milestones)
   const selectedStatus = useMemo(() => {
@@ -452,6 +449,21 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     }
   }, [progress]);
 
+  const handleStatusChange = useCallback(async (nodeId: string, newStatus: NodeStatus) => {
+    const result = await updateStatus(nodeId, newStatus);
+    if (newStatus === "done" && result?.success) {
+      // Confetti burst for completion!
+      fireCelebration();
+
+      // Show badge unlock toast if any were earned
+      if (result.badgesAwarded && result.badgesAwarded.length > 0) {
+        // Extra celebrate confetti for badges
+        fireBadgeCelebration();
+        setUnlockedBadgeId(result.badgesAwarded[0]);
+      }
+    }
+  }, [updateStatus]);
+
   return (
     <div className="relative space-y-4">
       {/* 1. Legend Row */}
@@ -462,13 +474,13 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
       {/* 2. Action Toolbar Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card/50 border border-border/60 p-3 rounded-xl shadow-xs">
         {nextRecommendedNode ? (
-          <div className="flex items-center gap-2 bg-accent/10 border border-accent/20 px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0">
+          <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/25 px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0">
             <span className="text-text-secondary">Next recommended:</span>
-            <span className="text-accent font-bold truncate max-w-[180px] sm:max-w-[320px]" title={nextRecommendedParent ? `${nextRecommendedParent.label} > ${nextRecommendedNode.label}` : nextRecommendedNode.label}>
+            <span className="text-amber-500 font-bold truncate max-w-[180px] sm:max-w-[320px]" title={nextRecommendedParent ? `${nextRecommendedParent.label} > ${nextRecommendedNode.label}` : nextRecommendedNode.label}>
               {nextRecommendedParent ? (
                 <>
-                  <span className="opacity-75 text-accent/80 font-normal">{nextRecommendedParent.label}</span>
-                  <span className="mx-1 text-accent/60 font-normal">&gt;</span>
+                  <span className="opacity-75 text-amber-500/80 font-normal">{nextRecommendedParent.label}</span>
+                  <span className="mx-1 text-amber-500/60 font-normal">&gt;</span>
                   <span>{nextRecommendedNode.label}</span>
                 </>
               ) : (
@@ -477,7 +489,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
             </span>
             <button
               onClick={() => setSelected(nextRecommendedNode)}
-              className="text-[10px] bg-accent text-black px-2 py-0.5 rounded-md hover:bg-amber-600 transition-colors ml-1 cursor-pointer font-bold shrink-0"
+              className="text-[10px] bg-amber-500 text-black px-2 py-0.5 rounded-md hover:bg-amber-600 transition-colors ml-1 cursor-pointer font-bold shrink-0"
             >
               Go →
             </button>
@@ -551,15 +563,15 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
               {isZoomedIn ? (
                 <>
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <path d="M3 1h4M3 9h4M1 3v4M9 3v4M2 2l6 6M8 2L2 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                    <path d="M3 1h4M3 9h4M1 3v4M9 3v4M2 2l6 6M8 2L2 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
                   </svg>
                   Drag to pan · Use ⊞ to reset
                 </>
               ) : (
                 <>
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <circle cx="5" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.2"/>
-                    <path d="M5 7.5v2M3.5 6.5L2 8M6.5 6.5L8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                    <circle cx="5" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M5 7.5v2M3.5 6.5L2 8M6.5 6.5L8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
                   </svg>
                   Zoom in to explore · Drag to pan
                 </>
@@ -580,7 +592,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
       <NodeDetailSheet
         node={selected}
         status={selectedStatus}
-        onStatusChange={(status: NodeStatus) => selected && updateStatus(selected.id, status)}
+        onStatusChange={(status: NodeStatus) => selected && handleStatusChange(selected.id, status)}
         onClose={() => setSelected(null)}
         onNavigate={handleNavigate}
         hasPrev={hasPrev}
@@ -589,6 +601,11 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         estimatedTime={selectedMetadata?.estimatedTime}
         whyLearn={selectedMetadata?.whyLearn}
         outcomes={selectedMetadata?.outcomes}
+      />
+
+      <BadgeToast
+        badgeId={unlockedBadgeId}
+        onDismiss={() => setUnlockedBadgeId(null)}
       />
     </div>
   );

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { taskflowContent } from "@/lib/taskflow-content";
 import { NodeStatus } from "@prisma/client";
+import { updateStreak } from "@/lib/streak/updateStreak";
+import { checkAndAwardBadges } from "@/lib/badges/checkBadges";
 
 function getAllowedOrigin(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -19,7 +21,6 @@ function isValidOrigin(req: Request): boolean {
 const VALID_STATUSES = new Set(["pending", "in-progress", "done", "skipped"]);
 
 export async function POST(request: Request) {
-  // Size limit validation (BUG-03): Reject bodies larger than 8KB
   const contentLength = Number(request.headers.get("content-length") ?? 0);
   if (contentLength > 8192) {
     return NextResponse.json({ error: "Payload too large" }, { status: 413 });
@@ -49,7 +50,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing or invalid progress data" }, { status: 400 });
   }
 
-  // Validate slug against known taskflow slugs (BUG-03)
   const content = taskflowContent[slug];
   if (!content) {
     return NextResponse.json({ error: "Unknown slug" }, { status: 400 });
@@ -68,7 +68,6 @@ export async function POST(request: Request) {
     }
   }
 
-  // Perform bulk updates / deletes inside a database transaction (BUG-33)
   const operations = Object.entries(progress).map(([nodeId, status]) => {
     const dbStatus = (status === "in-progress" ? "in_progress" : status) as NodeStatus;
 
@@ -89,5 +88,20 @@ export async function POST(request: Request) {
 
   await prisma.$transaction(operations);
 
-  return NextResponse.json({ ok: true });
+  const hasDone = Object.values(progress).some((status) => status === "done");
+  let badgesAwarded: string[] = [];
+  if (hasDone) {
+    try {
+      const awardedComeback = await updateStreak(session.user.id);
+      if (awardedComeback) {
+        badgesAwarded.push("comeback-kid");
+      }
+      const newBadges = await checkAndAwardBadges(session.user.id, slug);
+      badgesAwarded = [...badgesAwarded, ...newBadges];
+    } catch (e) {
+      console.error("Failed to run streak/badge check on sync:", e);
+    }
+  }
+
+  return NextResponse.json({ ok: true, badgesAwarded });
 }

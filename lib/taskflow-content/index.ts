@@ -67,7 +67,6 @@ export const taskflowContent: Record<string, TaskflowContent> = {
   cpp: cppTaskflow,
 };
 
-// Validate parentId constraints at build/import time (BUG-32)
 for (const [slug, content] of Object.entries(taskflowContent)) {
   const milestoneIds = new Set(
     content.nodes.filter((n) => n.kind === "milestone").map((n) => n.id)

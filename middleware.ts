@@ -1,5 +1,3 @@
-// BUG-004: Auth middleware to protect dashboard and progress API routes.
-//
 // IMPORTANT: next-auth v5 beta (5.0.0-beta.31) with the PrismaAdapter uses
 // jose library functions that require Node.js APIs (DecompressionStream) not
 // available in the Edge runtime. We must configure this middleware to run in

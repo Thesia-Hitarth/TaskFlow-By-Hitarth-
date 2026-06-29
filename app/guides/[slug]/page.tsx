@@ -9,6 +9,9 @@ import { guides } from "@/lib/guides-data";
 import { Clock, Calendar } from "lucide-react";
 import GuideQuiz from "@/components/GuideQuiz";
 import { guidesQuizData } from "@/lib/guides-quiz-data";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { checkAndAwardBadges } from "@/lib/badges/checkBadges";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -25,8 +28,6 @@ export async function generateMetadata({ params }: PageProps) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-  // BUG-020: Dynamic OG tags per guide page so social shares show the correct
-  // title, description, and URL instead of the site-wide defaults.
   return {
     title: `${guide.title} — task-flow-by-hitarth`,
     description: guide.description,
@@ -50,6 +51,28 @@ export default async function GuidePage({ params }: PageProps) {
   const { slug } = await params;
   const guide = guides.find((g) => g.slug === slug);
   if (!guide) notFound();
+
+  const session = await auth();
+  if (session?.user?.id) {
+    try {
+      await prisma.guideView.upsert({
+        where: {
+          userId_guideSlug: {
+            userId: session.user.id,
+            guideSlug: slug,
+          },
+        },
+        create: {
+          userId: session.user.id,
+          guideSlug: slug,
+        },
+        update: {},
+      });
+      await checkAndAwardBadges(session.user.id, "guides");
+    } catch (e) {
+      console.error("Failed to log guide view:", e);
+    }
+  }
 
   const filePath = path.join(process.cwd(), "content/guides", `${slug}.mdx`);
   if (!fs.existsSync(filePath)) notFound();

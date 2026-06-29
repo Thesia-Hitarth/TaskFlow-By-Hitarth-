@@ -1,6 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-
-// BUG-005: Singleton pattern to prevent connection pool exhaustion in Next.js serverless.
 // In development, Next.js hot-reloads modules which would create a new PrismaClient on
 // every reload. We attach it to `globalThis` so it persists across hot reloads.
 // In production, each serverless function instance only runs this module once, so the

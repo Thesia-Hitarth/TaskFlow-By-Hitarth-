@@ -1,5 +1,4 @@
-"use client";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,7 +6,8 @@ import TaskflowCard from "@/components/TaskflowCard";
 import { taskflows } from "@/lib/taskflows-data";
 import PathRecommender from "@/components/PathRecommender";
 import { changelogEntries } from "@/lib/changelog-data";
-import { track } from "@vercel/analytics";
+import { SubscribeForm } from "@/components/home/SubscribeForm";
+import { PersonalizedHomeBanner } from "@/components/home/PersonalizedHomeBanner";
 
 // Custom inline GitHub icon to avoid lucide-react version export mismatches
 function GithubIcon({ className, ...props }: React.SVGProps<SVGSVGElement>) {
@@ -28,13 +28,7 @@ function GithubIcon({ className, ...props }: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-// BUG-009: Subscribe form state — tracks loading, success, and error
-type SubscribeState = "idle" | "loading" | "success" | "error";
-
 export default function Home() {
-  const [subscribeEmail, setSubscribeEmail] = useState("");
-  const [subscribeState, setSubscribeState] = useState<SubscribeState>("idle");
-  const [subscribeError, setSubscribeError] = useState("");
   const roleTaskflows = taskflows.filter((t) => t.type === "role");
   const skillTaskflows = taskflows.filter((t) => t.type === "skill");
 
@@ -50,82 +44,14 @@ export default function Home() {
           <p className="text-text-secondary text-lg sm:text-xl max-w-2xl mt-4 leading-relaxed font-medium">
             Community created taskflows, guides and articles to help developers grow in their career.
           </p>
-          <div className="flex flex-col items-center gap-4 justify-center mt-8 w-full max-w-md">
-            {/* BUG-009: Subscribe form now POSTs to /api/subscribe */}
-            {subscribeState === "success" ? (
-              <div className="w-full rounded-xl bg-card border border-border px-5 py-4 text-center animate-fade-in">
-                <span className="text-2xl" role="img" aria-label="party popper">🎉</span>
-                <p className="text-text-primary font-bold mt-2">You&apos;re subscribed!</p>
-                <p className="text-sm text-text-secondary mt-1">You&apos;ll be notified when new content is added.</p>
-              </div>
-            ) : (
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (subscribeState === "loading") return;
-                  setSubscribeState("loading");
-                  setSubscribeError("");
-                  try {
-                    const res = await fetch("/api/subscribe", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ email: subscribeEmail }),
-                    });
-                    const data = await res.json();
-                    if (!res.ok) {
-                      setSubscribeState("error");
-                      setSubscribeError(data.error ?? "Something went wrong. Please try again.");
-                    } else {
-                      setSubscribeState("success");
-                      setSubscribeEmail("");
-                      track("subscribe", { source: "homepage" });
-                    }
-                  } catch {
-                    setSubscribeState("error");
-                    setSubscribeError("Network error. Please check your connection.");
-                  }
-                }}
-                className="flex flex-col w-full gap-2"
-              >
-                <div className="flex w-full gap-2">
-                  <input
-                    type="email"
-                    required
-                    value={subscribeEmail}
-                    onChange={(e) => setSubscribeEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    disabled={subscribeState === "loading"}
-                    className="flex-1 rounded-md border border-border bg-card px-3 py-1.5 text-sm text-text-primary placeholder-text-secondary outline-none focus:border-accent transition-colors disabled:opacity-60"
-                  />
-                  <button
-                    type="submit"
-                    disabled={subscribeState === "loading"}
-                    className="rounded-xl bg-accent px-5 py-2 text-sm font-semibold text-black hover:bg-amber-600 transition-colors cursor-pointer active:scale-[0.98] shrink-0 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {subscribeState === "loading" ? "Subscribing…" : "Subscribe for Updates"}
-                  </button>
-                </div>
-                {subscribeState === "error" && (
-                  <p className="text-red-500 text-xs text-left" role="alert">{subscribeError}</p>
-                )}
-              </form>
-            )}
-            {/* BUG-030: Added aria-label to icon link */}
-            <a
-              href="https://github.com/Thesia-Hitarth/TaskFlow-By-Hitarth-"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Contribute to TaskFlow on GitHub"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border text-text-primary hover:border-accent hover:bg-border/60 bg-transparent px-6 py-2.5 text-sm font-semibold cursor-pointer transition-all active:scale-[0.98] shrink-0"
-            >
-              <GithubIcon className="h-4 w-4" aria-hidden="true" />
-              Contribute on GitHub
-            </a>
-          </div>
+          <SubscribeForm />
         </section>
 
         {/* Core Grids Container */}
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+          {/* Personalized resume learning banner for authenticated users */}
+          <PersonalizedHomeBanner />
+
           <PathRecommender />
 
           {/* Section B: Role Based Taskflows */}
@@ -152,8 +78,6 @@ export default function Home() {
             </div>
           </section>
         </div>
-
-
 
         {/* Actively Maintained (Timeline) Section */}
         <section className="pt-16 pb-20 px-4 sm:px-8 max-w-4xl mx-auto">
@@ -226,7 +150,6 @@ export default function Home() {
         </section>
       </main>
       <Footer />
-
     </>
   );
 }

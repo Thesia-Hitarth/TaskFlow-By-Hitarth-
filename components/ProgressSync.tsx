@@ -8,7 +8,6 @@ const SYNCED_FLAG = "taskflow-progress-synced";
 export default function ProgressSync() {
   const { status } = useSession();
 
-  // Clear sync flag on sign-out (BUG-07)
   useEffect(() => {
     if (status === "unauthenticated") {
       localStorage.removeItem(SYNCED_FLAG);

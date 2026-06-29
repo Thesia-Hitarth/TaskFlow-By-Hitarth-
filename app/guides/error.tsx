@@ -1,6 +1,5 @@
 "use client";
 
-// BUG-014: Per-route error boundary for the /guides route segment.
 import Link from "next/link";
 import { useEffect } from "react";
 

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { taskflowContent } from "@/lib/taskflow-content";
 import { NodeStatus } from "@prisma/client";
+import { updateStreak } from "@/lib/streak/updateStreak";
+import { checkAndAwardBadges } from "@/lib/badges/checkBadges";
 
 function getAllowedOrigin(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -39,7 +41,6 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  // Size limit validation (BUG-03): Reject bodies larger than 2KB
   const contentLength = Number(request.headers.get("content-length") ?? 0);
   if (contentLength > 2048) {
     return NextResponse.json({ error: "Payload too large" }, { status: 413 });
@@ -66,13 +67,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  // Validate slug against known taskflow slugs (BUG-03)
   const content = taskflowContent[slug];
   if (!content) {
     return NextResponse.json({ error: "Unknown slug" }, { status: 400 });
   }
-
-  // Validate nodeId belongs to this taskflow (BUG-03)
   const validNodeIds = new Set(content.nodes.map((n) => n.id));
   if (!validNodeIds.has(nodeId)) {
     return NextResponse.json({ error: "Unknown nodeId" }, { status: 400 });
@@ -100,7 +98,21 @@ export async function POST(request: Request) {
     });
   }
 
-  return NextResponse.json({ ok: true });
+  let badgesAwarded: string[] = [];
+  if (dbStatus === "done") {
+    try {
+      const awardedComeback = await updateStreak(session.user.id);
+      if (awardedComeback) {
+        badgesAwarded.push("comeback-kid");
+      }
+      const newBadges = await checkAndAwardBadges(session.user.id, slug);
+      badgesAwarded = [...badgesAwarded, ...newBadges];
+    } catch (e) {
+      console.error("Failed to run streak/badge check:", e);
+    }
+  }
+
+  return NextResponse.json({ ok: true, badgesAwarded });
 }
 
 export async function DELETE(request: Request) {
@@ -115,7 +127,6 @@ export async function DELETE(request: Request) {
   const slug = new URL(request.url).searchParams.get("slug");
   if (!slug) return NextResponse.json({ error: "Missing slug" }, { status: 400 });
 
-  // Validate slug against known taskflow slugs (BUG-03)
   const content = taskflowContent[slug];
   if (!content) {
     return NextResponse.json({ error: "Unknown slug" }, { status: 400 });

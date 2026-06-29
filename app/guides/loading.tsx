@@ -1,4 +1,3 @@
-// BUG-018: Guides listing page loading skeleton
 export default function Loading() {
   return (
     <main className="flex-1 bg-background py-12 px-4 sm:px-8 max-w-7xl mx-auto transition-colors duration-200">
