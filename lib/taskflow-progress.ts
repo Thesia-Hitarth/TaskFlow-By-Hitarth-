@@ -22,6 +22,22 @@ function writeLocal(slug: string, progress: Record<string, NodeStatus>) {
   window.dispatchEvent(new CustomEvent("taskflow-progress-update", { detail: { slug } }));
 }
 
+function safeDecodeBase64(str: string): string | null {
+  try {
+    const cleanStr = str.trim();
+    if (!/^[A-Za-z0-9+/=_-]+$/.test(cleanStr)) {
+      return null;
+    }
+    const normalized = cleanStr
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const padded = normalized.padEnd(normalized.length + (4 - normalized.length % 4) % 4, "=");
+    return atob(padded);
+  } catch {
+    return null;
+  }
+}
+
 // NOTE: next-auth v5 auto-detects AUTH_<PROVIDER>_ID and AUTH_<PROVIDER>_SECRET env vars
 // for GitHub and Google without needing explicit credentials config inside auth.ts.
 export function useTaskflowProgress(slug: string) {
@@ -31,24 +47,55 @@ export function useTaskflowProgress(slug: string) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const load = useCallback(async () => {
+    let baseProgress: Record<string, NodeStatus> = {};
     if (isAuthed) {
       try {
         const res = await fetch(`/api/progress?slug=${slug}`);
         if (res.ok) {
-          const data = await res.json();
-          setProgress(data);
+          baseProgress = await res.json();
         } else if (res.status === 401) {
-          setProgress(readLocal(slug));
+          baseProgress = readLocal(slug);
         }
       } catch (err) {
         console.error("Failed to fetch database progress:", err);
-      } finally {
-        setIsLoaded(true);
+        baseProgress = readLocal(slug);
       }
     } else {
-      setProgress(readLocal(slug));
-      setIsLoaded(true);
+      baseProgress = readLocal(slug);
     }
+
+    // Check for shared progress parameter in URL
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const shareData = params.get("share");
+      if (shareData) {
+        const decodedStr = safeDecodeBase64(shareData);
+        if (decodedStr) {
+          try {
+            const shared = JSON.parse(decodedStr) as Record<string, NodeStatus>;
+            baseProgress = { ...baseProgress, ...shared };
+
+            if (isAuthed) {
+              await fetch("/api/progress/sync", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ slug, progress: baseProgress }),
+              });
+            } else {
+              writeLocal(slug, baseProgress);
+            }
+          } catch (e) {
+            console.error("Failed to parse shared progress:", e);
+          }
+        }
+        // Remove share param from URL cleanly
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      }
+    }
+
+    setProgress(baseProgress);
+    setIsLoaded(true);
   }, [slug, isAuthed]);
 
   useEffect(() => {

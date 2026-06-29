@@ -1,9 +1,15 @@
 export type NodeKind = "milestone" | "subtopic";
 export type NodeStatus = "pending" | "done" | "in-progress" | "skipped";
+export type NodeDifficulty = "beginner" | "intermediate" | "advanced";
 
 export interface ResourceLink {
   title: string;
   url: string;
+  type?: "video" | "article" | "interactive" | "docs" | "book";
+  duration?: string;
+  free?: boolean;
+  recommended?: boolean;
+  description?: string;
 }
 
 export interface TaskflowContentNode {
@@ -14,6 +20,12 @@ export interface TaskflowContentNode {
   description: string;
   links?: ResourceLink[];
   position: { x: number; y: number };
+  difficulty?: NodeDifficulty;
+  estimatedTime?: string;
+  whyLearn?: string;
+  outcomes?: string[];
+  isOptional?: boolean;
+  prerequisites?: string[];
 }
 
 export interface TaskflowContentEdge {
@@ -28,3 +40,4 @@ export interface TaskflowContent {
   nodes: TaskflowContentNode[];
   edges: TaskflowContentEdge[];
 }
+
