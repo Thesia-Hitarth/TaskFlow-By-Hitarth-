@@ -376,6 +376,12 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     return unfinished || null;
   }, [content.nodes, progress, isNodeLocked]);
 
+  // Parent milestone of the next recommended node
+  const nextRecommendedParent = useMemo(() => {
+    if (!nextRecommendedNode || !nextRecommendedNode.parentId) return null;
+    return content.nodes.find((n) => n.id === nextRecommendedNode.parentId) || null;
+  }, [nextRecommendedNode, content.nodes]);
+
   // Compute dynamic status to pass to detail sheet (e.g. for milestones)
   const selectedStatus = useMemo(() => {
     if (!selected) return "pending" as NodeStatus;
@@ -458,8 +464,16 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         {nextRecommendedNode ? (
           <div className="flex items-center gap-2 bg-accent/10 border border-accent/20 px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0">
             <span className="text-text-secondary">Next recommended:</span>
-            <span className="text-accent font-bold truncate max-w-[140px] sm:max-w-[220px]" title={nextRecommendedNode.label}>
-              {nextRecommendedNode.label}
+            <span className="text-accent font-bold truncate max-w-[180px] sm:max-w-[320px]" title={nextRecommendedParent ? `${nextRecommendedParent.label} > ${nextRecommendedNode.label}` : nextRecommendedNode.label}>
+              {nextRecommendedParent ? (
+                <>
+                  <span className="opacity-75 text-accent/80 font-normal">{nextRecommendedParent.label}</span>
+                  <span className="mx-1 text-accent/60 font-normal">&gt;</span>
+                  <span>{nextRecommendedNode.label}</span>
+                </>
+              ) : (
+                nextRecommendedNode.label
+              )}
             </span>
             <button
               onClick={() => setSelected(nextRecommendedNode)}
