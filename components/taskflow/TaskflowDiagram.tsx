@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { ReactFlow, Background, Node, Edge, NodeMouseHandler, ReactFlowProvider, useReactFlow, MiniMap, Controls } from "@xyflow/react";
+import { ReactFlow, Background, Node, Edge, NodeMouseHandler, ReactFlowProvider, useReactFlow, useViewport, Controls } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { TaskflowContent, TaskflowContentNode } from "@/lib/taskflow-content/types";
 import { useTaskflowProgress } from "@/lib/taskflow-progress";
@@ -91,6 +91,10 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
 
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
+  // Dynamically enable pan/scroll-lock only when user has zoomed in past the default fit level
+  const { zoom } = useViewport();
+  const isZoomedIn = zoom > 1.05; // threshold just above 1x to avoid floating-point edge cases
+
   // Collapsible toggle handler
   const toggleCollapse = useCallback((id: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Avoid selecting node
@@ -104,6 +108,20 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
       return next;
     });
   }, []);
+
+  // Helper to compute milestone status dynamically based on nested subtopics
+  const getMilestoneStatus = useCallback((milestoneId: string): NodeStatus => {
+    const children = content.nodes.filter(child => child.parentId === milestoneId && child.kind === "subtopic");
+    if (children.length > 0) {
+      const childStatuses = children.map(child => progress[child.id] ?? "pending");
+      const allDone = childStatuses.every(s => s === "done");
+      const allPending = childStatuses.every(s => s === "pending");
+      if (allDone) return "done";
+      if (allPending) return "pending";
+      return "in-progress";
+    }
+    return (progress[milestoneId] ?? "pending") as NodeStatus;
+  }, [content.nodes, progress]);
 
   // Recursive prerequisite checker
   const isNodeLocked = useCallback((nodeId: string): boolean => {
@@ -124,8 +142,11 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         return src?.kind === "milestone";
       });
 
-    return milestonePrereqs.some(prereqId => progress[prereqId] !== "done");
-  }, [content.nodes, content.edges, progress]);
+    return milestonePrereqs.some(prereqId => {
+      const status = getMilestoneStatus(prereqId);
+      return status !== "done";
+    });
+  }, [content.nodes, content.edges, getMilestoneStatus]);
 
   // Calculate layout bounds to scale container height responsively with vertical stretch
   const { diagramWidth, diagramHeight } = useMemo(() => {
@@ -218,78 +239,90 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [fitView, zoomIn, zoomOut]);
 
-  // Construct Nodes with Enriched Metadata, Scaled Spacing & Filter hidden subtopics
-  const nodes: Node[] = useMemo(
-    () =>
-      content.nodes.map((n, idx) => {
-        const metadata = getNodeMetadata(n, idx, content.nodes.length);
-        const locked = isNodeLocked(n.id);
-        const isCollapsed = n.kind === "subtopic" && n.parentId ? collapsedMilestones.has(n.parentId) : false;
-        const posX = n.position?.x ?? 0;
-        const posY = n.position?.y ?? 0;
-        const scaledY = posY * 1.6; // Vertical layout scaling to eliminate overlap
+  // Construct Nodes with Enriched Metadata, Scaled Spacing & Filter out hidden subtopics completely
+  const nodes: Node[] = useMemo(() => {
+    const visibleNodes: Node[] = [];
+    content.nodes.forEach((n, idx) => {
+      // If it's a subtopic, check if its parent milestone is collapsed
+      const isCollapsed = n.kind === "subtopic" && n.parentId ? collapsedMilestones.has(n.parentId) : false;
+      if (isCollapsed) return; // Do not include in ReactFlow nodes array!
+
+      const metadata = getNodeMetadata(n, idx, content.nodes.length);
+      const locked = isNodeLocked(n.id);
+      const posX = n.position?.x ?? 0;
+      const posY = n.position?.y ?? 0;
+      const scaledY = posY * 1.6;
+
+      visibleNodes.push({
+        id: n.id,
+        type: n.kind,
+        position: { x: posX, y: scaledY },
+        data: {
+          label: n.label,
+          status: n.kind === "milestone" ? getMilestoneStatus(n.id) : (progress[n.id] ?? "pending"),
+          difficulty: metadata.difficulty,
+          estimatedTime: metadata.estimatedTime,
+          resourceCount: n.links?.length ?? 0,
+          isOptional: n.isOptional ?? false,
+          isLocked: locked,
+          isCollapsed: collapsedMilestones.has(n.id),
+          onToggleCollapse: n.kind === "milestone" ? (e: React.MouseEvent) => toggleCollapse(n.id, e) : undefined,
+        },
+      });
+    });
+    return visibleNodes;
+  }, [content.nodes, progress, isNodeLocked, collapsedMilestones, toggleCollapse, getMilestoneStatus]);
+
+  // Construct Edges with Dynamic Progression Coloring & filter out hidden ones
+  const edges: Edge[] = useMemo(() => {
+    // Build set of visible node IDs for fast O(1) lookup
+    const visibleNodeIds = new Set(nodes.map(n => n.id));
+
+    // 1. Milestone-to-milestone connections
+    const baseEdges = content.edges
+      .filter(e => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target))
+      .map((e) => {
+        const status = progress[e.source] ?? "pending";
+        let stroke = "var(--color-border)";
+        let strokeWidth = 2;
+        let animated = false;
+
+        if (status === "done") {
+          stroke = "#22c55e"; // emerald-500
+          strokeWidth = 2.5;
+        } else if (status === "in-progress") {
+          stroke = "#eab308"; // yellow-500
+          strokeWidth = 2;
+          animated = true;
+        } else if (status === "skipped") {
+          stroke = "rgba(239, 68, 68, 0.4)"; // red-500 with opacity
+          strokeWidth = 1.5;
+        }
 
         return {
-          id: n.id,
-          type: n.kind,
-          position: { x: posX, y: scaledY },
-          hidden: isCollapsed,
-          data: {
-            label: n.label,
-            status: progress[n.id] ?? "pending",
-            difficulty: metadata.difficulty,
-            estimatedTime: metadata.estimatedTime,
-            resourceCount: n.links?.length ?? 0,
-            isOptional: n.isOptional ?? false,
-            isLocked: locked,
-            isCollapsed: collapsedMilestones.has(n.id),
-            onToggleCollapse: n.kind === "milestone" ? (e: React.MouseEvent) => toggleCollapse(n.id, e) : undefined,
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          sourceHandle: "bottom",
+          targetHandle: "top",
+          animated,
+          style: {
+            stroke,
+            strokeWidth,
+            transition: "stroke 0.4s ease, stroke-width 0.4s ease",
           },
         };
-      }),
-    [content.nodes, progress, isNodeLocked, collapsedMilestones, toggleCollapse]
-  );
+      });
 
-  // Construct Edges with Dynamic Progression Coloring
-  const edges: Edge[] = useMemo(() => {
-    // 1. Milestone-to-milestone connections
-    const baseEdges = content.edges.map((e) => {
-      const status = progress[e.source] ?? "pending";
-      let stroke = "var(--color-border)";
-      let strokeWidth = 2;
-      let animated = false;
-
-      if (status === "done") {
-        stroke = "#22c55e"; // emerald-500
-        strokeWidth = 2.5;
-      } else if (status === "in-progress") {
-        stroke = "#eab308"; // yellow-500
-        strokeWidth = 2;
-        animated = true;
-      } else if (status === "skipped") {
-        stroke = "rgba(239, 68, 68, 0.4)"; // red-500 with opacity
-        strokeWidth = 1.5;
-      }
-
-      return {
-        id: e.id,
-        source: e.source,
-        target: e.target,
-        sourceHandle: "bottom",
-        targetHandle: "top",
-        animated,
-        style: {
-          stroke,
-          strokeWidth,
-          transition: "stroke 0.4s ease, stroke-width 0.4s ease",
-        },
-      };
-    });
-
-    // 2. Milestone-to-subtopic connections (assigned explicitly via parentId) (BUG-32)
+    // 2. Milestone-to-subtopic connections (assigned explicitly via parentId)
     const flowEdges: Edge[] = [];
     for (const node of content.nodes) {
       if (node.kind === "subtopic" && node.parentId) {
+        // Only render edge if both milestone and subtopic are visible!
+        if (!visibleNodeIds.has(node.parentId) || !visibleNodeIds.has(node.id)) {
+          continue;
+        }
+
         const status = progress[node.parentId] ?? "pending";
         let stroke = "var(--color-border)";
         const strokeWidth = 2;
@@ -320,7 +353,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     }
 
     return [...baseEdges, ...flowEdges];
-  }, [content.edges, content.nodes, progress]);
+  }, [content.edges, content.nodes, progress, nodes]);
 
   const onNodeClick: NodeMouseHandler = useCallback(
     (_, node) => {
@@ -335,12 +368,22 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
   // Topological recommendation calculator (Next suggested step banner)
   const nextRecommendedNode = useMemo(() => {
     const unfinished = content.nodes.find((n) => {
+      if (n.kind !== "subtopic") return false;
       const status = progress[n.id] ?? "pending";
       const isCompleted = status === "done" || status === "skipped";
       return !isCompleted && !isNodeLocked(n.id);
     });
     return unfinished || null;
   }, [content.nodes, progress, isNodeLocked]);
+
+  // Compute dynamic status to pass to detail sheet (e.g. for milestones)
+  const selectedStatus = useMemo(() => {
+    if (!selected) return "pending" as NodeStatus;
+    if (selected.kind === "milestone") {
+      return getMilestoneStatus(selected.id);
+    }
+    return (progress[selected.id] ?? "pending") as NodeStatus;
+  }, [selected, progress, getMilestoneStatus]);
 
   // Drawer Next/Prev Navigation Calculations
   const selectedIndex = selected ? content.nodes.findIndex(n => n.id === selected.id) : -1;
@@ -409,7 +452,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
       <div className="border-b border-border/55 pb-1">
         <TaskflowLegend />
       </div>
-      
+
       {/* 2. Action Toolbar Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card/50 border border-border/60 p-3 rounded-xl shadow-xs">
         {nextRecommendedNode ? (
@@ -450,69 +493,79 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         </div>
       </div>
 
-      <div 
+      {/* Outer container is always mounted so ResizeObserver can measure its width */}
+      <div
         ref={containerRef}
         style={{ height: `${calculatedHeight}px` }}
         className="w-full rounded-xl border border-border/50 bg-surface/30 overflow-hidden relative transition-colors duration-200"
       >
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={NODE_TYPES}
-          onNodeClick={onNodeClick}
-          nodesDraggable={false}
-          nodesConnectable={false}
-          elementsSelectable
-          zoomOnScroll={false}
-          zoomOnPinch={false}
-          zoomOnDoubleClick={false}
-          panOnDrag={false}
-          panOnScroll={false}
-          preventScrolling={false}
-          proOptions={{ hideAttribution: true }}
-          fitView
-          fitViewOptions={{
-            padding: 0.05,
-            minZoom: 0.1,
-            maxZoom: 1,
-          }}
-        >
-          <Background color="var(--color-border)" gap={24} />
-          
-          <MiniMap
-            nodeColor={(node) => {
-              const status = node.data.status ?? "pending";
-              return {
-                done: "#22c55e",
-                "in-progress": "#eab308",
-                skipped: "#ef4444",
-                pending: "rgba(156, 163, 175, 0.3)",
-              }[status as NodeStatus] ?? "rgba(156, 163, 175, 0.3)";
+        {/* Only mount ReactFlow AFTER container dimensions are known — prevents all NaN SVG errors */}
+        {containerWidth > 0 ? (
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={NODE_TYPES}
+            onNodeClick={onNodeClick}
+            nodesDraggable={false}
+            nodesConnectable={false}
+            elementsSelectable
+            zoomOnScroll={false}
+            zoomOnPinch
+            zoomOnDoubleClick={false}
+            panOnDrag={isZoomedIn}
+            panOnScroll={false}
+            preventScrolling={isZoomedIn}
+            proOptions={{ hideAttribution: true }}
+            fitView
+            fitViewOptions={{
+              padding: 0.1,
+              minZoom: 0.1,
+              maxZoom: 2,
             }}
-            style={{
-              background: "var(--background)",
-              border: "1px solid var(--color-border)",
-              borderRadius: "8px",
-              width: "120px",
-              height: "90px",
-            }}
-            className="!bg-card !border-border shrink-0"
-            position="bottom-right"
-            zoomable
-            pannable
-          />
+          >
+            <Background color="var(--color-border)" gap={24} />
+            <Controls
+              showInteractive={false}
+              position="bottom-left"
+              className="!bg-card !border-border !text-text-primary fill-text-primary"
+            />
 
-          <Controls
-            showInteractive={false}
-            position="bottom-left"
-            className="!bg-card !border-border !text-text-primary fill-text-primary"
-          />
-        </ReactFlow>
+            {/* Context-aware hint badge */}
+            <div
+              className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 bg-card/80 backdrop-blur-sm border border-border/50 rounded-full px-2.5 py-1 text-[10px] text-text-secondary pointer-events-none select-none transition-all duration-300"
+            >
+              {isZoomedIn ? (
+                <>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    <path d="M3 1h4M3 9h4M1 3v4M9 3v4M2 2l6 6M8 2L2 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                  </svg>
+                  Drag to pan · Use ⊞ to reset
+                </>
+              ) : (
+                <>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    <circle cx="5" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.2"/>
+                    <path d="M5 7.5v2M3.5 6.5L2 8M6.5 6.5L8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                  </svg>
+                  Zoom in to explore · Drag to pan
+                </>
+              )}
+            </div>
+          </ReactFlow>
+        ) : (
+          /* Loading skeleton — shown for one frame until ResizeObserver fires */
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-3 text-text-secondary/50">
+              <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+              <span className="text-xs font-medium">Loading roadmap…</span>
+            </div>
+          </div>
+        )}
       </div>
 
       <NodeDetailSheet
         node={selected}
-        status={selected ? progress[selected.id] ?? "pending" : "pending"}
+        status={selectedStatus}
         onStatusChange={(status: NodeStatus) => selected && updateStatus(selected.id, status)}
         onClose={() => setSelected(null)}
         onNavigate={handleNavigate}

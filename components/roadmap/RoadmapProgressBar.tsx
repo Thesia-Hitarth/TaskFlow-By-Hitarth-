@@ -1,28 +1,39 @@
 "use client";
 import { useTaskflowProgress } from "@/lib/taskflow-progress";
+import { TaskflowContentNode } from "@/lib/taskflow-content/types";
 
 interface Props {
   slug: string;
-  totalNodes: number;
+  nodes: TaskflowContentNode[];
 }
 
-export default function RoadmapProgressBar({ slug, totalNodes }: Props) {
+export default function RoadmapProgressBar({ slug, nodes }: Props) {
   const { progress, clearProgress, isLoaded } = useTaskflowProgress(slug);
 
-  const done = Object.values(progress).filter((s) => s === "done").length;
-  const inProgress = Object.values(progress).filter(
-    (s) => s === "in-progress"
+  // Extract all subtopic child node IDs (milestones are ignored)
+  const childNodeIds = new Set(
+    nodes.filter((n) => n.kind === "subtopic").map((n) => n.id)
+  );
+
+  const done = Object.entries(progress).filter(
+    ([id, s]) => childNodeIds.has(id) && s === "done"
   ).length;
-  const pct =
-    totalNodes === 0 ? 0 : Math.round((done / totalNodes) * 100);
+
+  const inProgress = Object.entries(progress).filter(
+    ([id, s]) => childNodeIds.has(id) && s === "in-progress"
+  ).length;
+
+  const totalSubtopics = childNodeIds.size;
+  const pct = totalSubtopics === 0 ? 0 : Math.round((done / totalSubtopics) * 100);
 
   if (!isLoaded) {
     return <div className="mb-6 h-[116px] w-full rounded-lg border border-border bg-card animate-pulse" />;
   }
 
-  if (totalNodes === 0) return null;
+  if (totalSubtopics === 0) return null;
 
-  const hasAnyProgress = Object.keys(progress).length > 0;
+  // Check if there is any progress on subtopics
+  const hasAnyProgress = Object.keys(progress).some((id) => childNodeIds.has(id));
 
   return (
     <div className="mb-6 rounded-lg border border-border bg-card p-4">
@@ -33,7 +44,7 @@ export default function RoadmapProgressBar({ slug, totalNodes }: Props) {
           {inProgress > 0 && (
             <span className="text-yellow-400 font-bold">{inProgress} in progress</span>
           )}
-          <span>{totalNodes} total</span>
+          <span>{totalSubtopics} total</span>
           <span className="font-semibold text-accent">{pct}%</span>
         </div>
       </div>

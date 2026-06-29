@@ -143,8 +143,5 @@ body {
   background: var(--surface) !important;
 }
 .react-flow__minimap-mask {
-  fill: rgba(0, 0, 0, 0.15) !important;
-}
-.dark .react-flow__minimap-mask {
-  fill: rgba(0, 0, 0, 0.4) !important;
+  display: none !important;
 }

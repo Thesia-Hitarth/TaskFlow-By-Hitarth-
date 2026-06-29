@@ -81,7 +81,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
 
         {content && (
           <div className="mt-8">
-            <RoadmapProgressBar slug={slug} totalNodes={content.nodes.length} />
+            <RoadmapProgressBar slug={slug} nodes={content.nodes} />
           </div>
         )}
 

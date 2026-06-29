@@ -101,7 +101,7 @@ export default function NodeDetailSheet({
     <Sheet open={!!node} onOpenChange={(open) => !open && onClose()}>
       <SheetContent
         side="right"
-        className="bg-surface border-border text-text-primary w-full sm:max-w-md md:max-w-lg transition-colors duration-200 overflow-y-auto"
+        className="bg-surface border-border text-text-primary w-full sm:max-w-md md:max-w-lg transition-colors duration-200 overflow-y-auto [&>button]:hidden"
       >
         {/* Navigation Bar */}
         <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
@@ -287,46 +287,66 @@ export default function NodeDetailSheet({
             {/* Mark as Status Panel */}
             <div className="border-t border-border pt-6 space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
-                Mark Progress
+                Status
               </h3>
-              <div className="flex gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  className={cn(
-                    "cursor-pointer font-bold rounded-lg border",
-                    status === "done"
-                      ? "bg-green-600 hover:bg-green-700 text-white border-green-600 shadow-xs"
-                      : "bg-transparent border-border text-text-primary hover:border-green-500 hover:bg-green-500/5"
-                  )}
-                  onClick={() => onStatusChange(status === "done" ? "pending" : "done")}
-                >
-                  <Check className="h-4 w-4 mr-1.5" /> Completed
-                </Button>
-                <Button
-                  size="sm"
-                  className={cn(
-                    "cursor-pointer font-bold rounded-lg border",
-                    status === "in-progress"
-                      ? "bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-600 shadow-xs"
-                      : "bg-transparent border-border text-text-primary hover:border-yellow-500 hover:bg-yellow-500/5"
-                  )}
-                  onClick={() => onStatusChange(status === "in-progress" ? "pending" : "in-progress")}
-                >
-                  <CircleDot className="h-4 w-4 mr-1.5" /> In Progress
-                </Button>
-                <Button
-                  size="sm"
-                  className={cn(
-                    "cursor-pointer font-bold rounded-lg border",
-                    status === "skipped"
-                      ? "bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-xs"
-                      : "bg-transparent border-border text-text-primary hover:border-red-500 hover:bg-red-500/5"
-                  )}
-                  onClick={() => onStatusChange(status === "skipped" ? "pending" : "skipped")}
-                >
-                  <X className="h-4 w-4 mr-1.5" /> Skip
-                </Button>
-              </div>
+              {node.kind === "milestone" ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className={cn(
+                      "h-3 w-3 rounded-full border",
+                      status === "done" && "bg-green-500 border-green-500",
+                      status === "in-progress" && "bg-yellow-500 border-yellow-500 animate-pulse",
+                      status === "skipped" && "bg-red-500 border-red-500",
+                      status === "pending" && "border-border bg-transparent"
+                    )} />
+                    <span className="text-sm font-semibold capitalize text-text-primary">
+                      {status === "pending" ? "Not Started" : status === "in-progress" ? "In Progress" : status}
+                    </span>
+                  </div>
+                  <p className="text-xs text-text-secondary leading-relaxed font-medium">
+                    This is a parent milestone. Its status is computed automatically based on the completion of its subtopics.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex gap-2 flex-wrap">
+                  <Button
+                    size="sm"
+                    className={cn(
+                      "cursor-pointer font-bold rounded-lg border",
+                      status === "done"
+                        ? "bg-green-600 hover:bg-green-700 text-white border-green-600 shadow-xs"
+                        : "bg-transparent border-border text-text-primary hover:border-green-500 hover:bg-green-500/5"
+                    )}
+                    onClick={() => onStatusChange(status === "done" ? "pending" : "done")}
+                  >
+                    <Check className="h-4 w-4 mr-1.5" /> Completed
+                  </Button>
+                  <Button
+                    size="sm"
+                    className={cn(
+                      "cursor-pointer font-bold rounded-lg border",
+                      status === "in-progress"
+                        ? "bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-600 shadow-xs"
+                        : "bg-transparent border-border text-text-primary hover:border-yellow-500 hover:bg-yellow-500/5"
+                    )}
+                    onClick={() => onStatusChange(status === "in-progress" ? "pending" : "in-progress")}
+                  >
+                    <CircleDot className="h-4 w-4 mr-1.5" /> In Progress
+                  </Button>
+                  <Button
+                    size="sm"
+                    className={cn(
+                      "cursor-pointer font-bold rounded-lg border",
+                      status === "skipped"
+                        ? "bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-xs"
+                        : "bg-transparent border-border text-text-primary hover:border-red-500 hover:bg-red-500/5"
+                    )}
+                    onClick={() => onStatusChange(status === "skipped" ? "pending" : "skipped")}
+                  >
+                    <X className="h-4 w-4 mr-1.5" /> Skip
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}
