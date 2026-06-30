@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Check, CircleDot, X, ChevronLeft, ChevronRight, Video, BookOpen, Dumbbell, BookMarked, Clock } from "lucide-react";
 import { TaskflowContentNode, NodeStatus } from "@/lib/taskflow-content/types";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface Props {
   node: TaskflowContentNode | null;
@@ -191,6 +192,34 @@ export default function NodeDetailSheet({
                 ))}
               </ul>
             </div>
+
+            {/* Related Guides on TaskFlow */}
+            {node.relatedGuides && node.relatedGuides.length > 0 && (
+              <div className="space-y-3 pb-2">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
+                  Related Guides on TaskFlow
+                </h3>
+                <div className="space-y-2">
+                  {node.relatedGuides.map((guide) => (
+                    <Link
+                      key={guide.slug}
+                      href={`/guides/${guide.slug}`}
+                      className="flex items-center justify-between p-3 rounded-xl border border-border bg-card/60 hover:bg-card hover:border-accent/40 transition-all duration-200 group"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-xs select-none">📖</span>
+                        <span className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors leading-snug truncate">
+                          {guide.title}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-bold text-text-secondary shrink-0 ml-2 bg-background border border-border px-2 py-0.5 rounded-full font-sans">
+                        ⏱ {guide.readTime} min
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Resources Section with Tabs */}
             {enrichedLinks.length > 0 && (

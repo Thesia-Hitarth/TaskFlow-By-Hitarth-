@@ -3,11 +3,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { taskflows } from "@/lib/taskflows-data";
 import { taskflowContent } from "@/lib/taskflow-content";
-import { guides } from "@/lib/guides-data";
 import GuideCard from "@/components/GuideCard";
 import LazyTaskflowDiagram from "@/components/taskflow/LazyTaskflowDiagram";
 import { notFound } from "next/navigation";
 import RoadmapProgressBar from "@/components/roadmap/RoadmapProgressBar";
+import { getAllGuides } from "@/lib/guides/getAllGuides";
+import { getRelatedGuidesForNode } from "@/lib/guides/getRelatedGuidesForNode";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -52,8 +53,28 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   if (!taskflow) notFound();
   const content = taskflowContent[slug];
 
+  // Enrich nodes with related guides on the server
+  const enrichedNodes = content
+    ? content.nodes.map((node) => ({
+        ...node,
+        relatedGuides: getRelatedGuidesForNode(slug, node.id),
+      }))
+    : [];
+
+  const enrichedContent = content
+    ? {
+        ...content,
+        nodes: enrichedNodes,
+      }
+    : null;
+
   const title = taskflow.title;
   const headingSuffix = taskflow.type === "role" ? "Developer Taskflow" : "Taskflow";
+
+  const allGuides = getAllGuides();
+  const roadmapRelatedGuides = allGuides.filter((g) =>
+    g.frontmatter.relatedRoadmaps.includes(slug)
+  );
 
   return (
     <>
@@ -77,16 +98,16 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
           </p>
         </header>
 
-        {content && (
+        {enrichedContent && (
           <div className="mt-8">
-            <RoadmapProgressBar slug={slug} nodes={content.nodes} />
+            <RoadmapProgressBar slug={slug} nodes={enrichedContent.nodes} />
           </div>
         )}
 
         {/* Interactive Diagram or Placeholder Box */}
-        {content ? (
+        {enrichedContent ? (
           <div className="mt-10">
-            <LazyTaskflowDiagram content={content} />
+            <LazyTaskflowDiagram content={enrichedContent} />
           </div>
         ) : (
           <div className="mt-10 bg-card border border-border border-dashed rounded-xl h-96 w-full flex flex-col items-center justify-center text-center px-4">
@@ -100,15 +121,24 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
         )}
 
         {/* Related Guides */}
-        {guides.filter((g) => g.roadmapSlug === slug).length > 0 && (
+        {roadmapRelatedGuides.length > 0 && (
           <div className="mt-12 pt-10 border-t border-border">
             <h2 className="text-2xl font-bold text-text-primary mb-6 tracking-tight">Related Guides</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {guides
-                .filter((g) => g.roadmapSlug === slug)
-                .map((g) => (
-                  <GuideCard key={g.slug} guide={g} />
-                ))}
+              {roadmapRelatedGuides.map((g) => (
+                <GuideCard
+                  key={g.slug}
+                  guide={{
+                    slug: g.slug,
+                    title: g.frontmatter.title,
+                    description: g.frontmatter.description,
+                    tags: g.frontmatter.tags,
+                    publishedAt: g.frontmatter.publishedAt,
+                    difficulty: g.frontmatter.difficulty,
+                    readTime: g.frontmatter.readTime,
+                  }}
+                />
+              ))}
             </div>
           </div>
         )}

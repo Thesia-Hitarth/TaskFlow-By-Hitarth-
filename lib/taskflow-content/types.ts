@@ -26,6 +26,7 @@ export interface TaskflowContentNode {
   outcomes?: string[];
   isOptional?: boolean;
   prerequisites?: string[];
+  relatedGuides?: { slug: string; title: string; readTime: number }[];
 }
 
 export interface TaskflowContentEdge {

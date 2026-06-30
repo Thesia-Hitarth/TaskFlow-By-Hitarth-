@@ -1,3 +1,10 @@
+export interface BestPracticeRule {
+  rule: string;
+  explanation: string;
+  doExample?: string;
+  dontExample?: string;
+}
+
 export interface BestPracticeCard {
   slug: string;
   category: string;
@@ -5,87 +12,190 @@ export interface BestPracticeCard {
   description: string;
   topics: string[];
   icon: string; // emoji icon for the card
+  rules?: BestPracticeRule[];
 }
 
 export const bestPractices: BestPracticeCard[] = [
   {
-    slug: "code-quality",
-    category: "Code Quality",
-    title: "Writing Clean, Maintainable Code",
-    description: "Principles and conventions that keep your codebase readable and easy to change.",
-    topics: ["Clean code principles", "Naming conventions", "DRY & SOLID", "Code reviews"],
-    icon: "✨",
+    slug: "css",
+    category: "CSS",
+    title: "CSS Best Practices",
+    description: "Write CSS that stays modular, predictable, and maintainable as your project grows.",
+    topics: ["BEM naming convention", "Avoiding specificity wars", "CSS Variables", "Flexbox & Grid alignment"],
+    icon: "🎨",
+    rules: [
+      {
+        rule: "Use a consistent naming convention (BEM recommended)",
+        explanation: "Without a naming standard, class names collide, styles bleed, and specificity becomes unpredictable.",
+        doExample: ".card {}\n.card__title {}\n.card__title--highlighted {}",
+        dontExample: ".title2 {}\n.bold-red-text {}\n.my-custom-layout-box {}",
+      },
+      {
+        rule: "Avoid deep nesting and ID selectors for styling",
+        explanation: "ID selectors and deep element nesting create high specificity weights that are painful to override later. Keep nesting under 3 levels.",
+        doExample: ".card .card__title { font-size: 1.25rem; }",
+        dontExample: "#main-container .content-wrapper div.card article h3.title { font-size: 1.25rem; }",
+      },
+      {
+        rule: "Use CSS custom properties for repeated values",
+        explanation: "Define colors, spacing ratios, and border-radii as variables at the root level instead of copy-pasting hex codes.",
+        doExample: ":root {\n  --color-primary: #d97706;\n}\n\n.button {\n  background-color: var(--color-primary);\n}",
+        dontExample: ".button {\n  background-color: #d97706;\n}",
+      },
+      {
+        rule: "Enforce display: flex or display: grid explicitly",
+        explanation: "Never assume an element behaves as a flex/grid container without declaring display properties on the parent element.",
+        doExample: ".container {\n  display: flex;\n  justify-content: center;\n}",
+        dontExample: ".container {\n  /* missing display: flex */\n  justify-content: center;\n}",
+      }
+    ],
+  },
+  {
+    slug: "javascript",
+    category: "JavaScript",
+    title: "JavaScript Best Practices",
+    description: "Patterns that keep your JavaScript scripts readable, scope-safe, and bug-resistant.",
+    topics: ["Variable block scopes", "Explicit error handling", "Strict equality checks", "Array helper methods"],
+    icon: "🟨",
+    rules: [
+      {
+        rule: "Prefer const and let over legacy var",
+        explanation: "var is function-scoped and hoisted, which causes subtle variable leakage. const and let are block-scoped and predictable.",
+        doExample: "const maxLimit = 100;\nlet currentCount = 0;",
+        dontExample: "var maxLimit = 100;\nvar currentCount = 0;",
+      },
+      {
+        rule: "Handle errors explicitly, never swallow them silently",
+        explanation: "An empty catch block silences runtime exceptions, making debugging extremely difficult. Always log or recover.",
+        doExample: "try {\n  const data = await fetchData();\n} catch (error) {\n  console.error('Fetch failed:', error);\n  showNotification('Network issue');\n}",
+        dontExample: "try {\n  const data = await fetchData();\n} catch (e) {} // silently ignored",
+      },
+      {
+        rule: "Use strict equality (===) instead of loose equality (==)",
+        explanation: "Strict equality checks both value and type, preventing bugs due to silent type conversion (e.g. false == 0 is true).",
+        doExample: "if (status === 200) { ... }",
+        dontExample: "if (status == '200') { ... }",
+      }
+    ],
   },
   {
     slug: "git-version-control",
     category: "Git & Version Control",
     title: "Version Control Best Practices",
-    description: "Commit conventions, branching models, and PR etiquette that scale with your team.",
-    topics: ["Conventional Commits", "Branching strategy", "PR etiquette", "Git hooks"],
+    description: "Commit conventions, atomic branches, and pull request workflows for clean team collaboration.",
+    topics: ["Conventional Commits", "Atomic commit blocks", "Imperative mood formatting", "Branching workflows"],
     icon: "🌿",
+    rules: [
+      {
+        rule: "Write commit messages in the imperative mood",
+        explanation: "Commit messages should answer the sentence: 'If applied, this commit will [your message]'. E.g. 'Add login' not 'Added login'.",
+        doExample: "feat: Add authentication validation logic",
+        dontExample: "feat: Added validation to the login screen and fixed some styling bugs too",
+      },
+      {
+        rule: "Keep commits small, atomic, and focused on one change",
+        explanation: "A single commit containing feature logic, unrelated refactoring, and style fixes is hard to review, revert, or cherry-pick.",
+        doExample: "Commit 1: refactor(auth): simplify login handler\nCommit 2: fix(auth): prevent email bypass on submit",
+        dontExample: "Commit 1: refactor auth code and also fix the login validation bug",
+      }
+    ],
   },
   {
-    slug: "security",
-    category: "Security",
-    title: "Security Fundamentals for Developers",
-    description: "The baseline security habits every developer should build before shipping code.",
-    topics: ["Never hardcode secrets", "Input validation", "HTTPS/SSL", "OWASP Top 10"],
-    icon: "🔐",
-  },
-  {
-    slug: "performance",
-    category: "Performance",
-    title: "Web Performance Best Practices",
-    description: "Techniques to make your app fast for users and green in Core Web Vitals.",
-    topics: ["Lazy loading", "Caching strategies", "Avoid premature optimization", "Core Web Vitals"],
-    icon: "⚡",
-  },
-  {
-    slug: "testing",
-    category: "Testing",
-    title: "Testing Strategies That Actually Work",
-    description: "How to think about test coverage without wasting time on low-value tests.",
-    topics: ["Unit vs integration vs E2E", "The test pyramid", "TDD basics", "Test naming"],
-    icon: "🧪",
+    slug: "react",
+    category: "React",
+    title: "React Best Practices",
+    description: "Component patterns, stable state maps, and hooks execution rules for performant react applications.",
+    topics: ["Focused components", "Prop drilling avoidance", "Stable keys list rendering", "Custom hooks creation"],
+    icon: "⚛️",
+    rules: [
+      {
+        rule: "Keep components small and focused on one responsibility",
+        explanation: "Giant multi-purpose components are hard to test and maintain. Differentiate presentational rendering from state orchestration.",
+        doExample: "const UserProfile = () => {\n  const user = useUser();\n  return <UserCard user={user} />;\n};",
+        dontExample: "const UserProfile = () => {\n  /* 200 lines of data fetching, API parsing, and giant table rendering */\n};",
+      },
+      {
+        rule: "Avoid prop drilling more than 2-3 levels deep",
+        explanation: "Passing props down through intermediate components that don't use them couples components unnecessarily. Use context hooks or state managers.",
+        doExample: "const user = useCurrentUser(); // retrieved via Context",
+        dontExample: "<Header user={user} /> -> <Nav user={user} /> -> <UserMenu user={user} />",
+      },
+      {
+        rule: "Always provide unique, stable keys in lists",
+        explanation: "React uses key identifiers to track item insertions and sorting. Index keys degrade rendering speed and cause state bugs.",
+        doExample: "users.map(user => <li key={user.id}>{user.name}</li>)",
+        dontExample: "users.map((user, index) => <li key={index}>{user.name}</li>)",
+      }
+    ],
   },
   {
     slug: "api-design",
     category: "API Design",
     title: "Designing APIs Developers Love",
     description: "RESTful conventions, versioning, and error handling that make APIs predictable.",
-    topics: ["RESTful conventions", "API versioning", "Error response standards", "Pagination"],
+    topics: ["RESTful nouns endpoints", "Consistent error shapes", "Resource versioning", "Pagination headers"],
     icon: "🔌",
+    rules: [
+      {
+        rule: "Use plural nouns for resource endpoints, not verbs",
+        explanation: "REST endpoints describe nouns (resources). The HTTP verb represents the action. Avoid putting verbs in the URL path.",
+        doExample: "GET /users/42\nDELETE /users/42",
+        dontExample: "GET /getUser?id=42\nPOST /deleteUser/42",
+      },
+      {
+        rule: "Return consistent error response shapes",
+        explanation: "A structured, standard error payload shape helps API clients handle error boundary displays gracefully.",
+        doExample: "{\n  \"error\": {\n    \"code\": \"NOT_FOUND\",\n    \"message\": \"User not found\"\n  }\n}",
+        dontExample: "{\n  \"status\": \"failed\",\n  \"reason\": \"no user\"\n}",
+      }
+    ],
+  },
+  {
+    slug: "security",
+    category: "Security",
+    title: "Security Fundamentals",
+    description: "Baseline security habits and validation checks every developer must implement.",
+    topics: ["Never hardcode secrets", "Input validation", "HTTPS/SSL configurations", "OWASP Top 10 guidelines"],
+    icon: "🔐",
+    rules: [
+      {
+        rule: "Never commit API keys or database credentials to git",
+        explanation: "Public or private git histories are scanned by bots. Always load credentials from environment variables.",
+        doExample: "const dbUrl = process.env.DATABASE_URL;",
+        dontExample: "const dbUrl = 'postgresql://postgres:secretpassword@localhost:5432/db';",
+      }
+    ],
+  },
+  {
+    slug: "performance",
+    category: "Performance",
+    title: "Web Performance Best Practices",
+    description: "Techniques to optimize page render speed, minimize visual shifts, and load bundles efficiently.",
+    topics: ["Lazy loading assets", "Caching strategies", "Core Web Vitals tuning", "Premature optimization avoidance"],
+    icon: "⚡",
+  },
+  {
+    slug: "testing",
+    category: "Testing",
+    title: "Testing Strategies That Work",
+    description: "How to design high-value unit, integration, and E2E test blocks without wasting study time.",
+    topics: ["Unit vs integration vs E2E", "The testing pyramid", "TDD fundamentals", "Clean test setups"],
+    icon: "🧪",
   },
   {
     slug: "documentation",
     category: "Documentation",
-    title: "Writing Docs That Get Read",
-    description: "README structure, inline comments, and JSDoc patterns that save future-you hours.",
-    topics: ["README best practices", "Inline comments", "JSDoc/TSDoc", "Changelog format"],
+    title: "Writing Clear Documentation",
+    description: "README outlines, inline script comments, and JSDoc patterns that save hours of research.",
+    topics: ["README layouts", "Inline code explanations", "JSDoc/TSDoc types", "Changelog formatting"],
     icon: "📝",
   },
   {
     slug: "accessibility",
     category: "Accessibility",
     title: "Building Accessible Web Apps",
-    description: "Semantic HTML, ARIA, keyboard navigation, and contrast — the fundamentals of a11y.",
-    topics: ["Semantic HTML", "ARIA labels", "Keyboard navigation", "Contrast ratios"],
+    description: "Semantic HTML structure, ARIA helper tags, keyboard focus rings, and contrast checks.",
+    topics: ["Semantic HTML", "ARIA labels", "Keyboard focus loops", "Contrast testing ratios"],
     icon: "♿",
-  },
-  {
-    slug: "ci-cd",
-    category: "CI/CD",
-    title: "CI/CD Pipeline Best Practices",
-    description: "Automate your way from commit to production without breaking things.",
-    topics: ["Automate tests on PRs", "Lint checks in CI", "Deployment pipelines", "Rollback strategy"],
-    icon: "🚀",
-  },
-  {
-    slug: "devops",
-    category: "DevOps",
-    title: "DevOps Fundamentals for Developers",
-    description: "The 12-factor app, environment configs, and container hygiene every dev should know.",
-    topics: ["12-factor app", "Environment configs", "Container best practices", "Secrets management"],
-    icon: "🛠️",
   },
 ];

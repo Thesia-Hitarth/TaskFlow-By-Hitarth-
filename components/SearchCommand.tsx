@@ -1,26 +1,78 @@
 "use client";
+
 import { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import Fuse from "fuse.js";
 import { useRouter } from "next/navigation";
 import { Search, X, Map, FileText, ShieldCheck } from "lucide-react";
-import { searchIndex } from "@/lib/search-index";
+import { searchIndex, SearchItem } from "@/lib/search-index";
 
 export default function SearchCommand() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [dynamicGuides, setDynamicGuides] = useState<SearchItem[]>([]);
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
 
+  // Client-side local index for taskflows and best practices (excluding static guides)
+  const localIndex = useMemo(() => {
+    return searchIndex.filter((item) => item.type !== "guide");
+  }, []);
+
   const fuse = useMemo(
-    () => new Fuse(searchIndex, { keys: ["title", "description"], threshold: 0.35 }),
-    []
+    () => new Fuse(localIndex, { keys: ["title", "description"], threshold: 0.35 }),
+    [localIndex]
   );
 
-  const results = query
-    ? fuse.search(query).slice(0, 8).map((r) => r.item)
-    : searchIndex.slice(0, 8);
+  // Fetch full-text matched guides in the background
+  useEffect(() => {
+    if (!query.trim()) {
+      setDynamicGuides([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const mapped: SearchItem[] = data.map((g: { slug: string; title: string; description: string }) => ({
+            type: "guide",
+            title: g.title,
+            description: g.description,
+            href: `/guides/${g.slug}`,
+          }));
+          setDynamicGuides(mapped);
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name !== "AbortError") {
+          console.error("Search fetch failed:", err);
+        }
+      }
+    }, 150); // small debounce to avoid flooding API
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query]);
+
+  // Combine instant local results and dynamic background search results
+  const results = useMemo(() => {
+    const localMatches = query
+      ? fuse.search(query).map((r) => r.item)
+      : localIndex;
+
+    const guideMatches = query
+      ? dynamicGuides
+      : searchIndex.filter((item) => item.type === "guide");
+
+    return [...localMatches, ...guideMatches].slice(0, 8);
+  }, [query, localIndex, fuse, dynamicGuides]);
 
   useEffect(() => {
     if (open) {
@@ -105,7 +157,7 @@ export default function SearchCommand() {
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search taskflows and guides..."
+                placeholder="Search taskflows, guides, and best practices..."
                 className="flex-1 bg-transparent text-text-primary placeholder-text-secondary outline-none text-sm border-none focus:ring-0"
               />
               <button
@@ -118,7 +170,7 @@ export default function SearchCommand() {
             </div>
 
             {/* Results List */}
-            <div className="max-h-80 overflow-y-auto p-2 space-y-0.5">
+            <div className="max-h-80 overflow-y-auto p-2 space-y-0.5 animate-in fade-in duration-300">
               {results.length === 0 && (
                 <p className="px-3 py-8 text-center text-sm text-text-secondary">No results found.</p>
               )}
@@ -144,7 +196,7 @@ export default function SearchCommand() {
 
             {/* Command Palette Footer */}
             <div className="flex items-center justify-between border-t border-border/50 px-4 py-2 bg-background/50 text-[10px] text-text-secondary">
-              <span>Search index: {searchIndex.length} items</span>
+              <span>Dynamic search enabled</span>
               <span className="flex items-center gap-1.5">
                 <kbd className="border border-border rounded px-1 py-0.5">ESC</kbd> to close
               </span>
@@ -153,7 +205,6 @@ export default function SearchCommand() {
         </div>,
         document.body
       )}
-
     </>
   );
 }
