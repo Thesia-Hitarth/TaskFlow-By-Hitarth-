@@ -19,6 +19,7 @@ import {
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { BadgeGrid } from "@/components/dashboard/BadgeGrid";
 import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap";
+import { syncPastActivities } from "@/lib/streak/updateStreak";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -27,6 +28,9 @@ export default async function DashboardPage() {
   }
 
   const userId = session.user.id;
+
+  // Retroactively sync past exercise solves and completed nodes to UserActivity table
+  await syncPastActivities(userId);
 
   const [records, user] = await prisma.$transaction([
     prisma.userProgress.findMany({

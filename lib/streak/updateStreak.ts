@@ -84,3 +84,56 @@ function getPreviousDay(dateStr: string): string {
   d.setDate(d.getDate() - 1);
   return d.toISOString().split("T")[0];
 }
+
+export async function syncPastActivities(userId: string): Promise<void> {
+  try {
+    // 1. Fetch solved exercise attempts
+    const exercises = await prisma.exerciseAttempt.findMany({
+      where: { userId, status: "solved", solvedAt: { not: null } },
+      select: { solvedAt: true },
+    });
+
+    // 2. Fetch completed roadmap nodes
+    const nodeProgress = await prisma.userProgress.findMany({
+      where: { userId, status: "done" },
+      select: { updatedAt: true },
+    });
+
+    // 3. Fetch project submissions
+    const projects = await prisma.projectSubmission.findMany({
+      where: { userId },
+      select: { createdAt: true },
+    });
+
+    const activityMap: Record<string, number> = {};
+
+    const addDate = (dateObj: Date | null) => {
+      if (!dateObj) return;
+      const dateStr = dateObj.toISOString().split("T")[0];
+      activityMap[dateStr] = (activityMap[dateStr] || 0) + 1;
+    };
+
+    exercises.forEach((e: { solvedAt: Date | null }) => addDate(e.solvedAt));
+    nodeProgress.forEach((n: { updatedAt: Date }) => addDate(n.updatedAt));
+    projects.forEach((p: { createdAt: Date }) => addDate(p.createdAt));
+
+    // Sync entries
+    for (const [date, count] of Object.entries(activityMap)) {
+      const existing = await prisma.userActivity.findUnique({
+        where: { userId_date: { userId, date } },
+      });
+      if (!existing) {
+        await prisma.userActivity.create({
+          data: { userId, date, count },
+        });
+      } else if (existing.count < count) {
+        await prisma.userActivity.update({
+          where: { userId_date: { userId, date } },
+          data: { count },
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Failed to sync past activities:", error);
+  }
+}

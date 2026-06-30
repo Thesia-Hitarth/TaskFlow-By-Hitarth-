@@ -29,6 +29,7 @@
     "next-mdx-remote": "^6.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-joyride": "^3.1.0",
     "resend": "^6.16.0",
     "zod": "^4.4.3"
   },

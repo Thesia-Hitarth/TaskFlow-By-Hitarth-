@@ -18,18 +18,16 @@ export function ActivityHeatmap({ activities, weeks = 12 }: ActivityHeatmapProps
     // Build a lookup map of date → count
     const map = new Map(activities.map((a) => [a.date, a.count]));
 
-    // Generate last N weeks of dates, aligned to start on a Sunday
     const today = new Date();
     
-    // Find the Sunday of N weeks ago
-    const startDate = new Date(today);
-    startDate.setDate(today.getDate() - (weeks * 7) + 1);
-    
-    // Adjust start date to the nearest Sunday
-    const dayOfWeek = startDate.getDay();
-    if (dayOfWeek > 0) {
-      startDate.setDate(startDate.getDate() - dayOfWeek);
-    }
+    // Find the upcoming Saturday of the current week to align the grid to the end of the week
+    const endDate = new Date(today);
+    const dayOfWeek = today.getDay();
+    endDate.setDate(today.getDate() + (6 - dayOfWeek));
+
+    // Find the Sunday of N weeks ago relative to that Saturday
+    const startDate = new Date(endDate);
+    startDate.setDate(endDate.getDate() - (weeks * 7) + 1);
 
     const gridList: Array<{ date: string; count: number; label: string }> = [];
     const d = new Date(startDate);

@@ -239,7 +239,7 @@ export default function NodeDetailSheet({
 
                 {/* Related Guides on TaskFlow */}
                 {node.relatedGuides && node.relatedGuides.length > 0 && (
-                  <div className="space-y-3 pb-2">
+                  <div data-tour="related-guides" className="space-y-3 pb-2">
                     <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
                       Related Guides on TaskFlow
                     </h3>
@@ -382,7 +382,7 @@ export default function NodeDetailSheet({
                       </p>
                     </div>
                   ) : (
-                    <div className="flex gap-2 flex-wrap">
+                    <div data-tour="status-buttons" className="flex gap-2 flex-wrap">
                       <Button
                         size="sm"
                         className={cn(

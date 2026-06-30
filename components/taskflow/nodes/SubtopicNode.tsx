@@ -67,6 +67,7 @@ function SubtopicNodeComponent({ data, selected }: SubtopicNodeProps) {
     <Tooltip.Root>
       <Tooltip.Trigger asChild>
         <div
+          data-tour="roadmap-node"
           className={cn(
             "relative rounded-lg border px-3 py-2 min-w-[175px] flex flex-col text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-sm",
             cfg.borderClass,

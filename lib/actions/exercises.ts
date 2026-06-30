@@ -3,6 +3,7 @@
 
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { updateStreak } from "@/lib/streak/updateStreak"
 
 export async function saveExerciseProgress(exerciseId: string, code: string, solved: boolean) {
   const session = await auth()
@@ -31,6 +32,10 @@ export async function saveExerciseProgress(exerciseId: string, code: string, sol
         attemptCount: { increment: 1 },
       },
     })
+    
+    // Log daily consistency activity and update streak
+    await updateStreak(session.user.id)
+
     return { success: true }
   } catch (error: unknown) {
     console.error("Failed to save exercise progress:", error)

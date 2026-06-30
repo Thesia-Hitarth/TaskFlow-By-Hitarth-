@@ -93,6 +93,12 @@ export default function Footer() {
             <Link href="/compare" className="hover:text-text-primary transition-colors font-medium">
               Compare
             </Link>
+            <Link href="/path-finder" className="hover:text-text-primary transition-colors font-medium">
+              Path Finder
+            </Link>
+            <Link href="/playground" className="hover:text-text-primary transition-colors font-medium">
+              Playground
+            </Link>
           </div>
         </div>
 

@@ -48,6 +48,10 @@ model User {
   guideViews    GuideView[]
   exerciseAttempts   ExerciseAttempt[]
   projectSubmissions ProjectSubmission[]
+  quizResults        QuizResult[]
+
+  // Onboarding tour status
+  hasSeenTour      Boolean  @default(false)
 
   // Streak tracking
   streakDays       Int      @default(0)
@@ -164,4 +168,19 @@ model ProjectSubmission {
 
   @@unique([userId, projectId])
   @@index([projectId])
+}
+
+model QuizResult {
+  id                 String   @id @default(cuid())
+  userId             String?
+  answers            Json
+  primaryRoadmapId   String
+  secondaryRoadmapId String?
+  reasoning          String
+  timeCommitment     String
+  createdAt          DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

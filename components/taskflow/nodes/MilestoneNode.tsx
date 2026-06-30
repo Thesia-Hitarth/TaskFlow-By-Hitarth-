@@ -69,6 +69,7 @@ function MilestoneNodeComponent({ data, selected }: MilestoneNodeProps) {
     <Tooltip.Root>
       <Tooltip.Trigger asChild>
         <div
+          data-tour="roadmap-node"
           className={cn(
             "relative rounded-xl border-2 px-4 py-3 min-w-[190px] flex flex-col text-left transition-all duration-200 cursor-pointer shadow-xs hover:shadow-sm",
             cfg.borderClass,

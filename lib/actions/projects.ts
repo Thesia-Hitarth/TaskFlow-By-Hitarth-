@@ -3,6 +3,7 @@
 
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { updateStreak } from "@/lib/streak/updateStreak"
 
 interface SubmissionData {
   repoUrl: string
@@ -35,6 +36,10 @@ export async function submitProject(projectId: string, data: SubmissionData) {
         description: data.description || null,
       },
     })
+
+    // Log daily consistency activity and update streak
+    await updateStreak(session.user.id)
+
     return { success: true }
   } catch (error: unknown) {
     console.error("Failed to submit project:", error)

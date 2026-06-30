@@ -10,6 +10,9 @@ import RoadmapProgressBar from "@/components/roadmap/RoadmapProgressBar";
 import { getAllGuides } from "@/lib/guides/getAllGuides";
 import { getRelatedGuidesForNode } from "@/lib/guides/getRelatedGuidesForNode";
 import { getProjectsForRoadmap } from "@/lib/projects/getAllProjects";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -53,6 +56,17 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   const taskflow = taskflows.find((tf) => tf.slug === slug);
   if (!taskflow) notFound();
   const content = taskflowContent[slug];
+
+  // Fetch whether user has seen welcome tour
+  const session = await auth();
+  let hasSeenTour = false;
+  if (session?.user?.id) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { hasSeenTour: true },
+    });
+    hasSeenTour = user?.hasSeenTour ?? false;
+  }
 
   // Enrich nodes with related guides on the server
   const enrichedNodes = content
@@ -188,6 +202,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
         </div>
       </main>
       <Footer />
+      <WelcomeTour hasSeenTour={hasSeenTour} />
     </>
   );
 }

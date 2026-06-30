@@ -25,6 +25,7 @@ export default function Navbar() {
       !pathname.startsWith("/best-practices") &&
       !pathname.startsWith("/compare") &&
       !pathname.startsWith("/playground") &&
+      !pathname.startsWith("/path-finder") &&
       !pathname.startsWith("/dashboard") &&
       !pathname.startsWith("/profile") &&
       !pathname.startsWith("/signin"));
@@ -89,12 +90,22 @@ export default function Navbar() {
         </Link>
         <Link
           href="/compare"
+          data-tour="compare-link"
           className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/compare")
             ? "text-text-primary border-accent"
             : "text-text-secondary hover:text-text-primary border-transparent"
             }`}
         >
           Compare
+        </Link>
+        <Link
+          href="/path-finder"
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/path-finder")
+            ? "text-text-primary border-accent"
+            : "text-text-secondary hover:text-text-primary border-transparent"
+            }`}
+        >
+          Path Finder
         </Link>
         <Link
           href="/playground"
@@ -173,7 +184,7 @@ export default function Navbar() {
                 >
                   Best Practices
                 </Link>
-                <Link
+                 <Link
                   href="/compare"
                   onClick={() => setMenuOpen(false)}
                   className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/compare")
@@ -182,6 +193,16 @@ export default function Navbar() {
                     }`}
                 >
                   Compare
+                </Link>
+                <Link
+                  href="/path-finder"
+                  onClick={() => setMenuOpen(false)}
+                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/path-finder")
+                    ? "text-accent"
+                    : "text-text-secondary hover:text-text-primary"
+                    }`}
+                >
+                  Path Finder
                 </Link>
                 <Link
                   href="/playground"
