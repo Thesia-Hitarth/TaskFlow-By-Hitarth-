@@ -46,6 +46,8 @@ model User {
   activities    UserActivity[]
   badges        UserBadge[]
   guideViews    GuideView[]
+  exerciseAttempts   ExerciseAttempt[]
+  projectSubmissions ProjectSubmission[]
 
   // Streak tracking
   streakDays       Int      @default(0)
@@ -132,4 +134,34 @@ model GuideView {
 
   @@unique([userId, guideSlug])
   @@index([guideSlug])
+}
+
+model ExerciseAttempt {
+  id           String   @id @default(cuid())
+  userId       String
+  exerciseId   String
+  status       String   @default("attempted") // "attempted" | "solved"
+  lastCode     String   @db.Text             // saves their latest attempt so they can resume
+  attemptCount Int      @default(1)
+  solvedAt     DateTime?
+  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, exerciseId])
+}
+
+model ProjectSubmission {
+  id          String   @id @default(cuid())
+  userId      String
+  projectId   String
+  repoUrl     String?
+  liveUrl     String?
+  description String?
+  upvotes     Int      @default(0)
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([projectId])
 }

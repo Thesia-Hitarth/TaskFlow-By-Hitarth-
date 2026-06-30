@@ -591,6 +591,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
 
       <NodeDetailSheet
         node={selected}
+        roadmapId={content.slug}
         status={selectedStatus}
         onStatusChange={(status: NodeStatus) => selected && handleStatusChange(selected.id, status)}
         onClose={() => setSelected(null)}

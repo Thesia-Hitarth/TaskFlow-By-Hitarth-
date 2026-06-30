@@ -17,6 +17,18 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
+  const isTaskflowActive =
+    pathname.startsWith("/taskflows") ||
+    pathname.startsWith("/projects") ||
+    (pathname !== "/" &&
+      !pathname.startsWith("/guides") &&
+      !pathname.startsWith("/best-practices") &&
+      !pathname.startsWith("/compare") &&
+      !pathname.startsWith("/playground") &&
+      !pathname.startsWith("/dashboard") &&
+      !pathname.startsWith("/profile") &&
+      !pathname.startsWith("/signin"));
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -50,7 +62,7 @@ export default function Navbar() {
       <nav className="hidden md:flex items-center gap-6">
         <Link
           href="/taskflows"
-          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/taskflows")
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${isTaskflowActive
             ? "text-text-primary border-accent"
             : "text-text-secondary hover:text-text-primary border-transparent"
             }`}
@@ -83,6 +95,15 @@ export default function Navbar() {
             }`}
         >
           Compare
+        </Link>
+        <Link
+          href="/playground"
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/playground")
+            ? "text-text-primary border-accent"
+            : "text-text-secondary hover:text-text-primary border-transparent"
+            }`}
+        >
+          Playground
         </Link>
       </nav>
 
@@ -125,7 +146,7 @@ export default function Navbar() {
                 <Link
                   href="/taskflows"
                   onClick={() => setMenuOpen(false)}
-                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/taskflows")
+                  className={`text-base font-bold py-1.5 transition-colors ${isTaskflowActive
                     ? "text-accent"
                     : "text-text-secondary hover:text-text-primary"
                     }`}
@@ -161,6 +182,16 @@ export default function Navbar() {
                     }`}
                 >
                   Compare
+                </Link>
+                <Link
+                  href="/playground"
+                  onClick={() => setMenuOpen(false)}
+                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/playground")
+                    ? "text-accent"
+                    : "text-text-secondary hover:text-text-primary"
+                    }`}
+                >
+                  Playground
                 </Link>
               </nav>
               <div className="h-[1px] bg-border my-2" />

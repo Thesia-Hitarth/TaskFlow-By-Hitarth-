@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import RoadmapProgressBar from "@/components/roadmap/RoadmapProgressBar";
 import { getAllGuides } from "@/lib/guides/getAllGuides";
 import { getRelatedGuidesForNode } from "@/lib/guides/getRelatedGuidesForNode";
+import { getProjectsForRoadmap } from "@/lib/projects/getAllProjects";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -76,6 +77,8 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
     g.frontmatter.relatedRoadmaps.includes(slug)
   );
 
+  const roadmapProjects = getProjectsForRoadmap(slug);
+
   return (
     <>
       <Navbar />
@@ -117,6 +120,37 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
             <p className="text-text-secondary/60 text-sm mt-2">
               Check back soon
             </p>
+          </div>
+        )}
+
+        {/* Project Challenges */}
+        {roadmapProjects.length > 0 && (
+          <div className="mt-12 pt-10 border-t border-border">
+            <h2 className="text-2xl font-bold text-text-primary mb-6 tracking-tight">Project Challenges</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {roadmapProjects.map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/projects/${p.id}`}
+                  className="group block p-5 rounded-2xl border border-border bg-card/20 hover:bg-card/40 hover:border-accent/40 transition-all select-none"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2 py-0.5 rounded-full">
+                      {p.difficulty}
+                    </span>
+                    <span className="text-[10px] text-text-secondary font-medium">
+                      ⏱ {p.estimatedTime}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-text-primary group-hover:text-accent transition-colors mt-3 text-base">
+                    {p.title}
+                  </h3>
+                  <p className="text-xs text-text-secondary mt-1.5 line-clamp-2 leading-relaxed">
+                    {p.description}
+                  </p>
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 
