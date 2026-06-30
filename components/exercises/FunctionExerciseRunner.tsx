@@ -9,6 +9,7 @@ import { HintPanel } from "./HintPanel"
 import type { FunctionExercise } from "@/lib/exercises/types"
 import { saveExerciseProgress, getExerciseProgress } from "@/lib/actions/exercises"
 import { fireCelebration } from "@/lib/ui/confetti"
+import { AICodeReviewButton } from "./AICodeReviewButton"
 
 const CodeEditor = dynamic(() => import("./CodeEditor").then(m => m.CodeEditor), {
   ssr: false,
@@ -148,6 +149,9 @@ export function FunctionExerciseRunner({ exercise, onSolved }: Props) {
       {lastResult && (
         <div className="px-5 py-4 bg-background/30 border-t border-border/40">
           <ResultsPanel result={lastResult} totalTestCount={exercise.testCases.length} />
+          {hasEverPassed && (
+            <AICodeReviewButton exerciseTitle={exercise.title} code={code} />
+          )}
         </div>
       )}
     </div>

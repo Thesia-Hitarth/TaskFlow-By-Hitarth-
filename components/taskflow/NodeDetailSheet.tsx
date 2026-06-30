@@ -10,6 +10,8 @@ import Link from "next/link";
 import { getExercisesForNode } from "@/lib/exercises/getAllExercises";
 import { FunctionExerciseRunner } from "@/components/exercises/FunctionExerciseRunner";
 import { HtmlCssJsExerciseRunner } from "@/components/exercises/HtmlCssJsExerciseRunner";
+import { ExplainThisChat } from "@/components/ai/ExplainThisChat";
+import { Sparkles } from "lucide-react";
 
 interface Props {
   node: TaskflowContentNode | null;
@@ -74,6 +76,7 @@ export default function NodeDetailSheet({
   const [activeTab, setActiveTab] = useState<TabType>("all");
   const [sheetTab, setSheetTab] = useState<"learn" | "practice">("learn");
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
+  const [showAIChat, setShowAIChat] = useState(false);
 
   // Load exercises for the active node
   const exercises = node && roadmapId ? getExercisesForNode(roadmapId, node.id) : [];
@@ -83,6 +86,7 @@ export default function NodeDetailSheet({
     setActiveTab("all");
     setSheetTab("learn");
     setSelectedExerciseId(null);
+    setShowAIChat(false);
   }, [node?.id]);
 
   const links = node?.links || [];
@@ -210,152 +214,174 @@ export default function NodeDetailSheet({
               <>
                 {/* Why Learn This */}
                 <div className="space-y-2">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
-                    Why Learn This?
-                  </h3>
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
+                      Why Learn This?
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowAIChat(prev => !prev)}
+                      className="inline-flex items-center gap-1.5 text-xs font-extrabold text-accent hover:underline cursor-pointer"
+                    >
+                      <Sparkles className="h-3 w-3 animate-pulse text-accent" /> {showAIChat ? "Hide AI Assistant" : "Ask AI"}
+                    </button>
+                  </div>
                   <p className="text-sm text-text-secondary leading-relaxed font-medium">
                     {whyLearn || node.description}
                   </p>
                 </div>
 
-                {/* Key Outcomes */}
-                <div className="space-y-2.5">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
-                    Key Outcomes
-                  </h3>
-                  <ul className="space-y-2">
-                    {outcomesChecklist.map((outcome, i) => (
-                      <li key={i} className="flex items-start gap-2.5 text-sm text-text-secondary font-medium">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-border bg-card text-accent mt-0.5">
-                          {status === "done" ? <Check className="h-3 w-3" /> : <span className="h-1.5 w-1.5 rounded-full bg-accent/60" />}
-                        </span>
-                        <span className={cn(status === "done" && "line-through text-text-secondary/60")}>
-                          {outcome}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Related Guides on TaskFlow */}
-                {node.relatedGuides && node.relatedGuides.length > 0 && (
-                  <div data-tour="related-guides" className="space-y-3 pb-2">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
-                      Related Guides on TaskFlow
-                    </h3>
-                    <div className="space-y-2">
-                      {node.relatedGuides.map((guide) => (
-                        <Link
-                          key={guide.slug}
-                          href={`/guides/${guide.slug}`}
-                          className="flex items-center justify-between p-3 rounded-xl border border-border bg-card/60 hover:bg-card hover:border-accent/40 transition-all duration-200 group"
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-xs select-none">📖</span>
-                            <span className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors leading-snug truncate">
-                              {guide.title}
+                {showAIChat ? (
+                  <div className="pt-2">
+                    <ExplainThisChat
+                      roadmapId={roadmapId || ""}
+                      nodeId={node.id}
+                      nodeLabel={node.label}
+                      onClose={() => setShowAIChat(false)}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {/* Key Outcomes */}
+                    <div className="space-y-2.5">
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
+                        Key Outcomes
+                      </h3>
+                      <ul className="space-y-2">
+                        {outcomesChecklist.map((outcome, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-sm text-text-secondary font-medium">
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-border bg-card text-accent mt-0.5">
+                              {status === "done" ? <Check className="h-3 w-3" /> : <span className="h-1.5 w-1.5 rounded-full bg-accent/60" />}
                             </span>
-                          </div>
-                          <span className="text-[10px] font-bold text-text-secondary shrink-0 ml-2 bg-background border border-border px-2 py-0.5 rounded-full font-sans">
-                            ⏱ {guide.readTime} min
-                          </span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Resources Section with Tabs */}
-                {enrichedLinks.length > 0 && (
-                  <div className="space-y-3">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
-                      Resources ({enrichedLinks.length})
-                    </h3>
-
-                    {/* Categories Tab Bar */}
-                    <div className="flex flex-wrap gap-1 border-b border-border/40 pb-2">
-                      {(["all", "interactive", "video", "article", "docs"] as TabType[]).map((tab) => {
-                        const count = tab === "all" ? enrichedLinks.length : enrichedLinks.filter(l => l.type === tab).length;
-                        if (count === 0 && tab !== "all") return null;
-
-                        const tabLabels: Record<TabType, string> = {
-                          all: "All",
-                          interactive: "🏋️ Practice",
-                          video: "📹 Videos",
-                          article: "📖 Articles",
-                          docs: "📚 Docs",
-                        };
-
-                        return (
-                          <button
-                            key={tab}
-                            type="button"
-                            onClick={() => setActiveTab(tab)}
-                            className={cn(
-                              "px-2.5 py-1 text-xs font-semibold rounded-full transition-colors cursor-pointer",
-                              activeTab === tab
-                                ? "bg-accent/10 text-accent font-bold"
-                                : "bg-transparent text-text-secondary hover:bg-card"
-                            )}
-                          >
-                            {tabLabels[tab]}
-                          </button>
-                        );
-                      })}
+                            <span className={cn(status === "done" && "line-through text-text-secondary/60")}>
+                              {outcome}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
 
-                    {/* Resource List */}
-                    <div className="space-y-2">
-                      {filteredLinks.map((link) => (
-                        <a
-                          key={link.url}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={cn(
-                            "flex items-start gap-3 p-3 rounded-xl border transition-all duration-200 group text-left",
-                            "hover:shadow-xs hover:-translate-y-[1px]",
-                            link.recommended
-                              ? "border-accent/30 bg-accent/5"
-                              : "border-border bg-card/40"
-                          )}
-                          aria-label={`${link.title} (opens in new tab)`}
-                        >
-                          <div className="p-1.5 rounded-lg bg-surface border border-border mt-0.5">
-                            {RESOURCE_ICONS[link.type] || <BookOpen className="h-4 w-4 text-text-secondary shrink-0" />}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-1">
-                              <p className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors leading-snug truncate">
-                                {link.title}
-                              </p>
-                              <ExternalLink className="h-3.5 w-3.5 text-text-secondary/60 shrink-0 mt-0.5" aria-hidden="true" />
-                            </div>
-                            <p className="text-xs text-text-secondary mt-1 font-medium leading-relaxed">
-                              {link.description}
-                            </p>
-                            <div className="flex items-center gap-2 mt-2">
-                              {link.free && (
-                                <span className="text-[10px] font-bold text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                  Free
+                    {/* Related Guides on TaskFlow */}
+                    {node.relatedGuides && node.relatedGuides.length > 0 && (
+                      <div data-tour="related-guides" className="space-y-3 pb-2">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
+                          Related Guides on TaskFlow
+                        </h3>
+                        <div className="space-y-2">
+                          {node.relatedGuides.map((guide) => (
+                            <Link
+                              key={guide.slug}
+                              href={`/guides/${guide.slug}`}
+                              className="flex items-center justify-between p-3 rounded-xl border border-border bg-card/60 hover:bg-card hover:border-accent/40 transition-all duration-200 group"
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="text-xs select-none">📖</span>
+                                <span className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors leading-snug truncate">
+                                  {guide.title}
                                 </span>
+                              </div>
+                              <span className="text-[10px] font-bold text-text-secondary shrink-0 ml-2 bg-background border border-border px-2 py-0.5 rounded-full font-sans">
+                                ⏱ {guide.readTime} min
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Resources Section with Tabs */}
+                    {enrichedLinks.length > 0 && (
+                      <div className="space-y-3">
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-text-secondary/60">
+                          Resources ({enrichedLinks.length})
+                        </h3>
+
+                        {/* Categories Tab Bar */}
+                        <div className="flex flex-wrap gap-1 border-b border-border/40 pb-2">
+                          {(["all", "interactive", "video", "article", "docs"] as TabType[]).map((tab) => {
+                            const count = tab === "all" ? enrichedLinks.length : enrichedLinks.filter(l => l.type === tab).length;
+                            if (count === 0 && tab !== "all") return null;
+
+                            const tabLabels: Record<TabType, string> = {
+                              all: "All",
+                              interactive: "🏋️ Practice",
+                              video: "📹 Videos",
+                              article: "📖 Articles",
+                              docs: "📚 Docs",
+                            };
+
+                            return (
+                              <button
+                                key={tab}
+                                type="button"
+                                onClick={() => setActiveTab(tab)}
+                                className={cn(
+                                  "px-2.5 py-1 text-xs font-semibold rounded-full transition-colors cursor-pointer",
+                                  activeTab === tab
+                                    ? "bg-accent/10 text-accent font-bold"
+                                    : "bg-transparent text-text-secondary hover:bg-card"
+                                )}
+                              >
+                                {tabLabels[tab]}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Resource List */}
+                        <div className="space-y-2">
+                          {filteredLinks.map((link) => (
+                            <a
+                              key={link.url}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={cn(
+                                "flex items-start gap-3 p-3 rounded-xl border transition-all duration-200 group text-left",
+                                "hover:shadow-xs hover:-translate-y-[1px]",
+                                link.recommended
+                                  ? "border-accent/30 bg-accent/5"
+                                  : "border-border bg-card/40"
                               )}
-                              {link.recommended && (
-                                <span className="text-[10px] font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                  Top Pick
-                                </span>
-                              )}
-                              {link.duration && (
-                                <span className="text-[10px] text-text-secondary/70 flex items-center gap-0.5 font-medium">
-                                  ⏱ {link.duration}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
+                              aria-label={`${link.title} (opens in new tab)`}
+                            >
+                              <div className="p-1.5 rounded-lg bg-surface border border-border mt-0.5">
+                                {RESOURCE_ICONS[link.type] || <BookOpen className="h-4 w-4 text-text-secondary shrink-0" />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between gap-1">
+                                  <p className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors leading-snug truncate">
+                                    {link.title}
+                                  </p>
+                                  <ExternalLink className="h-3.5 w-3.5 text-text-secondary/60 shrink-0 mt-0.5" aria-hidden="true" />
+                                </div>
+                                <p className="text-xs text-text-secondary mt-1 font-medium leading-relaxed">
+                                  {link.description}
+                                </p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  {link.free && (
+                                    <span className="text-[10px] font-bold text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                      Free
+                                    </span>
+                                  )}
+                                  {link.recommended && (
+                                    <span className="text-[10px] font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                      Top Pick
+                                    </span>
+                                  )}
+                                  {link.duration && (
+                                    <span className="text-[10px] text-text-secondary/70 flex items-center gap-0.5 font-medium">
+                                      ⏱ {link.duration}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {/* Mark as Status Panel */}

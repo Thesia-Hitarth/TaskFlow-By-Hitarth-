@@ -4,7 +4,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Clock, Calendar } from "lucide-react";
-import GuideQuiz from "@/components/GuideQuiz";
+import { GuideQuizSection } from "@/components/guides/GuideQuizSection";
 import { guidesQuizData } from "@/lib/guides-quiz-data";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -170,11 +170,14 @@ export default async function GuidePage({ params }: PageProps) {
         {/* Quiz block */}
         {(() => {
           const quiz = guidesQuizData.find((q) => q.guideSlug === slug);
-          return quiz ? (
+          return (
             <div className="mt-12 pt-8 border-t border-border/60">
-              <GuideQuiz guideSlug={slug} questions={quiz.questions} />
+              <GuideQuizSection
+                guideSlug={slug}
+                staticQuestions={quiz?.questions}
+              />
             </div>
-          ) : null;
+          );
         })()}
       </main>
       <Footer />

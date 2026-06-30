@@ -7,6 +7,7 @@ import type { HtmlCssJsExercise } from "@/lib/exercises/types"
 import { HintPanel } from "./HintPanel"
 import { saveExerciseProgress, getExerciseProgress } from "@/lib/actions/exercises"
 import { Check } from "lucide-react"
+import { AICodeReviewButton } from "./AICodeReviewButton"
 
 const CodeEditor = dynamic(() => import("./CodeEditor").then(m => m.CodeEditor), {
   ssr: false,
@@ -176,6 +177,14 @@ export function HtmlCssJsExerciseRunner({ exercise, onSolved }: Props) {
           </div>
         </div>
       </div>
+      {exercise.successCriteria.every((_, i) => checkedCriteria[i]) && (
+        <div className="px-5 pb-5">
+          <AICodeReviewButton
+            exerciseTitle={exercise.title}
+            code={`<!-- HTML -->\n${html}\n\n/* CSS */\n${css}${js ? `\n\n// JS\n${js}` : ""}`}
+          />
+        </div>
+      )}
     </div>
   )
 }
