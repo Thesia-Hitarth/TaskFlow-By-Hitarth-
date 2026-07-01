@@ -100,10 +100,11 @@ export function ProjectSubmissionForm({ projectId }: { projectId: string }) {
       />
 
       <div>
-        <label className="text-xs font-semibold text-text-secondary">
+        <label htmlFor="project-desc" className="text-xs font-semibold text-text-secondary">
           Brief description (optional)
         </label>
         <textarea
+          id="project-desc"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}

@@ -14,6 +14,17 @@ export default function SearchCommand() {
   const [dynamicGuides, setDynamicGuides] = useState<SearchItem[]>([]);
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open && inputRef.current) {
+      // Focus after a tiny timeout to ensure portal mounting finishes
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   // Client-side local index for taskflows and best practices (excluding static guides)
   const localIndex = useMemo(() => {
@@ -144,17 +155,27 @@ export default function SearchCommand() {
         <div
           className="fixed inset-0 z-[100] flex items-start justify-center pt-24 bg-black/40 dark:bg-black/70 backdrop-blur-xs transition-opacity duration-300"
           onClick={() => setOpen(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+              setOpen(false);
+            }
+          }}
+          role="button"
+          tabIndex={-1}
+          aria-label="Close search overlay"
         >
           <div
             ref={modalRef}
             className="w-full max-w-lg rounded-2xl border border-border bg-surface shadow-2xl mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="presentation"
           >
             {/* Input Header */}
             <div className="flex items-center gap-2 border-b border-border/80 px-4 py-3.5">
               <Search className="h-4 w-4 text-accent" />
               <input
-                autoFocus
+                ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search taskflows, guides, and best practices..."

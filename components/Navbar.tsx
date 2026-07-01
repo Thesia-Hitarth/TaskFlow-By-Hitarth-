@@ -216,7 +216,7 @@ export default function Navbar() {
                 </Link>
               </nav>
               <div className="h-[1px] bg-border my-2" />
-              <div className="flex flex-col gap-3 mt-auto pb-4" onClick={() => setMenuOpen(false)}>
+              <div className="flex flex-col gap-3 mt-auto pb-4">
                 <AuthButtons />
               </div>
             </SheetContent>
