@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { getNextNode } from "@/lib/roadmap/getNextNode";
 import { fireCelebration, fireBadgeCelebration } from "@/lib/ui/confetti";
 import { BadgeToast } from "@/components/ui/BadgeToast";
+import { useAnnounce } from "@/components/ui/LiveAnnouncer";
 
 interface TaskflowDiagramProps {
   content: TaskflowContent;
@@ -449,8 +450,13 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     }
   }, [progress]);
 
+  const announce = useAnnounce();
+
   const handleStatusChange = useCallback(async (nodeId: string, newStatus: NodeStatus) => {
     const result = await updateStatus(nodeId, newStatus);
+    const nodeLabel = content.nodes.find(n => n.id === nodeId)?.label || "Node";
+    announce(`${nodeLabel} marked as ${newStatus === "in-progress" ? "in progress" : newStatus}`);
+
     if (newStatus === "done" && result?.success) {
       // Confetti burst for completion!
       fireCelebration();
@@ -460,9 +466,10 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         // Extra celebrate confetti for badges
         fireBadgeCelebration();
         setUnlockedBadgeId(result.badgesAwarded[0]);
+        announce(`Congratulations! You unlocked a new badge.`);
       }
     }
-  }, [updateStatus]);
+  }, [updateStatus, content.nodes, announce]);
 
   return (
     <div className="relative space-y-4">

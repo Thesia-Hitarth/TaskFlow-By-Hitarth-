@@ -18,6 +18,7 @@ import GuideReadingProgress from "@/components/guides/GuideReadingProgress";
 import CompletionPrompt from "@/components/guides/CompletionPrompt";
 import SeriesNavigator from "@/components/guides/SeriesNavigator";
 import RelatedRoadmapLink from "@/components/guides/RelatedRoadmapLink";
+import { guideJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -60,6 +61,7 @@ export default async function GuidePage({ params }: PageProps) {
   if (!guide) notFound();
 
   const { frontmatter, content } = guide;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
 
   const session = await auth();
   if (session?.user?.id) {
@@ -97,9 +99,34 @@ export default async function GuidePage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col min-h-screen bg-background transition-colors duration-200">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            guideJsonLd({
+              title: frontmatter.title,
+              description: frontmatter.description,
+              slug,
+              publishedAt: frontmatter.publishedAt,
+            })
+          ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbJsonLd([
+              { name: "Home", url: siteUrl },
+              { name: "Guides", url: `${siteUrl}/guides` },
+              { name: frontmatter.title, url: `${siteUrl}/guides/${slug}` },
+            ])
+          ),
+        }}
+      />
       <GuideReadingProgress />
       <Navbar />
-      <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full">
+      <main id="main-content" className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full">
         {/* Back Link */}
         <Link
           href="/guides"

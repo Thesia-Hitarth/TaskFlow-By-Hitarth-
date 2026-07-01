@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /dashboard
-Disallow: /api/
-Disallow: /signin
-
-Sitemap: https://task-flow-by-hitarth.vercel.app/sitemap.xml

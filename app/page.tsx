@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="flex-1 bg-background transition-colors duration-200">
+      <main id="main-content" className="flex-1 bg-background transition-colors duration-200">
         {/* Section A: Hero */}
         <section className="pt-24 pb-16 px-4 sm:px-8 max-w-4xl mx-auto text-center flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-amber-700 via-orange-600 to-amber-800 dark:from-amber-500 dark:via-orange-500 dark:to-amber-600 bg-clip-text text-transparent animate-fade-in">

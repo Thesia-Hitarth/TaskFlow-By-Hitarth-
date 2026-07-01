@@ -1,7 +1,9 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider as NextThemesProvider, useTheme as useNextThemes } from "next-themes";
+import { LiveAnnouncerProvider } from "@/components/ui/LiveAnnouncer";
 import ProgressSync from "../components/ProgressSync";
 
 type Theme = "light" | "dark";
@@ -14,30 +16,22 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== "undefined") {
-      return document.documentElement.classList.contains("dark") ? "dark" : "light";
-    }
-    return "dark"; // Default to dark theme for server pre-rendering
-  });
-
+  const { resolvedTheme, setTheme } = useNextThemes();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    setMounted(true);
+  }, []);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
 
+  // Safe fallback to "dark" during hydration/SSR
+  const activeTheme = mounted ? (resolvedTheme as Theme) || "dark" : "dark";
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme: activeTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -54,10 +48,19 @@ export function useTheme() {
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      <ThemeProvider>
-        <ProgressSync />
-        {children}
-      </ThemeProvider>
+      <NextThemesProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <ThemeProvider>
+          <LiveAnnouncerProvider>
+            <ProgressSync />
+            {children}
+          </LiveAnnouncerProvider>
+        </ThemeProvider>
+      </NextThemesProvider>
     </SessionProvider>
   );
 }

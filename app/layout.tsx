@@ -6,6 +6,8 @@ import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+import { SkipLink } from "@/components/ui/SkipLink";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -64,6 +66,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-text-primary font-sans flex flex-col">
+        <SkipLink />
         <Providers>{children}</Providers>
         <Analytics />
         <SpeedInsights />

@@ -1,6 +1,11 @@
 import confetti from "canvas-confetti";
 
 export function fireCelebration() {
+  // Check prefers-reduced-motion before firing
+  if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
   // Standard completion burst from bottom-center using theme colors (amber/gold)
   confetti({
     particleCount: 80,
@@ -11,6 +16,11 @@ export function fireCelebration() {
 }
 
 export function fireBadgeCelebration() {
+  // Check prefers-reduced-motion before firing
+  if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
   // More dramatic multi-angle burst for badge unlocks
   const duration = 1500;
   const end = Date.now() + duration;

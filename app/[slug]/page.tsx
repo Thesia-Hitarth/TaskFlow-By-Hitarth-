@@ -13,10 +13,13 @@ import { getProjectsForRoadmap } from "@/lib/projects/getAllProjects";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
+import { roadmapJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
+
+export const revalidate = 86400; // rebuild at most once per 24 hours
 
 export async function generateStaticParams() {
   return taskflows.map((tf) => ({
@@ -56,6 +59,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   const taskflow = taskflows.find((tf) => tf.slug === slug);
   if (!taskflow) notFound();
   const content = taskflowContent[slug];
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
 
   // Fetch whether user has seen welcome tour
   const session = await auth();
@@ -95,8 +99,32 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            roadmapJsonLd({
+              title,
+              description: taskflow?.description || "",
+              slug,
+            })
+          ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbJsonLd([
+              { name: "Home", url: siteUrl },
+              { name: "Taskflows", url: `${siteUrl}/taskflows` },
+              { name: title, url: `${siteUrl}/${slug}` },
+            ])
+          ),
+        }}
+      />
       <Navbar />
-      <main className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
+      <main id="main-content" className="flex-1 bg-background py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
         <nav className="text-text-secondary text-sm font-medium" aria-label="Breadcrumb">
           <Link href="/taskflows" className="hover:text-text-primary transition-colors">
             All Taskflows
