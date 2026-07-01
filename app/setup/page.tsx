@@ -26,9 +26,8 @@ export default function ProfileSetupPage() {
         setError(result.error)
       } else {
         // Successful username setup
-        // Force session update/refresh or redirect to dashboard
-        router.push("/dashboard")
-        router.refresh()
+        // Force full page navigation to let NextAuth reload session metadata
+        window.location.href = "/dashboard"
       }
     })
   }

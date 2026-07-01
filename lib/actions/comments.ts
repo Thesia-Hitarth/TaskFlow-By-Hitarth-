@@ -102,7 +102,7 @@ export async function deleteComment(commentId: string) {
   if (!comment) return { error: "Comment not found." }
   
   // Allow the author or an admin to delete the comment
-  const isAdmin = session.user.email === process.env.ADMIN_EMAIL || session.user.email === "admin@taskflow.dev"
+  const isAdmin = !!process.env.ADMIN_EMAIL && session.user.email === process.env.ADMIN_EMAIL
   if (comment.authorId !== session.user.id && !isAdmin) {
     return { error: "You are not authorized to delete this comment." }
   }

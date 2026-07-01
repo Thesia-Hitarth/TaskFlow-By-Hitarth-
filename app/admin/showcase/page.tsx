@@ -8,9 +8,9 @@ import { Check, Trash2, Shield, Link2 } from "lucide-react"
 
 export default async function AdminShowcasePage() {
   const session = await auth()
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@taskflow.dev"
+  const adminEmail = process.env.ADMIN_EMAIL
 
-  if (session?.user?.email !== adminEmail && session?.user?.email !== "admin@taskflow.dev") {
+  if (!session?.user?.email || !adminEmail || session.user.email !== adminEmail) {
     redirect("/")
   }
 
@@ -42,7 +42,7 @@ export default async function AdminShowcasePage() {
     <>
       <Navbar />
       <main className="flex-1 bg-background text-text-primary py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
-        
+
         <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border">
           <Shield size={24} className="text-amber-500" />
           <h1 className="text-2xl font-black tracking-tight">Showcase Submissions</h1>

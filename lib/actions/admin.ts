@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 
 const ADMIN_EMAILS = [
-  "admin@taskflow.dev",
   process.env.ADMIN_EMAIL || ""
 ].filter(Boolean)
 

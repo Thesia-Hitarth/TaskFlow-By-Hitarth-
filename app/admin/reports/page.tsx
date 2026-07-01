@@ -8,9 +8,9 @@ import { AlertCircle, EyeOff, Shield } from "lucide-react"
 
 export default async function AdminReportsPage() {
   const session = await auth()
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@taskflow.dev"
-  
-  if (session?.user?.email !== adminEmail && session?.user?.email !== "admin@taskflow.dev") {
+  const adminEmail = process.env.ADMIN_EMAIL
+
+  if (!session?.user?.email || !adminEmail || session.user.email !== adminEmail) {
     redirect("/")
   }
 
@@ -49,9 +49,8 @@ export default async function AdminReportsPage() {
           {flagged.map(comment => (
             <div
               key={comment.id}
-              className={`border rounded-2xl p-6 bg-card transition-all duration-200 ${
-                comment.isHidden ? "border-border/40 opacity-60" : "border-red-500/20 shadow-sm"
-              }`}
+              className={`border rounded-2xl p-6 bg-card transition-all duration-200 ${comment.isHidden ? "border-border/40 opacity-60" : "border-red-500/20 shadow-sm"
+                }`}
             >
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>
