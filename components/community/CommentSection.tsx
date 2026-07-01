@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useOptimistic, useTransition } from "react"
+import { useState, useOptimistic, useTransition, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { createComment, deleteComment } from "@/lib/actions/comments"
 import { CommentCard } from "./CommentCard"
@@ -24,6 +24,10 @@ export function CommentSection({
   const [comments, setComments] = useState(initialComments)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setComments(initialComments)
+  }, [initialComments])
 
   // useOptimistic displays the new comment immediately
   const [optimisticComments, addOptimisticComment] = useOptimistic(

@@ -79,7 +79,12 @@ export async function createComment(input: z.infer<typeof CommentSchema>) {
       revalidatePath(`/${roadmapId}`)
     }
     if (finalGuideTarget) {
-      revalidatePath(`/guides/${finalGuideTarget}`)
+      if (finalGuideTarget.startsWith("best-practice-")) {
+        const slug = finalGuideTarget.replace("best-practice-", "")
+        revalidatePath(`/best-practices/${slug}`)
+      } else {
+        revalidatePath(`/guides/${finalGuideTarget}`)
+      }
     }
 
     return { comment }
@@ -87,6 +92,29 @@ export async function createComment(input: z.infer<typeof CommentSchema>) {
     console.error("Failed to create comment:", error)
     return { error: "Failed to post comment due to database error." }
   }
+}
+
+async function deleteCommentCascade(commentId: string) {
+  const replies = await prisma.comment.findMany({
+    where: { parentId: commentId },
+    select: { id: true },
+  })
+
+  for (const reply of replies) {
+    await deleteCommentCascade(reply.id)
+  }
+
+  await prisma.commentReport.deleteMany({
+    where: { commentId },
+  })
+
+  await prisma.commentVote.deleteMany({
+    where: { commentId },
+  })
+
+  await prisma.comment.delete({
+    where: { id: commentId },
+  })
 }
 
 // ── Delete a comment ─────────────────────────────────────────────
@@ -108,18 +136,20 @@ export async function deleteComment(commentId: string) {
   }
 
   try {
-    // Soft delete: hide content to maintain tree structure
-    await prisma.comment.update({
-      where: { id: commentId },
-      data: { isHidden: true, body: "[deleted]" },
-    })
+    // Hard delete cascade: remove comment and all replies from database
+    await deleteCommentCascade(commentId)
 
     if (comment.nodeTarget) {
       const [roadmapId] = comment.nodeTarget.split(":")
       revalidatePath(`/${roadmapId}`)
     }
     if (comment.guideTarget) {
-      revalidatePath(`/guides/${comment.guideTarget}`)
+      if (comment.guideTarget.startsWith("best-practice-")) {
+        const slug = comment.guideTarget.replace("best-practice-", "")
+        revalidatePath(`/best-practices/${slug}`)
+      } else {
+        revalidatePath(`/guides/${comment.guideTarget}`)
+      }
     }
 
     return { success: true }
@@ -138,8 +168,10 @@ export async function getComments(target: {
     parentId: null
     nodeTarget?: string
     guideTarget?: string
+    isHidden: boolean
   } = {
     parentId: null,
+    isHidden: false,
   }
 
   if (target.nodeTarget) {
@@ -157,6 +189,7 @@ export async function getComments(target: {
         author: { select: { id: true, name: true, image: true, username: true } },
         votes: true,
         replies: {
+          where: { isHidden: false },
           include: {
             author: { select: { id: true, name: true, image: true, username: true } },
             votes: true,
