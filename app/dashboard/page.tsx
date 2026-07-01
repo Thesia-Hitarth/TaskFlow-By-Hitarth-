@@ -15,6 +15,7 @@ import {
   Flame,
   Clock,
   Sparkles,
+  Users,
 } from "lucide-react";
 import { ProgressRing } from "@/components/ui/ProgressRing";
 import { BadgeGrid } from "@/components/dashboard/BadgeGrid";
@@ -32,7 +33,7 @@ export default async function DashboardPage() {
   // Retroactively sync past exercise solves and completed nodes to UserActivity table
   await syncPastActivities(userId);
 
-  const [records, user] = await prisma.$transaction([
+  const [records, user, activeBuddies] = await prisma.$transaction([
     prisma.userProgress.findMany({
       where: { userId },
     }),
@@ -53,7 +54,45 @@ export default async function DashboardPage() {
         },
       },
     }),
+    prisma.studyBuddyConnection.findMany({
+      where: {
+        status: "active",
+        OR: [
+          { userId1: userId },
+          { userId2: userId },
+        ],
+      },
+      include: {
+        user1: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            image: true,
+            streakDays: true,
+          },
+        },
+        user2: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            image: true,
+            streakDays: true,
+          },
+        },
+      },
+    }),
   ]);
+
+  const buddiesList = activeBuddies.map(conn => {
+    const buddyUser = conn.userId1 === userId ? conn.user2 : conn.user1;
+    return {
+      connectionId: conn.id,
+      roadmapId: conn.roadmapId,
+      ...buddyUser,
+    };
+  });
 
   if (!user) {
     redirect("/signin");
@@ -243,6 +282,80 @@ export default async function DashboardPage() {
                         Continue Track <ChevronRight className="h-4 w-4" />
                       </Link>
                     </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* Study Buddies Section */}
+        <section className="mb-10">
+          <h2 className="text-xl font-bold text-text-primary flex items-center gap-2 mb-4">
+            <Users className="h-5 w-5 text-amber-500" />
+            Active Study Buddies ({buddiesList.length})
+          </h2>
+
+          {buddiesList.length === 0 ? (
+            <div className="rounded-2xl border border-border bg-card p-8 text-center shadow-xs">
+              <p className="text-xs text-text-secondary font-medium">
+                You don&apos;t have any active study buddies on your paths yet. 
+                Go to a learning path page and click &quot;Find study buddies&quot; to connect with other students!
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {buddiesList.map(buddy => {
+                const profileUrl = buddy.username ? `/u/${buddy.username}` : "#";
+                return (
+                  <div
+                    key={buddy.connectionId}
+                    className="flex items-center justify-between bg-card border border-border rounded-2xl px-5 py-4 shadow-xs"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      {buddy.image ? (
+                        <img
+                          src={buddy.image}
+                          alt={buddy.name || "Buddy"}
+                          className="w-10 h-10 rounded-full border border-border object-cover shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center text-text-secondary text-xs font-bold shrink-0">
+                          {(buddy.name || buddy.username || "B").charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <Link
+                          href={profileUrl}
+                          className="font-extrabold text-sm text-text-primary hover:text-accent transition-colors truncate block"
+                        >
+                          {buddy.name || buddy.username}
+                        </Link>
+                        <p className="text-[10px] text-text-secondary/60 font-semibold mt-0.5 truncate uppercase">
+                          🔥 {buddy.streakDays} days &middot; {buddy.roadmapId.replace(/-/g, " ")}
+                        </p>
+                      </div>
+                    </div>
+
+                    <form
+                      action={async (formData) => {
+                        "use server"
+                        const { rejectBuddyRequest } = await import("@/lib/actions/buddies");
+                        const connectionId = formData.get("connectionId") as string;
+                        if (connectionId) {
+                          await rejectBuddyRequest(connectionId);
+                        }
+                      }}
+                      className="shrink-0"
+                    >
+                      <input type="hidden" name="connectionId" value={buddy.connectionId} />
+                      <button
+                        type="submit"
+                        className="text-[10px] font-bold text-red-500 hover:text-red-600 border border-red-500/10 hover:bg-red-500/5 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer select-none"
+                      >
+                        End Partner
+                      </button>
+                    </form>
                   </div>
                 );
               })}

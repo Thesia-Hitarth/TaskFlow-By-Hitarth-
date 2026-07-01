@@ -3,7 +3,6 @@
 import { useState, useTransition } from "react"
 import { sendBuddyRequest, acceptBuddyRequest, rejectBuddyRequest } from "@/lib/actions/buddies"
 import { UserPlus, Check, X, Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 interface BuddyCardProps {
   user: {
@@ -28,7 +27,6 @@ export function BuddyCard({
   connectionId,
 }: BuddyCardProps) {
   const [statusState, setStatusState] = useState<"none" | "sent" | "received" | "active" | "declined">(connectionState)
-  const [activeConnectionId, setActiveConnectionId] = useState<string | undefined>(connectionId)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
@@ -49,10 +47,10 @@ export function BuddyCard({
   }
 
   async function handleAccept() {
-    if (!activeConnectionId) return
+    if (!connectionId) return
     setError(null)
     startTransition(async () => {
-      const result = await acceptBuddyRequest(activeConnectionId)
+      const result = await acceptBuddyRequest(connectionId)
       if (result.success) {
         setStatusState("active")
       } else if (result.error) {
@@ -62,10 +60,10 @@ export function BuddyCard({
   }
 
   async function handleDecline() {
-    if (!activeConnectionId) return
+    if (!connectionId) return
     setError(null)
     startTransition(async () => {
-      const result = await rejectBuddyRequest(activeConnectionId)
+      const result = await rejectBuddyRequest(connectionId)
       if (result.success) {
         setStatusState("declined")
       } else if (result.error) {
