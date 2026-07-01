@@ -5,6 +5,7 @@ import { upvoteProject } from "@/lib/actions/showcase"
 import { ExternalLink, Github, ThumbsUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { UserAvatar } from "../ui/UserAvatar"
 
 interface ShowcaseProjectWithMeta {
   id: string
@@ -86,17 +87,13 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
         {/* Content */}
         <div className="p-5">
           <div className="flex items-center gap-2 mb-3">
-            {project.author.image ? (
-              <img
-                src={project.author.image}
-                alt={project.author.name || "User"}
-                className="w-5 h-5 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-5 h-5 rounded-full bg-border flex items-center justify-center text-[8px] font-bold text-text-secondary">
-                {(project.author.name || "U").charAt(0).toUpperCase()}
-              </div>
-            )}
+            <UserAvatar
+              src={project.author.image}
+              name={project.author.name}
+              username={project.author.username}
+              className="w-5 h-5"
+              size={20}
+            />
             {project.author.username ? (
               <Link
                 href={profileUrl}

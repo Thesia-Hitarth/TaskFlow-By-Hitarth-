@@ -6,7 +6,7 @@ import { formatTimeAgo } from "@/lib/utils";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { UserAvatar } from "../ui/UserAvatar";
 
 interface LoadMoreActivityProps {
   initialBeforeTimeISO: string | null;
@@ -42,19 +42,13 @@ export function LoadMoreActivity({ initialBeforeTimeISO }: LoadMoreActivityProps
             key={`more-${idx}`}
             className="flex items-start gap-3.5 p-4 rounded-2xl bg-card border border-border hover:border-accent/10 transition-all text-left"
           >
-            {item.user.image ? (
-              <Image
-                src={item.user.image}
-                alt={item.user.name || "User"}
-                width={32}
-                height={32}
-                className="w-8 h-8 rounded-full border border-border object-cover shrink-0 mt-0.5"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center text-[10px] font-bold text-text-secondary shrink-0 mt-0.5">
-                {(item.user.name || "U").charAt(0).toUpperCase()}
-              </div>
-            )}
+            <UserAvatar
+              src={item.user.image}
+              name={item.user.name}
+              username={item.user.username}
+              className="w-8 h-8 mt-0.5"
+              size={32}
+            />
 
             <div className="flex-1 min-w-0">
               <p className="text-sm text-text-secondary font-medium leading-relaxed">

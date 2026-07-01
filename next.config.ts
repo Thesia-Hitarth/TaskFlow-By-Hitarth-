@@ -35,11 +35,11 @@ const nextConfig: NextConfig = {
               // Styles: self + inline + Monaco CDN styles
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
               // Fonts
-              "font-src 'self' https://fonts.gstatic.com",
+              "font-src 'self' data: https://fonts.gstatic.com",
               // Images: self + data URIs (common in Next.js Image)
               "img-src 'self' data: blob: https:",
-              // Connect: API calls + Vercel analytics/speed-insights
-              "connect-src 'self' https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+              // Connect: API calls + Vercel analytics/speed-insights + Monaco CDN + Google/GitHub avatars
+              "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://avatars.githubusercontent.com https://lh3.googleusercontent.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
               // Workers for ReactFlow and practice runs
               "worker-src 'self' blob:",
               // Frames: allow self + sandboxed visual iframe previews

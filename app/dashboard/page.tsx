@@ -22,6 +22,7 @@ import { BadgeGrid } from "@/components/dashboard/BadgeGrid";
 import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap";
 import { syncPastActivities } from "@/lib/streak/updateStreak";
 import { PostLoginSync } from "@/components/dashboard/PostLoginSync";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -315,17 +316,13 @@ export default async function DashboardPage() {
                     className="flex items-center justify-between bg-card border border-border rounded-2xl px-5 py-4 shadow-xs"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      {buddy.image ? (
-                        <img
-                          src={buddy.image}
-                          alt={buddy.name || "Buddy"}
-                          className="w-10 h-10 rounded-full border border-border object-cover shrink-0"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center text-text-secondary text-xs font-bold shrink-0">
-                          {(buddy.name || buddy.username || "B").charAt(0).toUpperCase()}
-                        </div>
-                      )}
+                      <UserAvatar
+                        src={buddy.image}
+                        name={buddy.name}
+                        username={buddy.username}
+                        className="w-10 h-10"
+                        size={40}
+                      />
                       <div className="min-w-0">
                         <Link
                           href={profileUrl}

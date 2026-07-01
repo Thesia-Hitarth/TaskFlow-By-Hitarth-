@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import { cn } from "@/lib/utils"
+import { UserAvatar } from "../ui/UserAvatar"
 
 interface CommentFormProps {
   onSubmit: (body: string) => Promise<void>
@@ -38,11 +39,11 @@ export function CommentForm({
 
   return (
     <form onSubmit={handleSubmit} className={cn("flex gap-3", compact ? "items-start" : "")}>
-      {userImage && !compact && (
-        <img
+      {!compact && (
+        <UserAvatar
           src={userImage}
-          alt="Your avatar"
-          className="w-9 h-9 rounded-full shrink-0 border border-border mt-1 object-cover"
+          className="w-9 h-9 mt-1"
+          size={36}
         />
       )}
       <div className="flex-1 min-w-0">

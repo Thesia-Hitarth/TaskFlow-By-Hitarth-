@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import Image from "next/image";
-import { LayoutDashboard, LogOut, User } from "lucide-react";
+import { LayoutDashboard, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
+import { UserAvatar } from "./ui/UserAvatar";
 
 export default function AuthButtons() {
   const { data: session, status } = useSession();
@@ -31,19 +31,12 @@ export default function AuthButtons() {
           <LayoutDashboard className="h-4 w-4 text-amber-500" />
           <span className="hidden sm:inline">Dashboard</span>
         </Link>
-        {session.user.image ? (
-          <Image
-            src={session.user.image}
-            alt={session.user.name ?? "User"}
-            width={32}
-            height={32}
-            className="h-8 w-8 rounded-full border border-border"
-          />
-        ) : (
-          <div className="h-8 w-8 rounded-full bg-surface border border-border flex items-center justify-center">
-            <User className="h-4 w-4 text-text-secondary" />
-          </div>
-        )}
+        <UserAvatar
+          src={session.user.image}
+          name={session.user.name}
+          className="h-8 w-8"
+          size={32}
+        />
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
           className="p-2 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors cursor-pointer"

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react"
 import { sendBuddyRequest, acceptBuddyRequest, rejectBuddyRequest } from "@/lib/actions/buddies"
 import { UserPlus, Check, X, Loader2 } from "lucide-react"
+import { UserAvatar } from "../ui/UserAvatar"
 
 interface BuddyCardProps {
   user: {
@@ -75,17 +76,13 @@ export function BuddyCard({
   return (
     <div className="flex items-center justify-between bg-card border border-border rounded-2xl px-5 py-4 transition-all hover:border-accent/10">
       <div className="flex items-center gap-3.5 min-w-0">
-        {user.image ? (
-          <img
-            src={user.image}
-            alt={user.name || "User"}
-            className="w-11 h-11 rounded-full border border-border object-cover shrink-0"
-          />
-        ) : (
-          <div className="w-11 h-11 rounded-full bg-border flex items-center justify-center text-text-secondary text-sm font-bold shrink-0">
-            {(user.name || user.username || "U").charAt(0).toUpperCase()}
-          </div>
-        )}
+        <UserAvatar
+          src={user.image}
+          name={user.name}
+          username={user.username}
+          className="w-11 h-11"
+          size={44}
+        />
         <div className="min-w-0">
           <p className="font-extrabold text-sm text-text-primary truncate">
             {user.name || user.username}

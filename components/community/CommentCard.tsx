@@ -5,6 +5,7 @@ import { ThumbsUp, Reply, Trash2, CheckCircle2, ChevronDown, ChevronUp, AlertOct
 import { cn, formatTimeAgo } from "@/lib/utils"
 import { voteComment, acceptAnswer, reportComment, createComment } from "@/lib/actions/comments"
 import { CommentForm } from "./CommentForm"
+import { UserAvatar } from "../ui/UserAvatar"
 import type { CommentWithAuthor, CommentReply } from "@/types/community"
 import Link from "next/link"
 
@@ -133,17 +134,13 @@ export function CommentCard({
         {/* Header: Author Info */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
-            {comment.author.image ? (
-              <img
-                src={comment.author.image}
-                alt={comment.author.name || "User"}
-                className="w-7 h-7 rounded-full border border-border object-cover"
-              />
-            ) : (
-              <div className="w-7 h-7 rounded-full bg-border flex items-center justify-center text-[10px] font-bold text-text-secondary select-none">
-                {(comment.author.name || "U").charAt(0).toUpperCase()}
-              </div>
-            )}
+            <UserAvatar
+              src={comment.author.image}
+              name={comment.author.name}
+              username={comment.author.username}
+              className="w-7 h-7"
+              size={28}
+            />
             
             <div className="flex flex-col">
               {comment.author.username ? (

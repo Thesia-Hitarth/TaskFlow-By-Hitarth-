@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { formatTimeAgo } from "@/lib/utils"
 import Link from "next/link"
+import { UserAvatar } from "@/components/ui/UserAvatar"
 
 interface ProfilePageProps {
   params: Promise<{ username: string }>
@@ -94,17 +95,13 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
         
         {/* ── Profile Header ── */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-10 pb-8 border-b border-border text-center sm:text-left">
-          {user.image ? (
-            <img
-              src={user.image}
-              alt={user.name ?? username}
-              className="w-24 h-24 rounded-full border border-border shadow-sm shrink-0"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-surface border border-border flex items-center justify-center text-text-secondary text-3xl font-bold shrink-0">
-              {(user.name || username).charAt(0).toUpperCase()}
-            </div>
-          )}
+          <UserAvatar
+            src={user.image}
+            name={user.name}
+            username={user.username}
+            className="w-24 h-24 shadow-sm"
+            size={96}
+          />
           
           <div className="flex-1 min-w-0">
             <h1 className="text-3xl font-extrabold text-text-primary leading-tight tracking-tight truncate">

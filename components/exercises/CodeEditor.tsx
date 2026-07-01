@@ -1,9 +1,15 @@
 // components/exercises/CodeEditor.tsx
 "use client"
 
-import Editor, { OnMount } from "@monaco-editor/react"
+import Editor, { OnMount, loader } from "@monaco-editor/react"
 import { useRef } from "react"
 import { useTheme } from "@/app/providers"
+
+loader.config({
+  paths: {
+    vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.48.0/min/vs",
+  },
+});
 
 interface CodeEditorProps {
   value: string

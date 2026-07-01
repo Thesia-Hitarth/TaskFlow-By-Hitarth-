@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 import { taskflows } from "@/lib/taskflows-data";
 import { taskflowContent } from "@/lib/taskflow-content";
 import GuideCard from "@/components/GuideCard";
@@ -184,12 +185,13 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
               {uniqueLearnersWithImages.length > 0 && (
                 <div className="flex -space-x-2.5">
                   {uniqueLearnersWithImages.map((l, i) => (
-                    <img
+                    <UserAvatar
                       key={i}
                       src={l.image}
-                      alt={l.name}
-                      title={l.name || l.username}
-                      className="w-7 h-7 rounded-full ring-2 ring-background object-cover select-none"
+                      name={l.name}
+                      username={l.username}
+                      className="w-7 h-7 ring-2 ring-background"
+                      size={28}
                     />
                   ))}
                 </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Check, CircleDot, X, ChevronLeft, ChevronRight, Video, BookOpen, Dumbbell, BookMarked, Clock, Play } from "lucide-react";
@@ -212,6 +212,9 @@ export default function NodeDetailSheet({
               <SheetTitle className="text-text-primary text-2xl font-bold tracking-tight">
                 {node.label}
               </SheetTitle>
+              <SheetDescription className="sr-only">
+                Detailed information, recommended reading materials, exercises, and community discussions for the learning path node: {node.label}.
+              </SheetDescription>
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <span className={cn(
                   "text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider",

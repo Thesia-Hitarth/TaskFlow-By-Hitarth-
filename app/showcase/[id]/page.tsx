@@ -8,6 +8,7 @@ import { formatTimeAgo } from "@/lib/utils"
 import { ArrowLeft, ExternalLink, Github, ThumbsUp } from "lucide-react"
 import Link from "next/link"
 import { CommentWithAuthor } from "@/types/community"
+import { UserAvatar } from "@/components/ui/UserAvatar"
 
 interface ShowcaseDetailPageProps {
   params: Promise<{ id: string }>
@@ -73,17 +74,13 @@ export default async function ShowcaseProjectDetailPage({ params }: ShowcaseDeta
           </h1>
 
           <div className="flex items-center gap-3 mb-6 pb-6 border-b border-border/60">
-            {project.author.image ? (
-              <img
-                src={project.author.image}
-                alt={project.author.name || "User"}
-                className="w-8 h-8 rounded-full border border-border object-cover"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center text-xs font-bold text-text-secondary">
-                {(project.author.name || "U").charAt(0).toUpperCase()}
-              </div>
-            )}
+            <UserAvatar
+              src={project.author.image}
+              name={project.author.name}
+              username={project.author.username}
+              className="w-8 h-8"
+              size={32}
+            />
             <div>
               <p className="text-xs font-semibold text-text-secondary/65 leading-none">Created by</p>
               {project.author.username ? (
