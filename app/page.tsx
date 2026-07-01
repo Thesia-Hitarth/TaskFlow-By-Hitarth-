@@ -38,6 +38,16 @@ export default function Home() {
       <main id="main-content" className="flex-1 bg-background transition-colors duration-200">
         {/* Section A: Hero */}
         <section className="pt-24 pb-16 px-4 sm:px-8 max-w-4xl mx-auto text-center flex flex-col items-center">
+          <Link
+            href="/changelog"
+            className="inline-flex items-center gap-2 bg-accent/10 hover:bg-accent/15 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-[11px] font-bold mb-5 tracking-wider uppercase transition-all duration-300"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+            </span>
+            <span>TaskFlow v2.0 Community Suite Live!</span>
+          </Link>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-amber-700 via-orange-600 to-amber-800 dark:from-amber-500 dark:via-orange-500 dark:to-amber-600 bg-clip-text text-transparent animate-fade-in">
             Developer Taskflows
           </h1>

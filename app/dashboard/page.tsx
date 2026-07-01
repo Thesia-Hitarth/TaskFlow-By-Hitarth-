@@ -41,6 +41,7 @@ export default async function DashboardPage() {
       select: {
         name: true,
         email: true,
+        username: true,
         streakDays: true,
         longestStreak: true,
         activities: {
@@ -102,6 +103,16 @@ export default async function DashboardPage() {
               <p className="text-sm text-text-secondary mt-2 max-w-xl font-medium">
                 Continue your learning tracks, track daily consistency, and view unlocked achievements.
               </p>
+              {user.username && (
+                <div className="flex gap-2.5 mt-4">
+                  <Link
+                    href={`/u/${user.username}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-accent bg-accent/10 border border-accent/20 px-3.5 py-2 rounded-xl hover:bg-accent/20 transition-all select-none"
+                  >
+                    View Public Profile &rarr;
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Streak Counter Pill */}

@@ -13,19 +13,33 @@ import type { NextRequest } from "next/server";
 // Use Node.js runtime to avoid Edge-incompatible APIs from jose/@auth/core
 export const runtime = "nodejs";
 
-export default auth((req: NextRequest & { auth: { user?: { id?: string } } | null }) => {
+export default auth((req: any) => {
   const { pathname } = req.nextUrl;
   const session = req.auth;
 
-  // Protect /dashboard/* routes — redirect to sign-in if not authenticated
-  if (pathname.startsWith("/dashboard") && !session?.user) {
+  const isLoggedIn = !!session?.user;
+  const hasUsername = !!(session?.user as any)?.username;
+
+  // Protect routes — redirect to sign-in if not authenticated
+  const isProtectedPath =
+    pathname.startsWith("/dashboard") ||
+    pathname === "/showcase/submit" ||
+    pathname.startsWith("/admin");
+
+  if (isProtectedPath && !isLoggedIn) {
     const signInUrl = new URL("/signin", req.url);
     signInUrl.searchParams.set("callbackUrl", req.url);
     return NextResponse.redirect(signInUrl);
   }
 
+  // Redirect authenticated users without a username to /setup
+  const isSetupPage = pathname === "/setup";
+  if (isLoggedIn && !hasUsername && !isSetupPage && isProtectedPath) {
+    return NextResponse.redirect(new URL("/setup", req.url));
+  }
+
   // Protect /api/progress/* routes — short-circuit with JSON 401 if not authenticated
-  if (pathname.startsWith("/api/progress") && !session?.user) {
+  if (pathname.startsWith("/api/progress") && !isLoggedIn) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -35,9 +49,9 @@ export default auth((req: NextRequest & { auth: { user?: { id?: string } } | nul
 
 export const config = {
   matcher: [
-    // Protect all /dashboard/* routes
     "/dashboard/:path*",
-    // Protect progress API mutations
+    "/showcase/submit",
+    "/admin/:path*",
     "/api/progress/:path*",
   ],
 };

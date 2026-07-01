@@ -73,47 +73,18 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-surface border-t border-border py-10 px-4 sm:px-8 mt-auto transition-colors duration-200">
-      <div className="max-w-7xl mx-auto flex flex-col gap-8">
-        {/* Top row: Logo left, Nav links right */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <Link href="/" className="text-text-primary font-bold text-lg hover:opacity-90 transition-opacity">
-            TaskFlow
+    <footer className="w-full bg-surface border-t border-border/80 py-16 px-6 sm:px-12 mt-auto transition-all duration-200">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
+        
+        {/* Brand Information (Left 5 Columns) */}
+        <div className="lg:col-span-5 flex flex-col gap-5 text-left">
+          <Link href="/" className="text-text-primary font-black text-2xl tracking-tight hover:opacity-90 transition-opacity">
+            TaskFlow<span className="text-accent">.</span>
           </Link>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-secondary">
-            <Link href="/taskflows" className="hover:text-text-primary transition-colors font-medium">
-              Taskflows
-            </Link>
-            <Link href="/guides" className="hover:text-text-primary transition-colors font-medium">
-              Guides
-            </Link>
-            <Link href="/best-practices" className="hover:text-text-primary transition-colors font-medium">
-              Best Practices
-            </Link>
-            <Link href="/compare" className="hover:text-text-primary transition-colors font-medium">
-              Compare
-            </Link>
-            <Link href="/path-finder" className="hover:text-text-primary transition-colors font-medium">
-              Path Finder
-            </Link>
-            <Link href="/playground" className="hover:text-text-primary transition-colors font-medium">
-              Playground
-            </Link>
-          </div>
-        </div>
-
-        {/* Middle row: Tagline */}
-        <p className="text-text-secondary text-sm max-w-2xl leading-relaxed">
-          Community created taskflows, best practices, guides and articles to help you grow in your career.
-        </p>
-
-        {/* Bottom row: Copyright left, Socials right */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-border pt-6 mt-2">
-          <p className="text-muted text-xs font-semibold">
-            &copy; {new Date().getFullYear()} TaskFlow
+          <p className="text-text-secondary text-sm max-w-sm leading-relaxed font-medium">
+            A developer-focused platform containing community-driven learning paths, standards checklists, guidebooks, and social accountability tools to scale your engineering career.
           </p>
-
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 mt-2">
             {socialLinks.map((social) => {
               const Icon = social.icon;
               return (
@@ -122,14 +93,112 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card/40 text-text-secondary transition-all duration-200 hover:border-accent hover:text-accent hover:bg-border/40 focus:outline-none"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-card/60 text-text-secondary transition-all duration-300 hover:border-accent hover:text-accent hover:bg-accent/5 hover:-translate-y-[2px] focus:outline-none"
                   aria-label={social.label}
                 >
-                  <Icon className="h-[18px] w-[18px]" />
+                  <Icon className="h-4 w-4" />
                 </a>
               );
             })}
           </div>
+        </div>
+
+        {/* Navigation Grid (Right 7 Columns - 4x2 Grid) */}
+        <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-6 text-left">
+          
+          {/* Column 1: Learn */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-text-primary/95">
+              Learn
+            </h4>
+            <ul className="space-y-2.5 text-sm font-semibold">
+              <li>
+                <Link href="/taskflows" className="text-text-secondary hover:text-accent transition-colors">
+                  Taskflows
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides" className="text-text-secondary hover:text-accent transition-colors">
+                  Guides
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 2: Standards */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-text-primary/95">
+              Standards
+            </h4>
+            <ul className="space-y-2.5 text-sm font-semibold">
+              <li>
+                <Link href="/best-practices" className="text-text-secondary hover:text-accent transition-colors">
+                  Best Practices
+                </Link>
+              </li>
+              <li>
+                <Link href="/compare" className="text-text-secondary hover:text-accent transition-colors">
+                  Compare
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Tools */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-text-primary/95">
+              Tools
+            </h4>
+            <ul className="space-y-2.5 text-sm font-semibold">
+              <li>
+                <Link href="/path-finder" className="text-text-secondary hover:text-accent transition-colors">
+                  Path Finder
+                </Link>
+              </li>
+              <li>
+                <Link href="/playground" className="text-text-secondary hover:text-accent transition-colors">
+                  Playground
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Community */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-text-primary/95">
+              Community
+            </h4>
+            <ul className="space-y-2.5 text-sm font-semibold">
+              <li>
+                <Link href="/showcase" className="text-text-secondary hover:text-accent transition-colors">
+                  Showcase
+                </Link>
+              </li>
+              <li>
+                <Link href="/activity" className="text-text-secondary hover:text-accent transition-colors">
+                  Activity
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Bottom Row */}
+      <div className="max-w-7xl mx-auto border-t border-border/40 pt-8 mt-12 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <p className="text-text-secondary/50 text-xs font-bold tracking-wide">
+          &copy; {new Date().getFullYear()} TaskFlow. All rights reserved.
+        </p>
+        <div className="flex gap-4 text-xs font-bold text-text-secondary/50">
+          <Link href="/changelog" className="hover:text-accent transition-colors">
+            Changelog
+          </Link>
+          <span>&middot;</span>
+          <Link href="/terms" className="hover:text-accent transition-colors">
+            Terms
+          </Link>
         </div>
       </div>
     </footer>

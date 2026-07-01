@@ -10,6 +10,9 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { checkAndAwardBadges } from "@/lib/badges/checkBadges";
 import { taskflowContent } from "@/lib/taskflow-content";
+import { CommentSection } from "@/components/community/CommentSection";
+import { getComments } from "@/lib/actions/comments";
+import { CommentWithAuthor } from "@/types/community";
 
 // New components & helpers
 import { getGuideBySlug, getAllGuides } from "@/lib/guides/getAllGuides";
@@ -84,6 +87,7 @@ export default async function GuidePage({ params }: PageProps) {
       console.error("Failed to log guide view:", e);
     }
   }
+  const initialComments = await getComments({ guideTarget: slug });
 
   // Resolve node label for completion prompt if linked
   const primaryRoadmap = frontmatter.relatedRoadmaps?.[0];
@@ -206,6 +210,12 @@ export default async function GuidePage({ params }: PageProps) {
             </div>
           );
         })()}
+
+        {/* Comments Section */}
+        <CommentSection
+          initialComments={initialComments as CommentWithAuthor[]}
+          guideTarget={slug}
+        />
       </main>
       <Footer />
     </div>

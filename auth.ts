@@ -20,8 +20,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     session({ session, user }) {
-      // Attach the DB user.id to the session so it is accessible client-side
-      if (session.user) session.user.id = user.id;
+      // Attach the DB user.id and username to the session so they are accessible client-side
+      if (session.user) {
+        session.user.id = user.id;
+        (session.user as any).username = (user as any).username;
+      }
       return session;
     },
   },

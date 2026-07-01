@@ -116,6 +116,24 @@ export default function Navbar() {
         >
           Playground
         </Link>
+        <Link
+          href="/showcase"
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/showcase")
+            ? "text-text-primary border-accent"
+            : "text-text-secondary hover:text-text-primary border-transparent"
+            }`}
+        >
+          Showcase
+        </Link>
+        <Link
+          href="/activity"
+          className={`transition-all text-sm font-semibold pb-1 border-b-2 ${pathname.startsWith("/activity")
+            ? "text-text-primary border-accent"
+            : "text-text-secondary hover:text-text-primary border-transparent"
+            }`}
+        >
+          Activity
+        </Link>
       </nav>
 
       {/* Right: Theme toggle, Auth buttons & Menu icon */}
@@ -213,6 +231,26 @@ export default function Navbar() {
                     }`}
                 >
                   Playground
+                </Link>
+                <Link
+                  href="/showcase"
+                  onClick={() => setMenuOpen(false)}
+                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/showcase")
+                    ? "text-accent"
+                    : "text-text-secondary hover:text-text-primary"
+                    }`}
+                >
+                  Showcase
+                </Link>
+                <Link
+                  href="/activity"
+                  onClick={() => setMenuOpen(false)}
+                  className={`text-base font-bold py-1.5 transition-colors ${pathname.startsWith("/activity")
+                    ? "text-accent"
+                    : "text-text-secondary hover:text-text-primary"
+                    }`}
+                >
+                  Activity
                 </Link>
               </nav>
               <div className="h-[1px] bg-border my-2" />

@@ -12,6 +12,9 @@ import { FunctionExerciseRunner } from "@/components/exercises/FunctionExerciseR
 import { HtmlCssJsExerciseRunner } from "@/components/exercises/HtmlCssJsExerciseRunner";
 import { ExplainThisChat } from "@/components/ai/ExplainThisChat";
 import { Sparkles } from "lucide-react";
+import { CommentSection } from "@/components/community/CommentSection";
+import { getComments } from "@/lib/actions/comments";
+import { CommentWithAuthor } from "@/types/community";
 
 interface Props {
   node: TaskflowContentNode | null;
@@ -88,6 +91,18 @@ export default function NodeDetailSheet({
     setSelectedExerciseId(null);
     setShowAIChat(false);
   }, [node?.id]);
+
+  // Load comments for the active node
+  const [nodeComments, setNodeComments] = useState<CommentWithAuthor[]>([]);
+  useEffect(() => {
+    if (node && roadmapId) {
+      setNodeComments([]);
+      getComments({ nodeTarget: `${roadmapId}:${node.id}` }).then((commentsList) => {
+        setNodeComments((commentsList as CommentWithAuthor[]) || []);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [node?.id, roadmapId]);
 
   const links = node?.links || [];
   
@@ -448,6 +463,16 @@ export default function NodeDetailSheet({
                     </div>
                   )}
                 </div>
+
+                {/* Comments Section */}
+                {node && roadmapId && (
+                  <div className="border-t border-border pt-6">
+                    <CommentSection
+                      initialComments={nodeComments}
+                      nodeTarget={`${roadmapId}:${node.id}`}
+                    />
+                  </div>
+                )}
               </>
             ) : (
               <div className="space-y-4 pt-2">

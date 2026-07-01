@@ -7,43 +7,59 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
-    date: "25 May, 2026",
-    version: "v1.4",
-    title: "Network Engineer Taskflow + Python Guides",
+    date: "01 Jul, 2026",
+    version: "v2.0",
+    title: "Community & Social Suite",
     changes: [
-      "Added Network Engineer roadmap with full milestone structure",
-      "Added Python learning path guide",
-      "Bug fixes on mobile roadmap view",
+      "Threaded discussion boards with Markdown syntax support integrated at the bottom of all Guides and Best Practices",
+      "Interactive comment drawer panels built inside the roadmap node detail sidebar sheets",
+      "Optimistic comments updates utilizing React 19's useOptimistic hook for instantaneous updates",
+      "Portfolio Showcase Gallery (/showcase) allowing learners to publish what they build and gather upvotes",
+      "Matchmaking Discovery page (/[roadmap]/buddies) to find, select, and connect with accountability study partners",
+      "Public Developer Profiles (/u/[username]) summarizing completed paths, streak levels, earned badge collections, heatmaps, and contributions",
+      "Admin Moderation Hub (/admin/reports and /admin/showcase) for project reviews and comment flags",
+      "Global Live Activity Stream (/activity) displaying learning actions and project contributions in real-time",
+      "Path Header Social Proof highlighting learner counts and active student avatar stacks",
+    ],
+  },
+  {
+    date: "10 Jun, 2026",
+    version: "v1.6",
+    title: "Interactive Playgrounds & AI Chat",
+    changes: [
+      "Interactive Code Playground (/playground) with support for executing HTML/CSS/JS code in real-time sandboxed previews",
+      "Node Practice exercises linking interactive coding challenges directly inside learning nodes",
+      "AI Assistant integration (ExplainThisChat) on roadmap drawers for quick contextual explanations of topics",
+    ],
+  },
+  {
+    date: "15 May, 2026",
+    version: "v1.5",
+    title: "Consistency Streaks & Gamification",
+    changes: [
+      "Streak tracking system (Flame stats) promoting consistent daily learning commits",
+      "Developer badges module awarding achievements (e.g. Guide Scholar, Master Solver) as students study",
+      "SVG contribution heatmap tracking learning logs on the developer dashboard and public profiles",
     ],
   },
   {
     date: "26 Mar, 2026",
     version: "v1.3",
-    title: "AI Engineer Taskflow Review",
+    title: "AI Engineer & Advanced Track",
     changes: [
-      "Full review and update of the AI Engineer roadmap",
-      "Added LLM and prompt engineering nodes",
+      "Full review and update of the AI Engineer learning roadmap",
+      "Added Large Language Models (LLM) and prompt engineering nodes",
       "Updated resource links across AI-related roadmaps",
-    ],
-  },
-  {
-    date: "27 Feb, 2026",
-    version: "v1.2",
-    title: "AI Content in Guides",
-    changes: [
-      "Added AI-focused articles to the Guides section",
-      "Introduced tagging system for guide categories",
-      "Performance improvements on the guides listing page",
     ],
   },
   {
     date: "31 Jan, 2026",
     version: "v1.1",
-    title: "Community Reviews",
+    title: "Community Reviews & QA",
     changes: [
-      "Incorporated community feedback across 8 roadmaps",
-      "Fixed broken resource links",
-      "Improved mobile navigation",
+      "Incorporated community review feedback across 8 core roadmaps",
+      "Verified external resource links and updated broken URLs",
+      "Improved mobile navigation drawers and sheet performance",
     ],
   },
   {
@@ -51,10 +67,9 @@ export const changelogEntries: ChangelogEntry[] = [
     version: "v1.0",
     title: "Initial Launch",
     changes: [
-      "Launched TaskFlow with 13 role-based roadmaps",
-      "Launched with 19 skill-based roadmaps",
-      "Guides system with 8 in-depth articles",
-      "Search command palette (Ctrl+K)",
+      "Launched TaskFlow with 13 role-based and 19 skill-based learning paths",
+      "Interactive Guides explorer system with 8 initial depth articles",
+      "Command palette system (Ctrl+K) for rapid site-wide keyword searches",
     ],
   },
 ];

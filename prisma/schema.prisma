@@ -50,6 +50,20 @@ model User {
   projectSubmissions ProjectSubmission[]
   quizResults        QuizResult[]
 
+  // Profile additions
+  username  String?  @unique
+  bio       String?
+
+  // Relations for community
+  comments         Comment[]
+  commentVotes     CommentVote[]
+  commentReports   CommentReport[]
+  buddyConnections1 StudyBuddyConnection[] @relation("BuddyUser1")
+  buddyConnections2 StudyBuddyConnection[] @relation("BuddyUser2")
+  buddyMessages    BuddyMessage[]
+  showcaseProjects ShowcaseProject[]
+  showcaseUpvotes  ShowcaseUpvote[]
+
   // Onboarding tour status
   hasSeenTour      Boolean  @default(false)
 
@@ -214,3 +228,116 @@ model AIUsageLog {
 
   @@index([feature, createdAt])
 }
+
+// ── Comment system ───────────────────────────────────────────────────────────
+model Comment {
+  id          String   @id @default(cuid())
+  body        String   @db.Text
+  authorId    String
+  nodeTarget  String?
+  guideTarget String?
+  parentId    String?
+  isAccepted  Boolean  @default(false)
+  isHidden    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author  User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent  Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies Comment[]     @relation("CommentReplies")
+  votes   CommentVote[]
+  reports CommentReport[]
+
+  @@index([nodeTarget])
+  @@index([guideTarget])
+  @@index([authorId])
+  @@index([parentId])
+}
+
+model CommentVote {
+  id        String @id @default(cuid())
+  commentId String
+  userId    String
+  value     Int
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+}
+
+model CommentReport {
+  id         String   @id @default(cuid())
+  commentId  String
+  reporterId String
+  reason     String
+  createdAt  DateTime @default(now())
+
+  comment  Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  reporter User    @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, reporterId])
+}
+
+// ── Study Buddies ─────────────────────────────────────────────────────────────
+model StudyBuddyConnection {
+  id        String   @id @default(cuid())
+  userId1   String
+  userId2   String
+  status    String   // "pending" | "active" | "ended"
+  roadmapId String
+  createdAt DateTime @default(now())
+
+  user1    User           @relation("BuddyUser1", fields: [userId1], references: [id], onDelete: Cascade)
+  user2    User           @relation("BuddyUser2", fields: [userId2], references: [id], onDelete: Cascade)
+  messages BuddyMessage[]
+
+  @@unique([userId1, userId2, roadmapId])
+  @@index([userId1])
+  @@index([userId2])
+}
+
+model BuddyMessage {
+  id           String   @id @default(cuid())
+  connectionId String
+  senderId     String
+  body         String   @db.Text
+  createdAt    DateTime @default(now())
+
+  connection StudyBuddyConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  sender     User                 @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+// ── Community Showcase ────────────────────────────────────────────────────────
+model ShowcaseProject {
+  id           String   @id @default(cuid())
+  title        String
+  description  String   @db.Text
+  liveUrl      String?
+  repoUrl      String?
+  thumbnailUrl String?
+  authorId     String
+  roadmapId    String
+  tags         String[]
+  isApproved   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  author  User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  upvotes ShowcaseUpvote[]
+
+  @@index([roadmapId])
+  @@index([authorId])
+  @@index([isApproved])
+}
+
+model ShowcaseUpvote {
+  id        String @id @default(cuid())
+  projectId String
+  userId    String
+
+  project ShowcaseProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+}
+

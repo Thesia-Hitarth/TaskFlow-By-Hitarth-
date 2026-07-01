@@ -5,6 +5,9 @@ import Footer from "@/components/Footer";
 import { bestPractices } from "@/lib/best-practices-data";
 import type { Metadata } from "next";
 import { CheckCircle2, AlertTriangle, ArrowLeft } from "lucide-react";
+import { CommentSection } from "@/components/community/CommentSection";
+import { getComments } from "@/lib/actions/comments";
+import { CommentWithAuthor } from "@/types/community";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -28,6 +31,8 @@ export default async function BestPracticePage({ params }: PageProps) {
   const { slug } = await params;
   const bp = bestPractices.find((b) => b.slug === slug);
   if (!bp) notFound();
+
+  const initialComments = await getComments({ guideTarget: `best-practice-${slug}` });
 
   return (
     <div className="flex flex-col min-h-screen bg-background transition-colors duration-200">
@@ -143,6 +148,11 @@ export default async function BestPracticePage({ params }: PageProps) {
             </div>
           </>
         )}
+        {/* Comments Section */}
+        <CommentSection
+          initialComments={initialComments as CommentWithAuthor[]}
+          guideTarget={`best-practice-${slug}`}
+        />
       </main>
       <Footer />
     </div>

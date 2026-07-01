@@ -72,6 +72,42 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
     hasSeenTour = user?.hasSeenTour ?? false;
   }
 
+  // Fetch social proof (learner counts & recently active avatars)
+  const learnerCount = await prisma.userProgress.groupBy({
+    by: ["userId"],
+    where: { taskflowSlug: slug, status: { in: ["done", "in_progress"] } },
+  }).then(res => res.length);
+
+  const recentLearnerRecords = await prisma.userProgress.findMany({
+    where: { taskflowSlug: slug, status: { in: ["done", "in_progress"] } },
+    orderBy: { updatedAt: "desc" },
+    take: 50,
+    select: {
+      userId: true,
+      user: {
+        select: {
+          image: true,
+          name: true,
+          username: true,
+        },
+      },
+    },
+  });
+
+  const uniqueLearnersWithImages: Array<{ image: string; name: string; username: string }> = [];
+  const seenUsers = new Set<string>();
+  for (const p of recentLearnerRecords) {
+    if (p.user.image && !seenUsers.has(p.userId)) {
+      seenUsers.add(p.userId);
+      uniqueLearnersWithImages.push({
+        image: p.user.image,
+        name: p.user.name || "",
+        username: p.user.username || "",
+      });
+      if (uniqueLearnersWithImages.length >= 5) break;
+    }
+  }
+
   // Enrich nodes with related guides on the server
   const enrichedNodes = content
     ? content.nodes.map((node) => ({
@@ -141,6 +177,37 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
           <p className="text-text-secondary mt-2 font-semibold">
             {taskflow?.description || `Step by step guide to learning ${title}`}
           </p>
+
+          {/* Social Proof (Learners count & avatars) */}
+          {learnerCount > 0 && (
+            <div className="flex flex-wrap items-center gap-3 mt-4">
+              {uniqueLearnersWithImages.length > 0 && (
+                <div className="flex -space-x-2.5">
+                  {uniqueLearnersWithImages.map((l, i) => (
+                    <img
+                      key={i}
+                      src={l.image}
+                      alt={l.name}
+                      title={l.name || l.username}
+                      className="w-7 h-7 rounded-full ring-2 ring-background object-cover select-none"
+                    />
+                  ))}
+                </div>
+              )}
+              <p className="text-xs font-bold text-text-secondary/70">
+                <span className="text-accent">{learnerCount.toLocaleString()}</span> learner{learnerCount > 1 ? "s" : ""} on this path
+              </p>
+              
+              <span className="text-text-secondary/30 text-xs">•</span>
+              
+              <Link
+                href={`/${slug}/buddies`}
+                className="text-xs font-bold text-accent hover:underline flex items-center gap-1"
+              >
+                Find study buddies &rarr;
+              </Link>
+            </div>
+          )}
         </header>
 
         {enrichedContent && (
