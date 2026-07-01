@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Check, CircleDot, X, ChevronLeft, ChevronRight, Video, BookOpen, Dumbbell, BookMarked, Clock, Play } from "lucide-react";
 import { TaskflowContentNode, NodeStatus } from "@/lib/taskflow-content/types";
@@ -81,6 +82,29 @@ export default function NodeDetailSheet({
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
   const [showAIChat, setShowAIChat] = useState(false);
 
+  const isMobile = useMediaQuery("(max-width: 767px)");
+
+  // Swipe-down-to-close logic on mobile
+  const touchStartY = useRef(0);
+  const touchCurrentY = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchCurrentY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    const deltaY = touchCurrentY.current - touchStartY.current;
+    if (deltaY > 100) {
+      onClose();
+    }
+    touchStartY.current = 0;
+    touchCurrentY.current = 0;
+  };
+
   // Load exercises for the active node
   const exercises = node && roadmapId ? getExercisesForNode(roadmapId, node.id) : [];
 
@@ -132,9 +156,22 @@ export default function NodeDetailSheet({
   return (
     <Sheet open={!!node} onOpenChange={(open) => !open && onClose()}>
       <SheetContent
-        side="right"
-        className="bg-surface border-border text-text-primary w-full sm:max-w-md md:max-w-lg transition-colors duration-200 overflow-y-auto [&>button]:hidden"
+        side={isMobile ? "bottom" : "right"}
+        className={cn(
+          "bg-surface border-border text-text-primary transition-colors duration-200 overflow-y-auto [&>button]:hidden",
+          isMobile
+            ? "w-full max-h-[85vh] rounded-t-3xl border-t border-border shadow-2xl"
+            : "w-full sm:max-w-md md:max-w-lg h-full"
+        )}
+        onTouchStart={isMobile ? handleTouchStart : undefined}
+        onTouchMove={isMobile ? handleTouchMove : undefined}
+        onTouchEnd={isMobile ? handleTouchEnd : undefined}
       >
+        {isMobile && (
+          <div className="flex justify-center pt-2 pb-1.5 shrink-0 select-none">
+            <div className="w-12 h-1.5 rounded-full bg-border" />
+          </div>
+        )}
         {/* Navigation Bar */}
         <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
           <button

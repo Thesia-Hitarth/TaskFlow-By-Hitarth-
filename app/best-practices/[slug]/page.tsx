@@ -9,6 +9,8 @@ import { CommentSection } from "@/components/community/CommentSection";
 import { getComments } from "@/lib/actions/comments";
 import { CommentWithAuthor } from "@/types/community";
 
+export const revalidate = 0;
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

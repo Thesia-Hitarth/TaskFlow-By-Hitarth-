@@ -14,6 +14,8 @@ import { CommentSection } from "@/components/community/CommentSection";
 import { getComments } from "@/lib/actions/comments";
 import { CommentWithAuthor } from "@/types/community";
 
+export const revalidate = 0;
+
 // New components & helpers
 import { getGuideBySlug, getAllGuides } from "@/lib/guides/getAllGuides";
 import { mdxComponents } from "@/components/guides/mdx-components";

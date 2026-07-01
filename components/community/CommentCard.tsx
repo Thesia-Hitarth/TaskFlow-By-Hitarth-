@@ -80,6 +80,8 @@ export function CommentCard({
       const res = await acceptAnswer(comment.id)
       if (res.success) {
         window.location.reload()
+      } else if (res.error) {
+        window.alert(res.error)
       }
     })
   }

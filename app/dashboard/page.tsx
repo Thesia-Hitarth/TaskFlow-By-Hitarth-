@@ -21,6 +21,7 @@ import { ProgressRing } from "@/components/ui/ProgressRing";
 import { BadgeGrid } from "@/components/dashboard/BadgeGrid";
 import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap";
 import { syncPastActivities } from "@/lib/streak/updateStreak";
+import { PostLoginSync } from "@/components/dashboard/PostLoginSync";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -124,6 +125,7 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
+      <PostLoginSync />
 
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Top Profile Summary Card */}

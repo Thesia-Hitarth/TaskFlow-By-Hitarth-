@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma"
 import { formatTimeAgo } from "@/lib/utils"
 import Link from "next/link"
+import { LoadMoreActivity } from "./LoadMoreActivity"
+import Image from "next/image"
 
 export async function ActivityFeed() {
   // Fetch recent completed progress nodes
@@ -83,6 +85,8 @@ export async function ActivityFeed() {
     )
   }
 
+  const oldestTimeISO = feed.length > 0 ? feed[feed.length - 1].time.toISOString() : null;
+
   return (
     <div className="space-y-4">
       {feed.map((item, idx) => {
@@ -94,9 +98,11 @@ export async function ActivityFeed() {
             className="flex items-start gap-3.5 p-4 rounded-2xl bg-card border border-border hover:border-accent/10 transition-all text-left"
           >
             {item.user.image ? (
-              <img
+              <Image
                 src={item.user.image}
                 alt={item.user.name || "User"}
+                width={32}
+                height={32}
                 className="w-8 h-8 rounded-full border border-border object-cover shrink-0 mt-0.5"
               />
             ) : (
@@ -151,6 +157,8 @@ export async function ActivityFeed() {
           </div>
         )
       })}
+
+      <LoadMoreActivity initialBeforeTimeISO={oldestTimeISO} />
     </div>
   )
 }

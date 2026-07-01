@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { ActivityFeed } from "@/components/community/ActivityFeed"
 import { Activity } from "lucide-react"
+import { ActivityPullToRefresh } from "@/components/activity/ActivityPullToRefresh"
 
 export const metadata = {
   title: "Recent Community Activity — TaskFlow",
@@ -24,8 +25,10 @@ export default function GlobalActivityPage() {
           Follow along with the TaskFlow community! Here is a live stream of learning milestones and showcase projects submitted by developers worldwide.
         </p>
 
-        {/* Activity Feed */}
-        <ActivityFeed />
+        {/* Activity Feed wrapped with Pull To Refresh */}
+        <ActivityPullToRefresh>
+          <ActivityFeed />
+        </ActivityPullToRefresh>
 
       </main>
       <Footer />

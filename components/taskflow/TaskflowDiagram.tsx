@@ -17,6 +17,8 @@ import { getNextNode } from "@/lib/roadmap/getNextNode";
 import { fireCelebration, fireBadgeCelebration } from "@/lib/ui/confetti";
 import { BadgeToast } from "@/components/ui/BadgeToast";
 import { useAnnounce } from "@/components/ui/LiveAnnouncer";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
+import { RoadmapListView } from "@/components/roadmap/RoadmapListView";
 
 interface TaskflowDiagramProps {
   content: TaskflowContent;
@@ -87,6 +89,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
   const { progress, updateStatus } = useTaskflowProgress(content.slug);
   const [selected, setSelected] = useState<TaskflowContentNode | null>(null);
   const [unlockedBadgeId, setUnlockedBadgeId] = useState<string | null>(null);
+  const isMobile = useMediaQuery("(max-width: 767px)");
 
   const nextRecommendedNode = useMemo(() => {
     return getNextNode(content.nodes, content.edges, progress);
@@ -474,9 +477,11 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
   return (
     <div className="relative space-y-4">
       {/* 1. Legend Row */}
-      <div className="border-b border-border/55 pb-1">
-        <TaskflowLegend />
-      </div>
+      {!isMobile && (
+        <div className="border-b border-border/55 pb-1">
+          <TaskflowLegend />
+        </div>
+      )}
 
       {/* 2. Action Toolbar Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card/50 border border-border/60 p-3 rounded-xl shadow-xs">
@@ -506,15 +511,17 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         )}
 
         <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExportPng}
-            disabled={isExporting}
-            className="h-8 px-3 text-xs font-semibold cursor-pointer border-border hover:border-accent hover:text-accent flex items-center gap-1.5 bg-background shrink-0"
-          >
-            📷 Export PNG
-          </Button>
+          {!isMobile && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportPng}
+              disabled={isExporting}
+              className="h-8 px-3 text-xs font-semibold cursor-pointer border-border hover:border-accent hover:text-accent flex items-center gap-1.5 bg-background shrink-0"
+            >
+              📷 Export PNG
+            </Button>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -526,75 +533,87 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         </div>
       </div>
 
-      {/* Outer container is always mounted so ResizeObserver can measure its width */}
-      <div
-        ref={containerRef}
-        style={{ height: `${calculatedHeight}px` }}
-        className="w-full rounded-xl border border-border/50 bg-surface/30 overflow-hidden relative transition-colors duration-200"
-      >
-        {/* Only mount ReactFlow AFTER container dimensions are known — prevents all NaN SVG errors */}
-        {containerWidth > 0 ? (
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={NODE_TYPES}
-            onNodeClick={onNodeClick}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            elementsSelectable
-            zoomOnScroll={false}
-            zoomOnPinch
-            zoomOnDoubleClick={false}
-            panOnDrag={isZoomedIn}
-            panOnScroll={false}
-            preventScrolling={isZoomedIn}
-            proOptions={{ hideAttribution: true }}
-            fitView
-            fitViewOptions={{
-              padding: 0.1,
-              minZoom: 0.1,
-              maxZoom: 2,
-            }}
-          >
-            <Background color="var(--color-border)" gap={24} />
-            <Controls
-              showInteractive={false}
-              position="bottom-left"
-              className="!bg-card !border-border !text-text-primary fill-text-primary"
-            />
-
-            {/* Context-aware hint badge */}
-            <div
-              className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 bg-card/80 backdrop-blur-sm border border-border/50 rounded-full px-2.5 py-1 text-[10px] text-text-secondary pointer-events-none select-none transition-all duration-300"
+      {isMobile ? (
+        <RoadmapListView
+          content={content}
+          nodeStatuses={progress}
+          onNodeClick={(node) => {
+            if (!isNodeLocked(node.id)) {
+              setSelected(node);
+            }
+          }}
+        />
+      ) : (
+        /* Outer container is always mounted so ResizeObserver can measure its width */
+        <div
+          ref={containerRef}
+          style={{ height: `${calculatedHeight}px` }}
+          className="w-full rounded-xl border border-border/50 bg-surface/30 overflow-hidden relative transition-colors duration-200"
+        >
+          {/* Only mount ReactFlow AFTER container dimensions are known — prevents all NaN SVG errors */}
+          {containerWidth > 0 ? (
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={NODE_TYPES}
+              onNodeClick={onNodeClick}
+              nodesDraggable={false}
+              nodesConnectable={false}
+              elementsSelectable
+              zoomOnScroll={false}
+              zoomOnPinch
+              zoomOnDoubleClick={false}
+              panOnDrag={isZoomedIn}
+              panOnScroll={false}
+              preventScrolling={isZoomedIn}
+              proOptions={{ hideAttribution: true }}
+              fitView
+              fitViewOptions={{
+                padding: 0.1,
+                minZoom: 0.1,
+                maxZoom: 2,
+              }}
             >
-              {isZoomedIn ? (
-                <>
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <path d="M3 1h4M3 9h4M1 3v4M9 3v4M2 2l6 6M8 2L2 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                  </svg>
-                  Drag to pan · Use ⊞ to reset
-                </>
-              ) : (
-                <>
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <circle cx="5" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.2" />
-                    <path d="M5 7.5v2M3.5 6.5L2 8M6.5 6.5L8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                  </svg>
-                  Zoom in to explore · Drag to pan
-                </>
-              )}
+              <Background color="var(--color-border)" gap={24} />
+              <Controls
+                showInteractive={false}
+                position="bottom-left"
+                className="!bg-card !border-border !text-text-primary fill-text-primary"
+              />
+
+              {/* Context-aware hint badge */}
+              <div
+                className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 bg-card/80 backdrop-blur-sm border border-border/50 rounded-full px-2.5 py-1 text-[10px] text-text-secondary pointer-events-none select-none transition-all duration-300"
+              >
+                {isZoomedIn ? (
+                  <>
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                      <path d="M3 1h4M3 9h4M1 3v4M9 3v4M2 2l6 6M8 2L2 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                    </svg>
+                    Drag to pan · Use ⊞ to reset
+                  </>
+                ) : (
+                  <>
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                      <circle cx="5" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.2" />
+                      <path d="M5 7.5v2M3.5 6.5L2 8M6.5 6.5L8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                    </svg>
+                    Zoom in to explore · Drag to pan
+                  </>
+                )}
+              </div>
+            </ReactFlow>
+          ) : (
+            /* Loading skeleton — shown for one frame until ResizeObserver fires */
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-3 text-text-secondary/50">
+                <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+                <span className="text-xs font-medium">Loading roadmap…</span>
+              </div>
             </div>
-          </ReactFlow>
-        ) : (
-          /* Loading skeleton — shown for one frame until ResizeObserver fires */
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3 text-text-secondary/50">
-              <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
-              <span className="text-xs font-medium">Loading roadmap…</span>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       <NodeDetailSheet
         node={selected}

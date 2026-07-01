@@ -7,6 +7,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { SkipLink } from "@/components/ui/SkipLink";
+import { BottomNav } from "@/components/layout/BottomNav";
+import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,6 +25,15 @@ export const metadata: Metadata = {
   },
   description:
     "Community created taskflows, guides and articles to help developers grow in their career.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "TaskFlow",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
   openGraph: {
     title: "TaskFlow",
     description:
@@ -67,7 +78,13 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-background text-text-primary font-sans flex flex-col">
         <SkipLink />
-        <Providers>{children}</Providers>
+        <Providers>
+          <div className="flex-1 pb-16 md:pb-0 flex flex-col">
+            {children}
+          </div>
+          <BottomNav />
+          <ServiceWorkerRegistration />
+        </Providers>
         <Analytics />
         <SpeedInsights />
       </body>

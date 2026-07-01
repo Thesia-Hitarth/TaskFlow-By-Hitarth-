@@ -68,7 +68,10 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
     <div className="bg-card border border-border rounded-2xl overflow-hidden hover:shadow-lg hover:border-accent/20 transition-all duration-300 group flex flex-col justify-between">
       <div>
         {/* Thumbnail Preview Area */}
-        <div className="aspect-video bg-border flex items-center justify-center text-4xl relative overflow-hidden select-none">
+        <Link
+          href={`/showcase/${project.id}`}
+          className="aspect-video bg-border flex items-center justify-center text-4xl relative overflow-hidden select-none block"
+        >
           {project.thumbnailUrl ? (
             <img
               src={project.thumbnailUrl}
@@ -78,7 +81,7 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
           ) : (
             <span className="group-hover:scale-110 transition-transform duration-300">🚀</span>
           )}
-        </div>
+        </Link>
 
         {/* Content */}
         <div className="p-5">
@@ -111,9 +114,12 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
             </span>
           </div>
 
-          <h3 className="font-extrabold text-text-primary text-base mb-1.5 truncate">
+          <Link
+            href={`/showcase/${project.id}`}
+            className="font-extrabold text-text-primary text-base mb-1.5 truncate block hover:text-accent transition-colors"
+          >
             {project.title}
-          </h3>
+          </Link>
           <p className="text-xs text-text-secondary/70 leading-relaxed font-medium line-clamp-3 mb-4">
             {project.description}
           </p>
