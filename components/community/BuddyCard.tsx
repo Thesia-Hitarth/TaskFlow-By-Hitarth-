@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { sendBuddyRequest } from "@/lib/actions/buddies"
-import { UserPlus, Check, Loader2 } from "lucide-react"
+import { sendBuddyRequest, acceptBuddyRequest, rejectBuddyRequest } from "@/lib/actions/buddies"
+import { UserPlus, Check, X, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface BuddyCardProps {
@@ -17,25 +17,59 @@ interface BuddyCardProps {
     }
   }
   roadmapId: string
+  connectionState?: "none" | "sent" | "received"
+  connectionId?: string
 }
 
-export function BuddyCard({ user, roadmapId }: BuddyCardProps) {
-  const [sent, setSent] = useState(false)
+export function BuddyCard({
+  user,
+  roadmapId,
+  connectionState = "none",
+  connectionId,
+}: BuddyCardProps) {
+  const [statusState, setStatusState] = useState<"none" | "sent" | "received" | "active" | "declined">(connectionState)
+  const [activeConnectionId, setActiveConnectionId] = useState<string | undefined>(connectionId)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
-  async function handleRequest() {
-    if (sent) return
+  async function handleConnect() {
+    if (statusState !== "none") return
     setError(null)
     startTransition(async () => {
       const result = await sendBuddyRequest(user.id, roadmapId)
       if (result.success) {
-        setSent(true)
+        setStatusState("sent")
       } else if (result.error) {
         setError(result.error)
         if (result.error.includes("exists")) {
-          setSent(true)
+          setStatusState("sent")
         }
+      }
+    })
+  }
+
+  async function handleAccept() {
+    if (!activeConnectionId) return
+    setError(null)
+    startTransition(async () => {
+      const result = await acceptBuddyRequest(activeConnectionId)
+      if (result.success) {
+        setStatusState("active")
+      } else if (result.error) {
+        setError(result.error)
+      }
+    })
+  }
+
+  async function handleDecline() {
+    if (!activeConnectionId) return
+    setError(null)
+    startTransition(async () => {
+      const result = await rejectBuddyRequest(activeConnectionId)
+      if (result.success) {
+        setStatusState("declined")
+      } else if (result.error) {
+        setError(result.error)
       }
     })
   }
@@ -63,33 +97,71 @@ export function BuddyCard({ user, roadmapId }: BuddyCardProps) {
           </p>
         </div>
       </div>
+
       <div className="flex flex-col items-end gap-1 shrink-0">
-        <button
-          onClick={handleRequest}
-          disabled={sent || isPending}
-          className={cn(
-            "flex items-center gap-1.5 text-xs font-extrabold px-4 py-2.5 rounded-xl transition-all cursor-pointer select-none active:scale-98",
-            sent
-              ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/10 cursor-default"
-              : "bg-accent text-black hover:bg-amber-600"
-          )}
-        >
-          {isPending ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : sent ? (
-            <>
-              <Check size={13.5} />
-              <span>Requested</span>
-            </>
-          ) : (
-            <>
-              <UserPlus size={13.5} />
-              <span>Connect</span>
-            </>
-          )}
-        </button>
-        {error && !error.includes("exists") && (
-          <span className="text-[10px] text-red-500 font-semibold">{error}</span>
+        {isPending ? (
+          <div className="flex h-10 items-center px-4">
+            <Loader2 className="w-4 h-4 animate-spin text-text-secondary/60" />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            {statusState === "none" && (
+              <button
+                onClick={handleConnect}
+                className="flex items-center gap-1.5 text-xs font-extrabold px-4 py-2.5 rounded-xl bg-accent text-black hover:bg-amber-600 transition-all cursor-pointer select-none active:scale-98"
+              >
+                <UserPlus size={13.5} />
+                <span>Connect</span>
+              </button>
+            )}
+
+            {statusState === "sent" && (
+              <button
+                disabled
+                className="flex items-center gap-1.5 text-xs font-extrabold px-4 py-2.5 rounded-xl bg-accent/10 text-accent border border-accent/20 cursor-default select-none"
+              >
+                <span>Request Sent</span>
+              </button>
+            )}
+
+            {statusState === "received" && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleAccept}
+                  className="flex items-center gap-1 text-xs font-extrabold px-3 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white transition-all cursor-pointer select-none active:scale-98"
+                  title="Accept request"
+                >
+                  <Check size={13.5} />
+                  <span>Accept</span>
+                </button>
+                <button
+                  onClick={handleDecline}
+                  className="flex items-center gap-1 text-xs font-extrabold px-3 py-2 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-500/10 transition-all cursor-pointer select-none active:scale-98"
+                  title="Decline request"
+                >
+                  <X size={13.5} />
+                  <span>Decline</span>
+                </button>
+              </div>
+            )}
+
+            {statusState === "active" && (
+              <span className="flex items-center gap-1.5 text-xs font-extrabold px-4 py-2.5 rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/10 cursor-default">
+                <Check size={13.5} />
+                <span>Connected</span>
+              </span>
+            )}
+
+            {statusState === "declined" && (
+              <span className="text-xs font-bold text-text-secondary/50 px-4 py-2.5 cursor-default">
+                Declined
+              </span>
+            )}
+          </div>
+        )}
+
+        {error && (
+          <span className="text-[10px] text-red-500 font-semibold mt-1">{error}</span>
         )}
       </div>
     </div>

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
 import { setUsername } from "@/lib/actions/profile"
 import { Button } from "@/components/ui/button"
 
@@ -10,7 +9,6 @@ export default function ProfileSetupPage() {
   const [bio, setBio] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
-  const router = useRouter()
 
   // Username validation: 3–20 chars, lowercase letters, numbers, hyphens only
   const usernameRegex = /^[a-z0-9-]{3,20}$/

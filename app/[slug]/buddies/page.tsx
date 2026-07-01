@@ -30,11 +30,11 @@ export default async function BuddiesPage({ params }: BuddiesPageProps) {
       progress: {
         some: { taskflowSlug: slug, status: "done" },
       },
-      // Exclude users already connected or requested
+      // Exclude users with already active connections
       NOT: {
         OR: [
-          { buddyConnections1: { some: { userId2: userId, roadmapId: slug } } },
-          { buddyConnections2: { some: { userId1: userId, roadmapId: slug } } },
+          { buddyConnections1: { some: { userId2: userId, roadmapId: slug, status: "active" } } },
+          { buddyConnections2: { some: { userId1: userId, roadmapId: slug, status: "active" } } },
         ],
       },
     },
@@ -54,6 +54,17 @@ export default async function BuddiesPage({ params }: BuddiesPageProps) {
     },
     take: 20,
   })
+
+  // Fetch connections for current user on this roadmap to show connection states
+  const connections = await prisma.studyBuddyConnection.findMany({
+    where: {
+      roadmapId: slug,
+      OR: [
+        { userId1: userId },
+        { userId2: userId },
+      ],
+    },
+  });
 
   return (
     <>
@@ -87,22 +98,40 @@ export default async function BuddiesPage({ params }: BuddiesPageProps) {
               </p>
             </div>
           ) : (
-            candidates.map(candidate => (
-              <BuddyCard
-                key={candidate.id}
-                user={candidate as unknown as {
-                  id: string;
-                  name: string | null;
-                  username: string | null;
-                  image: string | null;
-                  streakDays: number;
-                  _count: {
-                    progress: number;
-                  };
-                }}
-                roadmapId={slug}
-              />
-            ))
+            candidates.map(candidate => {
+              const conn = connections.find(
+                c =>
+                  (c.userId1 === candidate.id && c.userId2 === userId) ||
+                  (c.userId1 === userId && c.userId2 === candidate.id)
+              );
+
+              let connectionState: "none" | "sent" | "received" = "none";
+              let connectionId: string | undefined;
+
+              if (conn && conn.status === "pending") {
+                connectionId = conn.id;
+                connectionState = conn.userId1 === userId ? "sent" : "received";
+              }
+
+              return (
+                <BuddyCard
+                  key={candidate.id}
+                  user={candidate as unknown as {
+                    id: string;
+                    name: string | null;
+                    username: string | null;
+                    image: string | null;
+                    streakDays: number;
+                    _count: {
+                      progress: number;
+                    };
+                  }}
+                  roadmapId={slug}
+                  connectionState={connectionState}
+                  connectionId={connectionId}
+                />
+              );
+            })
           )}
         </div>
       </main>

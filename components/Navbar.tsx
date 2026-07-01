@@ -28,6 +28,11 @@ export default function Navbar() {
       !pathname.startsWith("/path-finder") &&
       !pathname.startsWith("/dashboard") &&
       !pathname.startsWith("/profile") &&
+      !pathname.startsWith("/showcase") &&
+      !pathname.startsWith("/activity") &&
+      !pathname.startsWith("/setup") &&
+      !pathname.startsWith("/admin") &&
+      !pathname.startsWith("/u/") &&
       !pathname.startsWith("/signin"));
 
   useEffect(() => {
