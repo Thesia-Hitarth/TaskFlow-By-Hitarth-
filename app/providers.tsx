@@ -5,7 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider as NextThemesProvider, useTheme as useNextThemes } from "next-themes";
 import { LiveAnnouncerProvider } from "@/components/ui/LiveAnnouncer";
 import ProgressSync from "../components/ProgressSync";
-import { loader } from "@monaco-editor/react";
+
 
 type Theme = "light" | "dark";
 
@@ -22,18 +22,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-
-    // Warm up/preload Monaco Editor assets in the background for fast editor initialization
-    if (typeof window !== "undefined") {
-      loader.config({
-        paths: {
-          vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.48.0/min/vs",
-        },
-      });
-      loader.init().catch((err) => {
-        console.warn("Monaco Editor background preloading skipped or failed:", err);
-      });
-    }
+    // Monaco Editor assets are loaded lazily by @monaco-editor/react when the editor
+    // first renders (only on /playground). No global preloading needed.
   }, []);
 
   const toggleTheme = () => {

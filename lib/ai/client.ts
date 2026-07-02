@@ -55,19 +55,22 @@ export async function generateAIResponse(params: GenerateResponseParams): Promis
       }
 
       if (params.userId) {
-        // Dynamic import to prevent circular dependencies
-        import("@/lib/prisma").then(({ prisma }) => {
-          prisma.aIUsageLog.create({
-            data: {
-              userId: params.userId,
-              feature: params.feature ?? "unknown",
-              inputTokens,
-              outputTokens,
-            },
-          }).catch((err) => {
+        // Dynamic import to prevent circular dependencies.
+        // Single .catch() covers both the import() rejection and the create() failure.
+        import("@/lib/prisma")
+          .then(({ prisma }) =>
+            prisma.aIUsageLog.create({
+              data: {
+                userId: params.userId,
+                feature: params.feature ?? "unknown",
+                inputTokens,
+                outputTokens,
+              },
+            })
+          )
+          .catch((err) => {
             console.error("Failed to log AI usage to database:", err);
           });
-        });
       }
     }
 

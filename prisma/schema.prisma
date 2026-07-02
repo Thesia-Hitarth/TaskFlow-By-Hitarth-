@@ -84,6 +84,10 @@ model User {
   emailUnsubscribed Boolean  @default(false)
   emailPreferences  Json     @default("{}")
   subscribedAt      DateTime?
+
+  // Role-based access control (INFO-002)
+  // "user" | "admin" — use role checks instead of email comparison for admin access
+  role             String   @default("user")
 }
 
 model VerificationToken {
@@ -320,6 +324,9 @@ model BuddyMessage {
 
   connection StudyBuddyConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
   sender     User                 @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  // MED-002: index for fetching conversation messages ordered by time
+  @@index([connectionId, createdAt])
 }
 
 // ── Community Showcase ────────────────────────────────────────────────────────
@@ -381,9 +388,13 @@ model ContentRequest {
   upvotes     Int      @default(0)
   status      String   @default("open") // "open" | "in_progress" | "done" | "declined"
   createdAt   DateTime @default(now())
-  
+
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   votes       ContentRequestVote[]
+
+  // MED-001: indexes for WHERE status != 'declined' ORDER BY upvotes DESC
+  @@index([status, upvotes])
+  @@index([userId])
 }
 
 model ContentRequestVote {

@@ -1,4 +1,8 @@
 // lib/seo/jsonld.ts
+// SITE_URL is derived from NEXT_PUBLIC_SITE_URL so preview and staging deployments
+// inject the correct canonical URLs into JSON-LD structured data.
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
 
 export function roadmapJsonLd(roadmap: { title: string; description: string; slug: string; estimatedTime?: string }) {
   return {
@@ -6,17 +10,17 @@ export function roadmapJsonLd(roadmap: { title: string; description: string; slu
     "@type": "Course",
     "name": `${roadmap.title} Developer Roadmap`,
     "description": roadmap.description || `Step by step guide to becoming a ${roadmap.title} developer.`,
-    "url": `https://task-flow-by-hitarth.vercel.app/${roadmap.slug}`,
+    "url": `${SITE_URL}/${roadmap.slug}`,
     "provider": {
       "@type": "Organization",
       "name": "TaskFlow",
-      "url": "https://task-flow-by-hitarth.vercel.app"
+      "url": SITE_URL,
     },
     "hasCourseInstance": {
       "@type": "CourseInstance",
       "courseMode": "Online",
-      "courseWorkload": roadmap.estimatedTime || "6 months"
-    }
+      "courseWorkload": roadmap.estimatedTime || "6 months",
+    },
   };
 }
 
@@ -32,21 +36,21 @@ export function guideJsonLd(guide: {
     "@type": "Article",
     "headline": guide.title,
     "description": guide.description,
-    "url": `https://task-flow-by-hitarth.vercel.app/guides/${guide.slug}`,
+    "url": `${SITE_URL}/guides/${guide.slug}`,
     "datePublished": guide.publishedAt,
     "dateModified": guide.updatedAt || guide.publishedAt,
     "author": {
       "@type": "Organization",
-      "name": "TaskFlow"
+      "name": "TaskFlow",
     },
     "publisher": {
       "@type": "Organization",
       "name": "TaskFlow",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://task-flow-by-hitarth.vercel.app/favicon.ico"
-      }
-    }
+        "url": `${SITE_URL}/favicon.ico`,
+      },
+    },
   };
 }
 
@@ -58,8 +62,8 @@ export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
       "@type": "ListItem",
       "position": i + 1,
       "name": item.name,
-      "item": item.url
-    }))
+      "item": item.url,
+    })),
   };
 }
 
@@ -69,7 +73,7 @@ export function showcaseJsonLd() {
     "@type": "CollectionPage",
     "name": "TaskFlow Community Showcase",
     "description": "Browse and discover web development projects built by fellow learners on TaskFlow.",
-    "url": "https://task-flow-by-hitarth.vercel.app/showcase"
+    "url": `${SITE_URL}/showcase`,
   };
 }
 
@@ -79,6 +83,6 @@ export function activityJsonLd() {
     "@type": "WebPage",
     "name": "Community Activity Feed",
     "description": "Real-time updates of guide completions and project submissions on the TaskFlow platform.",
-    "url": "https://task-flow-by-hitarth.vercel.app/activity"
+    "url": `${SITE_URL}/activity`,
   };
 }

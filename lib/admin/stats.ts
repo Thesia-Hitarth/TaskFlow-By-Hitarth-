@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
+// LOW-001: named constant instead of magic number 86_400_000
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
 export async function getPlatformStats() {
   const now = new Date();
   const startOfDay = new Date(now);
@@ -71,7 +74,7 @@ export async function getPlatformStats() {
     // 9-11. Email queue health
     prisma.emailQueue.count({ where: { status: "pending" } }),
     prisma.emailQueue.count({
-      where: { status: "sent", sentAt: { gte: new Date(Date.now() - 86400000) } },
+      where: { status: "sent", sentAt: { gte: new Date(Date.now() - ONE_DAY_MS) } },
     }),
     prisma.emailQueue.count({ where: { status: "failed" } }),
   ]);

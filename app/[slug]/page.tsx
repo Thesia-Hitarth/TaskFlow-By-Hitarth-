@@ -17,8 +17,10 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Next.js static analysis compiler requires a literal number for page configs
-export const revalidate = 86400; // rebuild at most once per 24 hours
+// ISR: Roadmap pages are statically generated and rebuilt at most once per 24 hours.
+// The 86400 literal is intentional — Next.js static analysis requires a literal number
+// here; using a named constant or expression would disable ISR silently.
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
   return taskflows.map((tf) => ({

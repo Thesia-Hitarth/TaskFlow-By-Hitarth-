@@ -20,10 +20,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     session({ session, user }) {
-      // Attach the DB user.id and username to the session so they are accessible client-side
+      // Attach DB user.id and username to session. Types are declared in types/next-auth.d.ts.
       if (session.user) {
         session.user.id = user.id;
-        (session.user as unknown as Record<string, unknown>).username = (user as unknown as Record<string, unknown>).username;
+        // user is the DB User record from PrismaAdapter — cast to access the username field
+        session.user.username = (user as { username?: string | null }).username ?? null;
       }
       return session;
     },

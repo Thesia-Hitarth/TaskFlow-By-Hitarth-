@@ -338,7 +338,17 @@ export async function reportComment(
     }
     
     return { success: true }
-  } catch {
-    return { error: "You have already reported this comment." }
+  } catch (error: unknown) {
+    // P2002 = unique constraint violation — the user has already reported this comment
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code: string }).code === "P2002"
+    ) {
+      return { error: "You have already reported this comment." }
+    }
+    console.error("Failed to report comment:", error)
+    return { error: "Database error. Failed to submit report." }
   }
 }

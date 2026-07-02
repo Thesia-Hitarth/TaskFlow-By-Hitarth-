@@ -52,39 +52,58 @@ export async function GET(request: NextRequest) {
     completionCounts.map((c) => [c.userId, c._count.userId])
   );
 
+  // Filter eligible users before batching to avoid unnecessary work
+  const eligibleUsers = activeUsers.filter((user) => {
+    if (!user.email) return false;
+    const prefs =
+      user.emailPreferences && typeof user.emailPreferences === "object"
+        ? (user.emailPreferences as Record<string, boolean>)
+        : {};
+    return prefs.weekly_digest !== false;
+  });
+
+  // Send in batches of 25 to avoid overwhelming the SMTP server while
+  // staying well within Vercel's function timeout. Promise.allSettled ensures
+  // a single failure never blocks the rest of the batch.
+  const BATCH_SIZE = 25;
   let sent = 0;
-  for (const user of activeUsers) {
-    if (!user.email) continue;
-    
-    // Check user preferences (defaults to enabled if not set)
-    let prefs: Record<string, boolean> = {};
-    if (user.emailPreferences && typeof user.emailPreferences === "object") {
-      prefs = user.emailPreferences as Record<string, boolean>;
-    }
-    if (prefs.weekly_digest === false) continue;
 
-    const totalCompleted = countMap[user.id] ?? 0;
+  for (let i = 0; i < eligibleUsers.length; i += BATCH_SIZE) {
+    const chunk = eligibleUsers.slice(i, i + BATCH_SIZE);
+    const results = await Promise.allSettled(
+      chunk.map((user) =>
+        sendWeeklyDigestEmail({
+          user: { email: user.email!, name: user.name },
+          stats: {
+            nodesCompletedThisWeek: user.progress.length,
+            currentStreak: user.streakDays,
+            totalCompleted: countMap[user.id] ?? 0,
+          },
+          recentCompletions: user.progress.map((p) => ({
+            nodeLabel: p.nodeId
+              .split("-")
+              .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(" "),
+            roadmapTitle: p.taskflowSlug
+              .split("-")
+              .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(" "),
+          })),
+        })
+      )
+    );
 
-    await sendWeeklyDigestEmail({
-      user: { email: user.email, name: user.name },
-      stats: {
-        nodesCompletedThisWeek: user.progress.length,
-        currentStreak: user.streakDays,
-        totalCompleted,
-      },
-      recentCompletions: user.progress.map((p) => ({
-        nodeLabel: p.nodeId
-          .split("-")
-          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(" "),
-        roadmapTitle: p.taskflowSlug
-          .split("-")
-          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(" "),
-      })),
+    results.forEach((result, idx) => {
+      if (result.status === "fulfilled") {
+        sent++;
+      } else {
+        console.error(
+          `[weekly-digest] Failed to send to ${chunk[idx].email}:`,
+          result.reason
+        );
+      }
     });
-    sent++;
   }
 
-  return NextResponse.json({ processed: activeUsers.length, sent });
+  return NextResponse.json({ processed: activeUsers.length, eligible: eligibleUsers.length, sent });
 }

@@ -13,6 +13,8 @@ if (typeof window === "undefined") {
     "AUTH_GOOGLE_ID",
     "AUTH_GOOGLE_SECRET",
     "GEMINI_API_KEY",
+    // INFO-001: Email sender must be set so emails don't bounce from a placeholder domain
+    "EMAIL_FROM",
   ];
 
   const missing = required.filter((key) => !process.env[key]);

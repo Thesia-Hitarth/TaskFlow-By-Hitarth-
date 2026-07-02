@@ -1,3 +1,4 @@
+<!-- DEVELOPER NOTE: This file configures coding instructions for AI agents working in this repository. -->
 <!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
 

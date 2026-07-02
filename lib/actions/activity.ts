@@ -18,50 +18,51 @@ export async function getMoreActivityAction(
 ): Promise<{ items: FeedItem[]; nextBeforeTimeISO: string | null }> {
   const beforeTime = new Date(beforeTimeISO);
 
-  // 1. Fetch progress completions before beforeTime
-  const recentProgress = await prisma.userProgress.findMany({
-    where: {
-      status: "done",
-      user: { username: { not: null } },
-      updatedAt: { lt: beforeTime },
-    },
-    orderBy: { updatedAt: "desc" },
-    take: limit,
-    select: {
-      nodeId: true,
-      taskflowSlug: true,
-      updatedAt: true,
-      user: {
-        select: {
-          name: true,
-          username: true,
-          image: true,
+  // Run both queries concurrently (MED-004) and filter by publicProfile (HIGH-005)
+  const [recentProgress, recentProjects] = await Promise.all([
+    prisma.userProgress.findMany({
+      where: {
+        status: "done",
+        user: { username: { not: null }, publicProfile: true },
+        updatedAt: { lt: beforeTime },
+      },
+      orderBy: { updatedAt: "desc" },
+      take: limit,
+      select: {
+        nodeId: true,
+        taskflowSlug: true,
+        updatedAt: true,
+        user: {
+          select: {
+            name: true,
+            username: true,
+            image: true,
+          },
         },
       },
-    },
-  });
-
-  // 2. Fetch projects before beforeTime
-  const recentProjects = await prisma.showcaseProject.findMany({
-    where: {
-      isApproved: true,
-      createdAt: { lt: beforeTime },
-    },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-    select: {
-      id: true,
-      title: true,
-      createdAt: true,
-      author: {
-        select: {
-          name: true,
-          username: true,
-          image: true,
+    }),
+    prisma.showcaseProject.findMany({
+      where: {
+        isApproved: true,
+        createdAt: { lt: beforeTime },
+        author: { publicProfile: true },
+      },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        author: {
+          select: {
+            name: true,
+            username: true,
+            image: true,
+          },
         },
       },
-    },
-  });
+    }),
+  ]);
 
   // 3. Combine and sort
   const items = [

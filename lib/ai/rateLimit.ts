@@ -9,7 +9,8 @@ export async function checkRateLimit(
   const windowStart = new Date(now.getTime() - windowSeconds * 1000);
 
   try {
-    // Fire-and-forget delete of records older than 24 hours to keep the table clean
+    // Fire-and-forget delete of records older than 24 hours to keep the table clean.
+    // Errors are logged (not swallowed) so table-bloat failures are visible in monitoring.
     prisma.aIRateLimit
       .deleteMany({
         where: {
@@ -18,7 +19,9 @@ export async function checkRateLimit(
           },
         },
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("[RateLimit] Failed to clean up old AIRateLimit records:", err);
+      });
 
     // Create the record first (write first to prevent race condition)
     const record = await prisma.aIRateLimit.create({
