@@ -8,6 +8,7 @@ import { ExternalLink, Check, CircleDot, X, ChevronLeft, ChevronRight, Video, Bo
 import { TaskflowContentNode, NodeStatus } from "@/lib/taskflow-content/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Resource } from "@/lib/resources/types";
 import { getExercisesForNode } from "@/lib/exercises/getAllExercises";
 import { FunctionExerciseRunner } from "@/components/exercises/FunctionExerciseRunner";
 import { HtmlCssJsExerciseRunner } from "@/components/exercises/HtmlCssJsExerciseRunner";
@@ -108,6 +109,50 @@ export default function NodeDetailSheet({
   // Load exercises for the active node
   const exercises = node && roadmapId ? getExercisesForNode(roadmapId, node.id) : [];
 
+  const [dbResources, setDbResources] = useState<Resource[]>([]);
+  const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
+  const [myVotes, setMyVotes] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (node && roadmapId) {
+      // Lazy load registry resources config
+      import("@/lib/resources").then((m) => {
+        m.getResourcesForNode(roadmapId, node.id).then((res) => {
+          setDbResources(res);
+        });
+      });
+
+      // Lazy load vote actions and counts
+      import("@/lib/actions/resources").then((m) => {
+        m.getResourceVoteCounts(roadmapId, node.id).then((counts) => {
+          setVoteCounts(counts);
+        });
+        m.getMyResourceVotes(roadmapId, node.id).then((votes) => {
+          setMyVotes(votes);
+        });
+      });
+    } else {
+      setDbResources([]);
+      setVoteCounts({});
+      setMyVotes([]);
+    }
+  }, [node, roadmapId]);
+
+  const handleResourceVote = async (resourceId: string) => {
+    if (!node || !roadmapId) return;
+    const { voteResource } = await import("@/lib/actions/resources");
+    const result = await voteResource(roadmapId, node.id, resourceId);
+    if (result.success) {
+      setMyVotes((prev) =>
+        prev.includes(resourceId) ? prev.filter((id) => id !== resourceId) : [...prev, resourceId]
+      );
+      setVoteCounts((prev) => ({
+        ...prev,
+        [resourceId]: (prev[resourceId] ?? 0) + (result.voted ? 1 : -1),
+      }));
+    }
+  };
+
   // Reset tab when switching nodes
   useEffect(() => {
     setActiveTab("all");
@@ -130,17 +175,41 @@ export default function NodeDetailSheet({
 
   const links = node?.links || [];
   
-  // Enrich links with type heuristics
-  const enrichedLinks = links.map(link => {
-    const type = getLinkType(link.url, link.title);
+  // Merge database resources config with node.links (filtering duplicates by URL match)
+  const mergedLinks = [...dbResources];
+  const dbUrls = new Set(dbResources.map((r) => r.url.toLowerCase()));
+  links.forEach((link) => {
+    if (!dbUrls.has(link.url.toLowerCase())) {
+      const type = getLinkType(link.url, link.title);
+      mergedLinks.push({
+        id: link.url,
+        type,
+        title: link.title,
+        url: link.url,
+        description: link.description || "Highly recommended community learning resource for this topic.",
+        duration: link.duration || (type === "video" ? "10 min" : type === "interactive" ? "30 min" : "15 min read"),
+        free: link.free !== false,
+        recommended: link.recommended || false,
+      });
+    }
+  });
+
+  const enrichedLinks = mergedLinks.map((link) => {
+    const votes = voteCounts[link.id] ?? 0;
+    const isVoted = myVotes.includes(link.id);
     return {
       ...link,
-      type,
-      duration: link.duration || (type === "video" ? "10 min" : type === "interactive" ? "30 min" : "15 min read"),
-      free: link.free !== false,
-      recommended: link.recommended || links[0] === link,
-      description: link.description || "Highly recommended community learning resource for this topic.",
+      votes,
+      isVoted,
     };
+  });
+
+  // Sort: recommended first, then by upvotes (descending), then alphabetically
+  enrichedLinks.sort((a, b) => {
+    if (a.recommended && !b.recommended) return -1;
+    if (!a.recommended && b.recommended) return 1;
+    if (b.votes !== a.votes) return b.votes - a.votes;
+    return a.title.localeCompare(b.title);
   });
 
   const filteredLinks = enrichedLinks.filter(
@@ -386,52 +455,75 @@ export default function NodeDetailSheet({
                         {/* Resource List */}
                         <div className="space-y-2">
                           {filteredLinks.map((link) => (
-                            <a
-                              key={link.url}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <div
+                              key={link.id || link.url}
                               className={cn(
-                                "flex items-start gap-3 p-3 rounded-xl border transition-all duration-200 group text-left",
+                                "flex items-start justify-between gap-3 p-3 rounded-xl border transition-all duration-200 group text-left",
                                 "hover:shadow-xs hover:-translate-y-[1px]",
                                 link.recommended
                                   ? "border-accent/30 bg-accent/5"
                                   : "border-border bg-card/40"
                               )}
-                              aria-label={`${link.title} (opens in new tab)`}
                             >
-                              <div className="p-1.5 rounded-lg bg-surface border border-border mt-0.5">
-                                {RESOURCE_ICONS[link.type] || <BookOpen className="h-4 w-4 text-text-secondary shrink-0" />}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-start justify-between gap-1">
-                                  <p className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors leading-snug truncate">
-                                    {link.title}
+                              <a
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 flex gap-3 min-w-0"
+                                aria-label={`${link.title} (opens in new tab)`}
+                              >
+                                <div className="p-1.5 rounded-lg bg-surface border border-border mt-0.5 shrink-0">
+                                  {RESOURCE_ICONS[link.type] || <BookOpen className="h-4 w-4 text-text-secondary shrink-0" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-start justify-between gap-1">
+                                    <p className="text-sm font-bold text-text-primary group-hover:text-accent transition-colors leading-snug truncate">
+                                      {link.title}
+                                    </p>
+                                    <ExternalLink className="h-3.5 w-3.5 text-text-secondary/60 shrink-0 mt-0.5" aria-hidden="true" />
+                                  </div>
+                                  <p className="text-xs text-text-secondary mt-1 font-medium leading-relaxed">
+                                    {link.description}
                                   </p>
-                                  <ExternalLink className="h-3.5 w-3.5 text-text-secondary/60 shrink-0 mt-0.5" aria-hidden="true" />
+                                  <div className="flex items-center gap-2 mt-2">
+                                    {link.free && (
+                                      <span className="text-[10px] font-bold text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                        Free
+                                      </span>
+                                    )}
+                                    {link.recommended && (
+                                      <span className="text-[10px] font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                        Top Pick
+                                      </span>
+                                    )}
+                                    {link.duration && (
+                                      <span className="text-[10px] text-text-secondary/70 flex items-center gap-0.5 font-medium">
+                                        ⏱ {link.duration}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                                <p className="text-xs text-text-secondary mt-1 font-medium leading-relaxed">
-                                  {link.description}
-                                </p>
-                                <div className="flex items-center gap-2 mt-2">
-                                  {link.free && (
-                                    <span className="text-[10px] font-bold text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                      Free
-                                    </span>
-                                  )}
-                                  {link.recommended && (
-                                    <span className="text-[10px] font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                      Top Pick
-                                    </span>
-                                  )}
-                                  {link.duration && (
-                                    <span className="text-[10px] text-text-secondary/70 flex items-center gap-0.5 font-medium">
-                                      ⏱ {link.duration}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </a>
+                              </a>
+
+                              {/* Upvote button */}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleResourceVote(link.id);
+                                }}
+                                className={cn(
+                                  "ml-2 flex flex-col items-center justify-center border rounded-lg px-2.5 py-1.5 transition-all cursor-pointer select-none",
+                                  link.isVoted
+                                    ? "bg-accent/10 border-accent text-accent font-bold scale-[1.02]"
+                                    : "border-border hover:border-accent/40 text-text-secondary"
+                                )}
+                              >
+                                <span className="text-[9px]">▲</span>
+                                <span className="text-[10px] font-mono leading-none mt-0.5">{link.votes}</span>
+                              </button>
+                            </div>
                           ))}
                         </div>
                       </div>

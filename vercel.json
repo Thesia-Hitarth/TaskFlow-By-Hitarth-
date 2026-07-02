@@ -1,8 +1,20 @@
 {
   "crons": [
     {
-      "path": "/api/cron/weekly-email",
+      "path": "/api/email/process",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/email/weekly-digest",
       "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/email/streak-warnings",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/admin/check-links",
+      "schedule": "0 6 * * 1"
     }
   ]
 }

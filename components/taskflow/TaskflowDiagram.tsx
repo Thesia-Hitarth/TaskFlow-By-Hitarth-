@@ -19,6 +19,7 @@ import { BadgeToast } from "@/components/ui/BadgeToast";
 import { useAnnounce } from "@/components/ui/LiveAnnouncer";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { RoadmapListView } from "@/components/roadmap/RoadmapListView";
+import { Analytics } from "@/lib/analytics/events";
 
 interface TaskflowDiagramProps {
   content: TaskflowContent;
@@ -99,6 +100,11 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     if (!nextRecommendedNode || !nextRecommendedNode.parentId) return null;
     return content.nodes.find((n) => n.id === nextRecommendedNode.parentId) || null;
   }, [nextRecommendedNode, content.nodes]);
+
+  // Track roadmap viewed event
+  useEffect(() => {
+    Analytics.roadmapViewed(content.slug);
+  }, [content.slug]);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [collapsedMilestones, setCollapsedMilestones] = useState<Set<string>>(new Set());
@@ -376,9 +382,10 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
       const original = content.nodes.find((n) => n.id === node.id) ?? null;
       if (original && !isNodeLocked(node.id)) {
         setSelected(original);
+        Analytics.nodeOpened(content.slug, node.id);
       }
     },
-    [content.nodes, isNodeLocked]
+    [content.nodes, isNodeLocked, content.slug]
   );
 
 
@@ -459,6 +466,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
     const result = await updateStatus(nodeId, newStatus);
     const nodeLabel = content.nodes.find(n => n.id === nodeId)?.label || "Node";
     announce(`${nodeLabel} marked as ${newStatus === "in-progress" ? "in progress" : newStatus}`);
+    Analytics.nodeStatusChanged(content.slug, nodeId, newStatus);
 
     if (newStatus === "done" && result?.success) {
       // Confetti burst for completion!
@@ -472,7 +480,7 @@ function TaskflowDiagramInner({ content }: TaskflowDiagramProps) {
         announce(`Congratulations! You unlocked a new badge.`);
       }
     }
-  }, [updateStatus, content.nodes, announce]);
+  }, [updateStatus, content.nodes, announce, content.slug]);
 
   return (
     <div className="relative space-y-4">

@@ -1,14 +1,6 @@
-// IMPORTANT: next-auth v5 beta (5.0.0-beta.31) with the PrismaAdapter uses
-// jose library functions that require Node.js APIs (DecompressionStream) not
-// available in the Edge runtime. We must configure this middleware to run in
-// the Node.js runtime instead.
-//
-// In production, this middleware runs as a Node.js serverless function on Vercel
-// (not as an Edge Function) when the runtime is set to "nodejs".
-
+// middleware.ts
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 // Use Node.js runtime to avoid Edge-incompatible APIs from jose/@auth/core
 export const runtime = "nodejs";
@@ -30,6 +22,15 @@ export default auth((req: any) => {
     const signInUrl = new URL("/signin", req.url);
     signInUrl.searchParams.set("callbackUrl", req.url);
     return NextResponse.redirect(signInUrl);
+  }
+
+  // Admin route protection - only allow matches to ADMIN_EMAIL
+  if (pathname.startsWith("/admin")) {
+    const userEmail = session?.user?.email;
+    const adminEmail = process.env.ADMIN_EMAIL || "hitarththesia123@gmail.com";
+    if (!userEmail || userEmail !== adminEmail) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
   }
 
   // Redirect authenticated users without a username to /setup

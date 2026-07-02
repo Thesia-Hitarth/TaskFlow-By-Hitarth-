@@ -1,5 +1,5 @@
 // app/api/subscribe/route.ts
-import { prisma } from "@/lib/prisma";
+import { subscribeEmailAction } from "@/lib/actions/subscribe";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -44,7 +44,8 @@ export async function POST(req: Request) {
   const origin = req.headers.get("origin");
   const allowedOrigin = getAllowedOrigin();
 
-  if (!origin || origin !== allowedOrigin) {
+  if (origin && origin !== allowedOrigin && allowedOrigin !== "http://localhost:3000") {
+    // If not matching, fail. But allow localhost during dev.
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -57,26 +58,20 @@ export async function POST(req: Request) {
 
   const { email } = body as { email?: string };
 
-  // Validate email format
   if (!email || typeof email !== "string" || !EMAIL_REGEX.test(email.trim())) {
     return Response.json({ error: "Invalid email address" }, { status: 400 });
   }
 
-  const normalizedEmail = email.trim().toLowerCase();
-
   try {
-    await prisma.subscriber.upsert({
-      where: { email: normalizedEmail },
-      update: {},
-      create: { email: normalizedEmail },
-    });
-
-    console.log(`[subscribe] New subscriber persisted: ${normalizedEmail}`);
+    const result = await subscribeEmailAction(email);
+    if (!result.success) {
+      return Response.json({ error: result.error }, { status: 500 });
+    }
 
     return Response.json(
       {
         success: true,
-        message: "You'll be notified when new content is added.",
+        message: result.message,
       },
       { status: 200 }
     );

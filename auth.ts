@@ -28,6 +28,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  events: {
+    async createUser({ user }) {
+      if (user.email) {
+        try {
+          const { sendWelcomeEmail } = await import("@/lib/email/templates/welcome");
+          await sendWelcomeEmail({ email: user.email, name: user.name });
+        } catch (error) {
+          console.error("Failed to send welcome email during user creation:", error);
+        }
+      }
+    },
+  },
   // AUTH_TRUST_HOST is automatically read from the AUTH_TRUST_HOST env var.
   // Both must be set in Vercel environment variables for production to work.
   // See .env.example for the required variables.

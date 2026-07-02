@@ -77,6 +77,11 @@ model User {
   publicProfile    Boolean  @default(true)
   notifications    Notification[]
   contentRequests  ContentRequest[]
+  
+  // Email Preferences & Subscription
+  emailUnsubscribed Boolean  @default(false)
+  emailPreferences  Json     @default("{}")
+  subscribedAt      DateTime?
 }
 
 model VerificationToken {
@@ -113,6 +118,7 @@ model UserProgress {
 model Subscriber {
   id        String   @id @default(cuid())
   email     String   @unique
+  confirmed Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
@@ -385,4 +391,34 @@ model ContentRequestVote {
   request   ContentRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
   @@unique([userId, requestId])
 }
+
+// ─── Email Queue & Subscription System ──────────────────────────────────────
+model EmailQueue {
+  id          String    @id @default(cuid())
+  to          String
+  subject     String
+  html        String    @db.Text
+  text        String    @db.Text
+  status      String    @default("pending")  // "pending" | "sent" | "failed"
+  attempts    Int       @default(0)
+  lastError   String?   @db.Text
+  scheduledAt DateTime  @default(now())
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([status, scheduledAt])
+}
+
+model ResourceVote {
+  id         String   @id @default(cuid())
+  userId     String
+  roadmapId  String
+  nodeId     String
+  resourceId String   // matches Resource.id in the config file
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, roadmapId, nodeId, resourceId])
+  @@index([roadmapId, nodeId, resourceId])
+}
+
 

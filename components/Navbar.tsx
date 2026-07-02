@@ -9,6 +9,7 @@ import SearchCommand from "./SearchCommand";
 import { useTheme } from "@/app/providers";
 import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from "./ui/sheet";
 import { usePathname } from "next/navigation";
+import { NotificationBell } from "./ui/NotificationBell";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -143,6 +144,8 @@ export default function Navbar() {
 
       {/* Right: Theme toggle, Auth buttons & Menu icon */}
       <div className="flex items-center gap-2">
+        <NotificationBell />
+        
         <Button
           variant="ghost"
           size="icon"

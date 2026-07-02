@@ -179,6 +179,11 @@ export default function Footer() {
                   Activity
                 </Link>
               </li>
+              <li>
+                <Link href="/suggest" className="text-text-secondary hover:text-accent transition-colors">
+                  Suggest Content
+                </Link>
+              </li>
             </ul>
           </div>
 

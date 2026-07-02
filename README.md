@@ -56,7 +56,7 @@ cp .env.example .env.local
 
 Then edit `.env.local`:
 
-| Variable | How to get it |
+| Variable | Description |
 |---|---|
 | `DATABASE_URL` | Your PostgreSQL connection string (Neon: Settings → Connection string) |
 | `AUTH_SECRET` | Run `openssl rand -base64 32` in your terminal |
@@ -64,13 +64,21 @@ Then edit `.env.local`:
 | `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | [GitHub Developer Settings → OAuth Apps](https://github.com/settings/developers) |
 | `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | [Google Cloud Console → Credentials](https://console.cloud.google.com/apis/credentials) |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` for local, your domain in production |
+| `SMTP_HOST` | SMTP server host address (e.g. `smtp.gmail.com` for Gmail) |
+| `SMTP_PORT` | SMTP port (e.g., `587` for STARTTLS, `465` for SSL/TLS) |
+| `SMTP_SECURE` | Secure connection flag (`"true"` for port 465, `"false"` for 587) |
+| `SMTP_USER` | SMTP username / credentials login email address |
+| `SMTP_PASS` | SMTP password (or generated App Password for Gmail/Zoho) |
+| `EMAIL_FROM` | Sender address header (e.g. `TaskFlow <your-email@gmail.com>`) |
+| `CRON_SECRET` | Auth secret verifying secure Vercel Cron endpoint runs |
+| `ADMIN_EMAIL` | Principal administrator email allowed to access `/admin` dashboard |
 
 > **GitHub OAuth callback URL:** `http://localhost:3000/api/auth/callback/github`
 > **Google OAuth redirect URI:** `http://localhost:3000/api/auth/callback/google`
 
 ### 4. Set up the database
 
-Run Prisma migrations to create all tables:
+Run Prisma migrations to create all tables (includes EmailQueue, ResourceVote, ContentRequest & ContentRequestVote):
 
 ```bash
 npx prisma migrate dev --name init
@@ -103,28 +111,38 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ```
 app/                  # Next.js App Router pages
   [slug]/             # Taskflow detail pages (e.g. /frontend, /backend)
+  admin/              # Admin dashboard metrics and configuration
+  suggest/            # Content suggestion upvote board
+  unsubscribe/        # Email preferences center
   guides/             # Guide listing and detail pages
   best-practices/     # Best practices pages
   compare/            # Technology comparison page
   api/                # API routes
     auth/             # NextAuth v5 route handler
     progress/         # User progress save/load
-    subscribe/        # Email subscription endpoint
+    subscribe/        # Double-opt-in subscriber route
+    email/            # Email queue & weekly digest crons processing
+    admin/            # Broken link checker health crons
 components/           # Shared React components
   taskflow/           # ReactFlow diagram components
   roadmap/            # Progress bar components
-  ui/                 # Primitive UI components (Button, Sheet, etc.)
+  email/              # Unsubscribe configuration form
+  admin/              # SVG charts and admin statistics widgets
+  suggestions/        # Content requests upvoting list and forms
+  ui/                 # Primitive UI components (Button, Sheet, NotificationBell, etc.)
 lib/                  # Data, utilities, and business logic
-  taskflows-data.ts   # Taskflow metadata (title, slug, description)
-  taskflow-content/   # Taskflow node/edge data for diagrams
-  guides-data.ts      # Guide metadata
+  email/              # Nodemailer client and transactional templates (base, welcome, milestones, etc.)
+  analytics/          # Client-side custom analytics event wrappers
+  admin/              # Database stats aggregations helpers
+  resources/          # Curated node external resources registry configurations
+  actions/            # Server actions (notifications, resources, suggestions, subscribe)
   prisma.ts           # Prisma client singleton
 content/              # MDX guide files
   guides/             # One .mdx file per guide
 prisma/               # Database schema and migrations
   schema.prisma       # Prisma schema definition
-middleware.ts         # Auth middleware protecting /api/* and /dashboard/*
-auth.ts               # NextAuth v5 configuration
+middleware.ts         # Auth & admin email middleware route protection
+auth.ts               # NextAuth v5 configuration and signup event hook
 ```
 
 ---

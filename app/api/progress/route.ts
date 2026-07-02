@@ -107,8 +107,76 @@ export async function POST(request: Request) {
       }
       const newBadges = await checkAndAwardBadges(session.user.id, slug);
       badgesAwarded = [...badgesAwarded, ...newBadges];
+
+      // Fetch user's actual email and preferences
+      const dbUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { email: true, name: true, emailUnsubscribed: true, emailPreferences: true },
+      });
+
+      if (dbUser && dbUser.email && !dbUser.emailUnsubscribed) {
+        const prefs = (dbUser.emailPreferences as Record<string, boolean> | null) || {};
+
+        // 1. First completed topic milestone trigger
+        const totalCompleted = await prisma.userProgress.count({
+          where: { userId: session.user.id, status: "done" },
+        });
+        if (totalCompleted === 1) {
+          const { sendFirstNodeEmail } = await import("@/lib/email/templates/milestone");
+          const roadmapConfig = taskflowContent[slug];
+          const nodeConfig = roadmapConfig?.nodes.find((n) => n.id === nodeId);
+          const nextEdge = roadmapConfig?.edges.find((e) => e.source === nodeId);
+          const nextNode = nextEdge ? roadmapConfig?.nodes.find((n) => n.id === nextEdge.target) : undefined;
+          
+          await sendFirstNodeEmail(
+            { email: dbUser.email, name: dbUser.name },
+            {
+              nodeLabel: nodeConfig?.label || nodeId,
+              roadmapTitle: slug.toUpperCase(),
+              roadmapId: slug,
+              nextNodeLabel: nextNode?.label,
+            }
+          );
+        }
+
+        // 2. New badges trigger
+        if (badgesAwarded.length > 0 && prefs.badges !== false) {
+          const { sendBadgeEarnedEmail } = await import("@/lib/email/templates/badgeEarned");
+          const { BADGE_DEFINITIONS } = await import("@/lib/badges/definitions");
+          for (const badgeId of badgesAwarded) {
+            const badge = BADGE_DEFINITIONS[badgeId];
+            if (badge) {
+              await sendBadgeEarnedEmail(
+                { email: dbUser.email, name: dbUser.name },
+                badge
+              );
+            }
+          }
+        }
+
+        // 3. Roadmap complete trigger
+        const roadmapConfig = taskflowContent[slug];
+        if (roadmapConfig) {
+          const childNodeIds = roadmapConfig.nodes.filter((n) => n.kind === "subtopic").map((n) => n.id);
+          const doneCount = await prisma.userProgress.count({
+            where: {
+              userId: session.user.id,
+              taskflowSlug: slug,
+              nodeId: { in: childNodeIds },
+              status: "done",
+            },
+          });
+          if (doneCount === childNodeIds.length && childNodeIds.length > 0) {
+            const { sendRoadmapCompleteEmail } = await import("@/lib/email/templates/roadmapComplete");
+            await sendRoadmapCompleteEmail(
+              { email: dbUser.email, name: dbUser.name },
+              { title: slug.toUpperCase(), id: slug }
+            );
+          }
+        }
+      }
     } catch (e) {
-      console.error("Failed to run streak/badge check:", e);
+      console.error("Failed to run streak/badge check or send trigger email:", e);
     }
   }
 
