@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Clock, Calendar } from "lucide-react";
 import { GuideQuizSection } from "@/components/guides/GuideQuizSection";
-import { guidesQuizData } from "@/lib/guides-quiz-data";
+import { guidesQuizData, QuizQuestion } from "@/lib/guides-quiz-data";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { checkAndAwardBadges } from "@/lib/badges/checkBadges";
@@ -203,11 +203,17 @@ export default async function GuidePage({ params }: PageProps) {
         {/* Quiz block */}
         {(() => {
           const quiz = guidesQuizData.find((q) => q.guideSlug === slug);
+          const safeQuestions = quiz?.questions.map((q) => {
+            const copy = { ...q } as Record<string, unknown>;
+            delete copy.correctIndex;
+            delete copy.explanation;
+            return copy as unknown as Omit<QuizQuestion, "correctIndex" | "explanation">;
+          });
           return (
             <div className="mt-12 pt-8 border-t border-border/60">
               <GuideQuizSection
                 guideSlug={slug}
-                staticQuestions={quiz?.questions}
+                staticQuestions={safeQuestions}
               />
             </div>
           );

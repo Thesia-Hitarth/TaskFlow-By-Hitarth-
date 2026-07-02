@@ -49,7 +49,7 @@ export default function RoadmapProgressBar({ slug, nodes }: Props) {
         </div>
       </div>
 
-      <div className="h-2 w-full rounded-full bg-[#2a2a2a] overflow-hidden">
+      <div className="h-2 w-full rounded-full bg-border/60 overflow-hidden">
         <div
           className="h-full bg-accent transition-all duration-500 rounded-full"
           style={{ width: `${pct}%` }}

@@ -73,16 +73,29 @@ export function useTaskflowProgress(slug: string) {
         if (decodedStr) {
           try {
             const shared = JSON.parse(decodedStr) as Record<string, NodeStatus>;
-            baseProgress = { ...baseProgress, ...shared };
+            const VALID_STATUSES = new Set(["pending", "in-progress", "done", "skipped", "in_progress"]);
+            const isValid = Object.entries(shared).every(
+              ([k, v]) => typeof k === "string" && VALID_STATUSES.has(v)
+            );
+            
+            if (isValid) {
+              const count = Object.values(shared).filter(v => v === "done" || v === "in-progress").length;
+              if (count > 0) {
+                const confirmed = window.confirm(`Import ${count} completed/in-progress steps from this shared link?`);
+                if (confirmed) {
+                  baseProgress = { ...baseProgress, ...shared };
 
-            if (isAuthed) {
-              await fetch("/api/progress/sync", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ slug, progress: baseProgress }),
-              });
-            } else {
-              writeLocal(slug, baseProgress);
+                  if (isAuthed) {
+                    await fetch("/api/progress/sync", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ slug, progress: baseProgress }),
+                    });
+                  } else {
+                    writeLocal(slug, baseProgress);
+                  }
+                }
+              }
             }
           } catch (e) {
             console.error("Failed to parse shared progress:", e);

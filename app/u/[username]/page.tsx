@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
+import Image from "next/image"
 import { ProgressRing } from "@/components/ui/ProgressRing"
 import { BadgeGrid } from "@/components/dashboard/BadgeGrid"
 import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap"
@@ -191,9 +192,12 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                 >
                   <div className="aspect-video bg-border flex items-center justify-center text-2xl relative overflow-hidden">
                     {project.thumbnailUrl ? (
-                      <img
+                      <Image
                         src={project.thumbnailUrl}
                         alt={project.title}
+                        width={320}
+                        height={180}
+                        unoptimized={true}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (

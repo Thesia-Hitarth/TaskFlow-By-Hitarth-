@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/prisma";
+import { getUserTimezone, getLocalDateString } from "@/lib/utils/timezone";
 
 export async function updateStreak(userId: string): Promise<boolean> {
-  const today = new Date().toISOString().split("T")[0]; // UTC date format: "YYYY-MM-DD"
+  const timezone = await getUserTimezone();
+  const today = getLocalDateString(new Date(), timezone);
 
   // 1. Upsert today's activity count
   await prisma.userActivity.upsert({
@@ -80,13 +82,19 @@ export async function updateStreak(userId: string): Promise<boolean> {
 }
 
 function getPreviousDay(dateStr: string): string {
-  const d = new Date(dateStr);
-  d.setDate(d.getDate() - 1);
-  return d.toISOString().split("T")[0];
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const d = new Date(Date.UTC(year, month - 1, day));
+  d.setUTCDate(d.getUTCDate() - 1);
+  const yyyy = d.getUTCFullYear();
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 export async function syncPastActivities(userId: string): Promise<void> {
   try {
+    const timezone = await getUserTimezone();
+
     // 1. Fetch solved exercise attempts
     const exercises = await prisma.exerciseAttempt.findMany({
       where: { userId, status: "solved", solvedAt: { not: null } },
@@ -109,7 +117,7 @@ export async function syncPastActivities(userId: string): Promise<void> {
 
     const addDate = (dateObj: Date | null) => {
       if (!dateObj) return;
-      const dateStr = dateObj.toISOString().split("T")[0];
+      const dateStr = getLocalDateString(dateObj, timezone);
       activityMap[dateStr] = (activityMap[dateStr] || 0) + 1;
     };
 

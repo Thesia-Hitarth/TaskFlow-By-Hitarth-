@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { taskflowContent } from "@/lib/taskflow-content";
+import { getUserTimezone, getLocalDateString, getLocalHours } from "@/lib/utils/timezone";
 
 export async function checkAndAwardBadges(
   userId: string,
@@ -7,119 +8,158 @@ export async function checkAndAwardBadges(
 ): Promise<string[]> {
   const newlyAwarded: string[] = [];
 
-  // Helper to award a badge if they don't have it yet
+  // Fetch the list of already owned badges to avoid redundant calculations and DB queries
+  const userBadges = await prisma.userBadge.findMany({
+    where: { userId },
+    select: { badgeId: true }
+  });
+  const owned = new Set(userBadges.map(b => b.badgeId));
+
+  // Helper to award a badge if they don't have it yet, atomically using upsert
   async function tryAward(badgeId: string) {
+    if (owned.has(badgeId)) return;
     try {
-      const existing = await prisma.userBadge.findUnique({
+      await prisma.userBadge.upsert({
         where: { userId_badgeId: { userId, badgeId } },
+        update: {},
+        create: { userId, badgeId },
       });
-      if (!existing) {
-        await prisma.userBadge.create({
-          data: { userId, badgeId },
-        });
-        newlyAwarded.push(badgeId);
-      }
+      newlyAwarded.push(badgeId);
+      owned.add(badgeId);
     } catch (e) {
       console.error(`Failed to award badge ${badgeId}:`, e);
     }
   }
 
-  // Fetch user stats
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { streakDays: true },
-  });
+  // Get user's local date and timezone
+  const timezone = await getUserTimezone();
+  const today = getLocalDateString(new Date(), timezone);
 
-  // 1. 🌱 First Step: completed at least 1 node
-  const totalDone = await prisma.userProgress.count({
-    where: { userId, status: "done" },
-  });
-  if (totalDone >= 1) {
-    await tryAward("first-step");
-  }
-
-  // 2. 🔥 On Fire: 7-day streak
-  if (user && user.streakDays >= 7) {
-    await tryAward("on-fire");
-  }
-
-  // 3. 🎯 Halfway There & 💯 Completionist: check taskflow progress
+  // Prepare variables for parallel query executions
   const content = taskflowContent[taskflowSlug];
-  if (content) {
-    const childNodeIds = content.nodes.filter((n) => n.kind === "subtopic").map((n) => n.id);
-    const totalSubtopics = childNodeIds.length;
+  const childNodeIds = content ? content.nodes.filter((n) => n.kind === "subtopic").map((n) => n.id) : [];
+  const totalSubtopics = childNodeIds.length;
 
-    if (totalSubtopics > 0) {
-      const doneCount = await prisma.userProgress.count({
+  // Set up conditional promises
+  const userStreakPromise = !owned.has("on-fire")
+    ? prisma.user.findUnique({ where: { id: userId }, select: { streakDays: true } })
+    : Promise.resolve(null);
+
+  const totalDonePromise = !owned.has("first-step")
+    ? prisma.userProgress.count({ where: { userId, status: "done" } })
+    : Promise.resolve(null);
+
+  const doneCountPromise = (totalSubtopics > 0 && (!owned.has("halfway-there") || !owned.has("completionist")))
+    ? prisma.userProgress.count({
         where: {
           userId,
           taskflowSlug,
           nodeId: { in: childNodeIds },
           status: "done",
         },
-      });
+      })
+    : Promise.resolve(null);
 
-      // Halfway There: >= 50% done
-      if (doneCount >= Math.ceil(totalSubtopics / 2)) {
-        await tryAward("halfway-there");
-      }
+  const activeTaskflowsPromise = !owned.has("multi-tracker")
+    ? prisma.userProgress.groupBy({
+        by: ["taskflowSlug"],
+        where: { userId, status: { in: ["done", "in_progress"] } },
+      })
+    : Promise.resolve(null);
 
-      // Completionist: 100% done
-      if (doneCount === totalSubtopics) {
-        await tryAward("completionist");
-      }
+  const guideViewsPromise = !owned.has("scholar")
+    ? prisma.guideView.count({ where: { userId } })
+    : Promise.resolve(null);
+
+  const todayActivityPromise = !owned.has("speed-learner")
+    ? prisma.userActivity.findUnique({
+        where: { userId_date: { userId, date: today } },
+        select: { count: true },
+      })
+    : Promise.resolve(null);
+
+  const activityDaysPromise = !owned.has("week-one")
+    ? prisma.userActivity.count({ where: { userId } })
+    : Promise.resolve(null);
+
+  const nightProgressPromise = !owned.has("night-owl")
+    ? prisma.userProgress.findMany({
+        where: { userId, status: "done" },
+        select: { updatedAt: true },
+      })
+    : Promise.resolve(null);
+
+  // Resolve all promises concurrently
+  const [
+    user,
+    totalDone,
+    doneCount,
+    activeTaskflows,
+    guideViews,
+    todayActivity,
+    activityDays,
+    progressRecords
+  ] = await Promise.all([
+    userStreakPromise,
+    totalDonePromise,
+    doneCountPromise,
+    activeTaskflowsPromise,
+    guideViewsPromise,
+    todayActivityPromise,
+    activityDaysPromise,
+    nightProgressPromise,
+  ]);
+
+  // Evaluate conditions
+  // 1. 🌱 First Step
+  if (totalDone !== null && totalDone >= 1) {
+    await tryAward("first-step");
+  }
+
+  // 2. 🔥 On Fire
+  if (user !== null && user && user.streakDays >= 7) {
+    await tryAward("on-fire");
+  }
+
+  // 3. 🎯 Halfway There & 💯 Completionist
+  if (doneCount !== null) {
+    if (doneCount >= Math.ceil(totalSubtopics / 2)) {
+      await tryAward("halfway-there");
+    }
+    if (doneCount === totalSubtopics) {
+      await tryAward("completionist");
     }
   }
 
-  // 4. 🚀 Multi-Tracker: actively learning (done or in progress) 3+ taskflows
-  const activeTaskflows = await prisma.userProgress.groupBy({
-    by: ["taskflowSlug"],
-    where: {
-      userId,
-      status: { in: ["done", "in_progress"] },
-    },
-  });
-  if (activeTaskflows.length >= 3) {
+  // 4. 🚀 Multi-Tracker
+  if (activeTaskflows !== null && activeTaskflows.length >= 3) {
     await tryAward("multi-tracker");
   }
 
-  // 5. 📚 Scholar: read 5 or more guides
-  const guideViews = await prisma.guideView.count({
-    where: { userId },
-  });
-  if (guideViews >= 5) {
+  // 5. 📚 Scholar
+  if (guideViews !== null && guideViews >= 5) {
     await tryAward("scholar");
   }
 
-  // 6. ⚡ Speed Learner: completed 5 nodes today (UTC)
-  const today = new Date().toISOString().split("T")[0];
-  const todayActivity = await prisma.userActivity.findUnique({
-    where: { userId_date: { userId, date: today } },
-    select: { count: true },
-  });
-  if (todayActivity && todayActivity.count >= 5) {
+  // 6. ⚡ Speed Learner
+  if (todayActivity !== null && todayActivity && todayActivity.count >= 5) {
     await tryAward("speed-learner");
   }
 
-  // 7. 📅 Week One: active on 7 distinct days
-  const activityDays = await prisma.userActivity.count({
-    where: { userId },
-  });
-  if (activityDays >= 7) {
+  // 7. 📅 Week One
+  if (activityDays !== null && activityDays >= 7) {
     await tryAward("week-one");
   }
 
-  // 8. 🦉 Night Owl: completed 10 nodes between 12 AM and 5 AM UTC
-  const progressRecords = await prisma.userProgress.findMany({
-    where: { userId, status: "done" },
-    select: { updatedAt: true },
-  });
-  const nightCompletions = progressRecords.filter((r) => {
-    const hours = new Date(r.updatedAt).getUTCHours();
-    return hours >= 0 && hours < 5;
-  }).length;
-  if (nightCompletions >= 10) {
-    await tryAward("night-owl");
+  // 8. 🦉 Night Owl: completed 10 nodes between 12 AM and 5 AM local time
+  if (progressRecords !== null) {
+    const nightCompletions = progressRecords.filter((r) => {
+      const hours = getLocalHours(new Date(r.updatedAt), timezone);
+      return hours >= 0 && hours < 5;
+    }).length;
+    if (nightCompletions >= 10) {
+      await tryAward("night-owl");
+    }
   }
 
   return newlyAwarded;

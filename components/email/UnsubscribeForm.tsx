@@ -11,10 +11,10 @@ const EMAIL_TYPES = [
 ];
 
 export function UnsubscribeForm({
-  email,
+  tokenOrEmail,
   initialPreferences,
 }: {
-  email: string;
+  tokenOrEmail: string;
   initialPreferences: Record<string, boolean>;
 }) {
   const [prefs, setPrefs] = useState<Record<string, boolean>>(initialPreferences);
@@ -25,7 +25,7 @@ export function UnsubscribeForm({
     setLoading(true);
     setSaved(false);
     try {
-      await updateEmailPreferences(email, prefs);
+      await updateEmailPreferences(tokenOrEmail, prefs);
       setSaved(true);
     } catch (e) {
       console.error(e);
@@ -40,7 +40,7 @@ export function UnsubscribeForm({
     try {
       const all = Object.fromEntries(Object.keys(prefs).map((k) => [k, false]));
       setPrefs(all);
-      await unsubscribeAllAction(email);
+      await unsubscribeAllAction(tokenOrEmail);
       setSaved(true);
     } catch (e) {
       console.error(e);
@@ -72,6 +72,7 @@ export function UnsubscribeForm({
       ))}
       <div className="flex gap-3 pt-2">
         <button
+          type="button"
           onClick={handleSave}
           disabled={loading}
           className="flex-1 py-2.5 bg-accent hover:bg-amber-600 text-black text-sm font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-60"
@@ -79,6 +80,7 @@ export function UnsubscribeForm({
           {saved ? "Saved ✓" : "Save preferences"}
         </button>
         <button
+          type="button"
           onClick={handleUnsubAll}
           disabled={loading}
           className="px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary border border-border rounded-xl transition-all cursor-pointer disabled:opacity-60"

@@ -164,14 +164,19 @@ export default function NodeDetailSheet({
   // Load comments for the active node
   const [nodeComments, setNodeComments] = useState<CommentWithAuthor[]>([]);
   useEffect(() => {
+    let active = true;
     if (node && roadmapId) {
       setNodeComments([]);
       getComments({ nodeTarget: `${roadmapId}:${node.id}` }).then((commentsList) => {
-        setNodeComments((commentsList as CommentWithAuthor[]) || []);
+        if (active) {
+          setNodeComments((commentsList as CommentWithAuthor[]) || []);
+        }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [node?.id, roadmapId]);
+    return () => {
+      active = false;
+    };
+  }, [node, roadmapId]);
 
   const links = node?.links || [];
   

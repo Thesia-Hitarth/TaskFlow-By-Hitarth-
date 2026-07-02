@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,12 +27,13 @@ export function UserAvatar({ src, name, username, className, size = 32 }: UserAv
   // If there's an image URL and no loading error occurred yet, render the image
   if (src && !error) {
     return (
-      <img
+      <Image
         src={src}
         alt={name || "User Avatar"}
         width={size}
         height={size}
         onError={() => setError(true)}
+        unoptimized={true}
         className={cn("rounded-full border border-border object-cover shrink-0 select-none", className)}
         style={{ width: `${size}px`, height: `${size}px` }}
       />

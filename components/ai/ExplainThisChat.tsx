@@ -27,13 +27,34 @@ export function ExplainThisChat({ roadmapId, nodeId, nodeLabel, onClose }: Props
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
   }, [messages, isLoading])
 
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+    }
+  }, [])
+
+  const handleClose = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    onClose()
+  }
+
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    abortControllerRef.current = new AbortController()
 
     setMessages(prev => [...prev, { role: "user", content: text }])
     setInput("")
@@ -48,6 +69,7 @@ export function ExplainThisChat({ roadmapId, nodeId, nodeLabel, onClose }: Props
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ roadmapId, nodeId, question: text }),
+        signal: abortControllerRef.current.signal,
       })
 
       if (!response.ok) {
@@ -76,6 +98,10 @@ export function ExplainThisChat({ roadmapId, nodeId, nodeLabel, onClose }: Props
         })
       }
     } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") {
+        // Ignored since the request was explicitly cancelled
+        return
+      }
       console.error("[Explain Chat Error]", err)
       const msg = err instanceof Error ? err.message : "Something went wrong. Please try again."
       setError(msg)
@@ -96,7 +122,7 @@ export function ExplainThisChat({ roadmapId, nodeId, nodeLabel, onClose }: Props
             Ask AI: {nodeLabel}
           </span>
         </div>
-        <button onClick={onClose} aria-label="Close chat" className="p-1 rounded-lg hover:bg-surface border border-transparent hover:border-border text-text-secondary cursor-pointer">
+        <button type="button" onClick={handleClose} aria-label="Close chat" className="p-1 rounded-lg hover:bg-surface border border-transparent hover:border-border text-text-secondary cursor-pointer">
           <X size={15} />
         </button>
       </div>

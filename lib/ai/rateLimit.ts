@@ -20,6 +20,14 @@ export async function checkRateLimit(
       })
       .catch(() => {});
 
+    // Create the record first (write first to prevent race condition)
+    const record = await prisma.aIRateLimit.create({
+      data: {
+        key,
+        timestamp: now,
+      },
+    });
+
     // Count records in the current sliding window
     const count = await prisma.aIRateLimit.count({
       where: {
@@ -30,7 +38,12 @@ export async function checkRateLimit(
       },
     });
 
-    if (count >= limit) {
+    if (count > limit) {
+      // Over limit! Delete the created record so we don't block subsequent windows artificially
+      await prisma.aIRateLimit.delete({
+        where: { id: record.id },
+      }).catch(() => {});
+
       const oldestInWindow = await prisma.aIRateLimit.findFirst({
         where: {
           key,
@@ -55,27 +68,19 @@ export async function checkRateLimit(
       };
     }
 
-    // Record the current request
-    await prisma.aIRateLimit.create({
-      data: {
-        key,
-        timestamp: now,
-      },
-    });
-
     return {
       success: true,
       limit,
-      remaining: limit - count - 1,
+      remaining: limit - count,
       reset: new Date(now.getTime() + windowSeconds * 1000),
     };
   } catch (err) {
     console.error("[Rate Limit Error]", err);
-    // Fail open in case of database issues
+    // Fail closed in case of database issues
     return {
-      success: true,
+      success: false,
       limit,
-      remaining: 1,
+      remaining: 0,
       reset: new Date(now.getTime() + windowSeconds * 1000),
     };
   }
@@ -91,4 +96,8 @@ export async function limitCodeReview(userId: string) {
 
 export async function limitQuizGen(userId: string) {
   return checkRateLimit(`user:quizgen:${userId}`, 15, 3600); // 15 per hour
+}
+
+export async function limitSubscribe(ip: string) {
+  return checkRateLimit(`ip:subscribe:${ip}`, 5, 600); // 5 per 10 minutes
 }

@@ -5,22 +5,40 @@ import { approveShowcaseProject, rejectShowcaseProject } from "@/lib/actions/adm
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { Check, Trash2, Shield, Link2 } from "lucide-react"
+import { isAdmin } from "@/lib/admin/auth"
+import Link from "next/link"
 
-export default async function AdminShowcasePage() {
+interface PageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminShowcasePage({ searchParams }: PageProps) {
   const session = await auth()
-  const adminEmail = process.env.ADMIN_EMAIL
 
-  if (!session?.user?.email || !adminEmail || session.user.email !== adminEmail) {
+  if (!isAdmin(session)) {
     redirect("/")
   }
 
-  const pending = await prisma.showcaseProject.findMany({
-    where: { isApproved: false },
-    include: {
-      author: { select: { name: true, email: true, username: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  })
+  const resolvedParams = await searchParams;
+  const page = parseInt(resolvedParams.page || "1", 10);
+  const skip = (page - 1) * 10;
+
+  const [pending, totalCount] = await Promise.all([
+    prisma.showcaseProject.findMany({
+      where: { isApproved: false },
+      include: {
+        author: { select: { name: true, email: true, username: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      skip,
+    }),
+    prisma.showcaseProject.count({
+      where: { isApproved: false },
+    }),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / 10));
 
   async function handleApprove(formData: FormData) {
     "use server"
@@ -129,6 +147,34 @@ export default async function AdminShowcasePage() {
             </div>
           )}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex justify-between items-center mt-8">
+            <Link
+              href={`/admin/showcase?page=${page - 1}`}
+              className={`px-4 py-2.5 rounded-xl border border-border text-xs font-bold transition-all ${
+                page <= 1
+                  ? "pointer-events-none opacity-40"
+                  : "hover:bg-card text-text-primary"
+              }`}
+            >
+              &larr; Previous
+            </Link>
+            <span className="text-xs text-text-secondary font-bold">
+              Page {page} of {totalPages}
+            </span>
+            <Link
+              href={`/admin/showcase?page=${page + 1}`}
+              className={`px-4 py-2.5 rounded-xl border border-border text-xs font-bold transition-all ${
+                page >= totalPages
+                  ? "pointer-events-none opacity-40"
+                  : "hover:bg-card text-text-primary"
+              }`}
+            >
+              Next &rarr;
+            </Link>
+          </div>
+        )}
       </main>
       <Footer />
     </>

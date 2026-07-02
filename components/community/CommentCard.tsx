@@ -17,6 +17,7 @@ interface CommentCardProps {
   onDelete: (id: string) => void
   onVoteSuccess?: (id: string, newVoteCount: number, hasVoted: boolean) => void
   isReply?: boolean
+  parentAuthorId?: string
 }
 
 export function CommentCard({
@@ -27,6 +28,7 @@ export function CommentCard({
   onDelete,
   onVoteSuccess,
   isReply = false,
+  parentAuthorId,
 }: CommentCardProps) {
   const [showReplyForm, setShowReplyForm] = useState(false)
   const [showReplies, setShowReplies] = useState(true)
@@ -220,7 +222,7 @@ export function CommentCard({
           )}
 
           {/* Accept Button */}
-          {!isReply && currentUserId && !comment.isAccepted && (
+          {isReply && currentUserId && currentUserId === parentAuthorId && !comment.isAccepted && (
             <button
               onClick={handleAccept}
               disabled={isPending}
@@ -269,6 +271,7 @@ export function CommentCard({
                   guideTarget={guideTarget}
                   onDelete={onDelete}
                   isReply={true}
+                  parentAuthorId={comment.authorId}
                 />
               ))}
             </div>

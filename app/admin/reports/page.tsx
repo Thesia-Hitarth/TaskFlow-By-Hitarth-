@@ -1,38 +1,64 @@
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
-import { hideComment } from "@/lib/actions/admin"
+import { hideComment, deleteCommentPermanently } from "@/lib/actions/admin"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { AlertCircle, EyeOff, Shield } from "lucide-react"
+import { isAdmin } from "@/lib/admin/auth"
+import Link from "next/link"
 
-export default async function AdminReportsPage() {
+interface PageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminReportsPage({ searchParams }: PageProps) {
   const session = await auth()
-  const adminEmail = process.env.ADMIN_EMAIL
 
-  if (!session?.user?.email || !adminEmail || session.user.email !== adminEmail) {
+  if (!isAdmin(session)) {
     redirect("/")
   }
 
-  const flagged = await prisma.comment.findMany({
-    where: { reports: { some: {} } },
-    include: {
-      author: { select: { name: true, email: true, username: true } },
-      reports: {
-        select: {
-          reason: true,
-          reporter: { select: { name: true, username: true } },
+  const resolvedParams = await searchParams;
+  const page = parseInt(resolvedParams.page || "1", 10);
+  const skip = (page - 1) * 10;
+
+  const [flagged, totalCount] = await Promise.all([
+    prisma.comment.findMany({
+      where: { reports: { some: {} } },
+      include: {
+        author: { select: { name: true, email: true, username: true } },
+        reports: {
+          select: {
+            reason: true,
+            reporter: { select: { name: true, username: true } },
+          },
         },
       },
-    },
-    orderBy: { reports: { _count: "desc" } },
-  })
+      orderBy: { reports: { _count: "desc" } },
+      take: 10,
+      skip,
+    }),
+    prisma.comment.count({
+      where: { reports: { some: {} } },
+    }),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / 10));
 
   async function handleHide(formData: FormData) {
     "use server"
     const commentId = formData.get("commentId") as string
     if (commentId) {
       await hideComment(commentId)
+    }
+  }
+
+  async function handleDelete(formData: FormData) {
+    "use server"
+    const commentId = formData.get("commentId") as string
+    if (commentId) {
+      await deleteCommentPermanently(commentId)
     }
   }
 
@@ -83,23 +109,37 @@ export default async function AdminReportsPage() {
                 </ul>
               </div>
 
-              {!comment.isHidden ? (
-                <form action={handleHide}>
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-border/40">
+                <div>
+                  {!comment.isHidden ? (
+                    <form action={handleHide}>
+                      <input type="hidden" name="commentId" value={comment.id} />
+                      <button
+                        type="submit"
+                        className="inline-flex items-center gap-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-colors cursor-pointer select-none"
+                      >
+                        <EyeOff size={14} />
+                        <span>Hide Comment</span>
+                      </button>
+                    </form>
+                  ) : (
+                    <div className="text-xs text-text-secondary/40 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                      <EyeOff size={14} />
+                      <span>Hidden by Administrator</span>
+                    </div>
+                  )}
+                </div>
+
+                <form action={handleDelete}>
                   <input type="hidden" name="commentId" value={comment.id} />
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-colors cursor-pointer select-none"
+                    className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-colors cursor-pointer select-none active:scale-[0.98]"
                   >
-                    <EyeOff size={14} />
-                    <span>Hide Comment</span>
+                    <span>Delete Permanently</span>
                   </button>
                 </form>
-              ) : (
-                <div className="text-xs text-text-secondary/40 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <EyeOff size={14} />
-                  <span>Hidden by Administrator</span>
-                </div>
-              )}
+              </div>
             </div>
           ))}
 
@@ -111,6 +151,34 @@ export default async function AdminReportsPage() {
             </div>
           )}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex justify-between items-center mt-8">
+            <Link
+              href={`/admin/reports?page=${page - 1}`}
+              className={`px-4 py-2.5 rounded-xl border border-border text-xs font-bold transition-all ${
+                page <= 1
+                  ? "pointer-events-none opacity-40"
+                  : "hover:bg-card text-text-primary"
+              }`}
+            >
+              &larr; Previous
+            </Link>
+            <span className="text-xs text-text-secondary font-bold">
+              Page {page} of {totalPages}
+            </span>
+            <Link
+              href={`/admin/reports?page=${page + 1}`}
+              className={`px-4 py-2.5 rounded-xl border border-border text-xs font-bold transition-all ${
+                page >= totalPages
+                  ? "pointer-events-none opacity-40"
+                  : "hover:bg-card text-text-primary"
+              }`}
+            >
+              Next &rarr;
+            </Link>
+          </div>
+        )}
       </main>
       <Footer />
     </>

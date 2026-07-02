@@ -67,6 +67,7 @@ export function AIGuideQuiz({ guideSlug }: Props) {
             Solidify your learning! Gemini can scan this guide and instantly compose a 5-question comprehension quiz tailored to what you just read.
           </p>
           <button
+            type="button"
             onClick={handleGenerate}
             disabled={isLoading}
             className="px-5 py-2.5 bg-accent hover:bg-amber-600 disabled:opacity-55 text-black text-xs font-bold rounded-xl transition-all shadow-md shadow-accent/15 inline-flex items-center gap-2 cursor-pointer"
@@ -93,6 +94,7 @@ export function AIGuideQuiz({ guideSlug }: Props) {
             </div>
             {submitted && (
               <button
+                type="button"
                 onClick={handleGenerate}
                 disabled={isLoading}
                 className="p-2 border border-border rounded-xl hover:border-accent/40 text-text-secondary hover:text-accent transition-all cursor-pointer inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider bg-card shadow-sm"
@@ -133,6 +135,7 @@ export function AIGuideQuiz({ guideSlug }: Props) {
 
                     return (
                       <button
+                        type="button"
                         key={oi}
                         onClick={() => handleSelect(qi, oi)}
                         disabled={submitted}
@@ -158,6 +161,7 @@ export function AIGuideQuiz({ guideSlug }: Props) {
 
           {!submitted ? (
             <button
+              type="button"
               onClick={() => setSubmitted(true)}
               disabled={Object.keys(selectedAnswers).length < quiz.questions.length}
               className="w-full py-3 bg-accent hover:bg-amber-600 disabled:opacity-40 text-black text-xs font-extrabold rounded-xl transition-all shadow-md shadow-accent/15 cursor-pointer active:scale-[0.98]"

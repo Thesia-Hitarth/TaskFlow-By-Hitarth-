@@ -65,6 +65,19 @@ export async function upvoteProject(projectId: string) {
   if (!session?.user?.id) return { error: "Not authenticated. Sign in to upvote." }
 
   try {
+    const project = await prisma.showcaseProject.findUnique({
+      where: { id: projectId },
+      select: { authorId: true },
+    })
+
+    if (!project) {
+      return { error: "Project not found." }
+    }
+
+    if (project.authorId === session.user.id) {
+      return { error: "You cannot upvote your own project." }
+    }
+
     await prisma.showcaseUpvote.create({
       data: {
         projectId,

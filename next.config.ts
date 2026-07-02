@@ -13,51 +13,66 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
+      // 1. CSP rules for /playground (with unsafe-eval for Monaco sandbox code execution)
       {
-        source: "/(.*)",
+        source: "/playground/:path*",
         headers: [
-          // Prevent clickjacking
           { key: "X-Frame-Options", value: "DENY" },
-          // Prevent MIME type sniffing
           { key: "X-Content-Type-Options", value: "nosniff" },
-          // Control referrer information
-          {
-            key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin",
-          },
-          // Prevent XSS by restricting content sources
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              // Next.js inline scripts (theme toggle, hydration) + Monaco CDN scripts
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vitals.vercel-insights.com",
-              // Styles: self + inline + Monaco CDN styles
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
-              // Fonts
               "font-src 'self' data: https://fonts.gstatic.com",
-              // Images: self + data URIs (common in Next.js Image)
               "img-src 'self' data: blob: https:",
-              // Connect: API calls + Vercel analytics/speed-insights + Monaco CDN + Google/GitHub avatars
               "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://avatars.githubusercontent.com https://lh3.googleusercontent.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
-              // Workers for ReactFlow and practice runs
               "worker-src 'self' blob:",
-              // Frames: allow self + sandboxed visual iframe previews
               "frame-src 'self' data: blob:",
-              // Object: disallow all plugins
               "object-src 'none'",
-              // Base URI restricted
               "base-uri 'self'",
-              // Form action restricted to self
               "form-action 'self'",
             ].join("; "),
           },
-          // HSTS: enforce HTTPS for 1 year
           {
             key: "Strict-Transport-Security",
             value: "max-age=31536000; includeSubDomains; preload",
           },
-          // Permissions policy: limit access to sensitive browser features
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+      // 2. CSP rules for all other paths (without unsafe-eval for secure production hardening)
+      {
+        source: "/((?!playground.*)(?:.*))",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+              "font-src 'self' data: https://fonts.gstatic.com",
+              "img-src 'self' data: blob: https:",
+              "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://avatars.githubusercontent.com https://lh3.googleusercontent.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+              "worker-src 'self' blob:",
+              "frame-src 'self' data: blob:",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join("; "),
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains; preload",
+          },
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",

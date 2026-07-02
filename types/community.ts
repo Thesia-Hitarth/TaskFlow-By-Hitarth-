@@ -1,4 +1,4 @@
-import { Comment, User, CommentVote, ShowcaseProject, ShowcaseUpvote, StudyBuddyConnection } from "@prisma/client"
+import { Comment, CommentVote, ShowcaseProject } from "@prisma/client"
 
 export type CommentAuthor = {
   id: string

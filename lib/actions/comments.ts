@@ -36,9 +36,15 @@ export async function createComment(input: z.infer<typeof CommentSchema>) {
   if (input.parentId) {
     const parent = await prisma.comment.findUnique({
       where: { id: input.parentId },
-      select: { nodeTarget: true, guideTarget: true },
+      select: { nodeTarget: true, guideTarget: true, parentId: true },
     })
     if (!parent) return { error: "Parent comment not found." }
+
+    // Prevent nested replies (replies to replies)
+    if (parent.parentId !== null) {
+      return { error: "Nested replies are not supported." }
+    }
+
     finalNodeTarget = finalNodeTarget || parent.nodeTarget
     finalGuideTarget = finalGuideTarget || parent.guideTarget
   }
@@ -94,27 +100,27 @@ export async function createComment(input: z.infer<typeof CommentSchema>) {
   }
 }
 
-async function deleteCommentCascade(commentId: string) {
+export async function deleteCommentCascade(commentId: string) {
   const replies = await prisma.comment.findMany({
     where: { parentId: commentId },
     select: { id: true },
-  })
+  });
+  const commentIds = [commentId, ...replies.map((r) => r.id)];
 
-  for (const reply of replies) {
-    await deleteCommentCascade(reply.id)
-  }
-
-  await prisma.commentReport.deleteMany({
-    where: { commentId },
-  })
-
-  await prisma.commentVote.deleteMany({
-    where: { commentId },
-  })
-
-  await prisma.comment.delete({
-    where: { id: commentId },
-  })
+  await prisma.$transaction([
+    prisma.commentVote.deleteMany({
+      where: { commentId: { in: commentIds } },
+    }),
+    prisma.commentReport.deleteMany({
+      where: { commentId: { in: commentIds } },
+    }),
+    prisma.comment.deleteMany({
+      where: { id: { in: commentIds.filter(id => id !== commentId) } },
+    }),
+    prisma.comment.delete({
+      where: { id: commentId },
+    }),
+  ]);
 }
 
 // ── Delete a comment ─────────────────────────────────────────────
@@ -251,21 +257,38 @@ export async function acceptAnswer(commentId: string) {
 
   const comment = await prisma.comment.findUnique({
     where: { id: commentId },
-    select: { nodeTarget: true, guideTarget: true, parentId: true },
+    select: { parentId: true, authorId: true, nodeTarget: true, guideTarget: true },
   })
   if (!comment) return { error: "Comment not found." }
-  if (comment.parentId) return { error: "Replies cannot be marked as accepted." }
 
-  const threadWhere = comment.nodeTarget
-    ? { nodeTarget: comment.nodeTarget, parentId: null }
-    : { guideTarget: comment.guideTarget, parentId: null }
+  // Must be a reply
+  if (!comment.parentId) {
+    return { error: "Only replies can be marked as accepted answers." }
+  }
+
+  // Fetch parent comment to verify ownership
+  const parent = await prisma.comment.findUnique({
+    where: { id: comment.parentId },
+    select: { authorId: true },
+  })
+  if (!parent) return { error: "Parent comment not found." }
+
+  // Check if caller is author of the question (parent) or an admin
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const isAdmin = adminEmail && session.user.email?.toLowerCase() === adminEmail.toLowerCase();
+  
+  if (parent.authorId !== session.user.id && !isAdmin) {
+    return { error: "Only the author of the question can accept an answer." }
+  }
 
   try {
+    // Clear accepted status for all sibling replies under the same parent
     await prisma.comment.updateMany({
-      where: { ...threadWhere, isAccepted: true },
+      where: { parentId: comment.parentId, isAccepted: true },
       data: { isAccepted: false },
     })
 
+    // Set accepted status on this reply
     await prisma.comment.update({
       where: { id: commentId },
       data: { isAccepted: true },
@@ -276,7 +299,12 @@ export async function acceptAnswer(commentId: string) {
       revalidatePath(`/${roadmapId}`)
     }
     if (comment.guideTarget) {
-      revalidatePath(`/guides/${comment.guideTarget}`)
+      if (comment.guideTarget.startsWith("best-practice-")) {
+        const slug = comment.guideTarget.replace("best-practice-", "")
+        revalidatePath(`/best-practices/${slug}`)
+      } else {
+        revalidatePath(`/guides/${comment.guideTarget}`)
+      }
     }
 
     return { success: true }
@@ -299,9 +327,9 @@ export async function reportComment(
       data: { commentId, reporterId: session.user.id, reason },
     })
     
-    // Auto-hide if 3+ reports come in
+    // Auto-hide if 10+ reports come in
     const reportCount = await prisma.commentReport.count({ where: { commentId } })
-    if (reportCount >= 3) {
+    if (reportCount >= 10) {
       await prisma.comment.update({
         where: { id: commentId },
         data: { isHidden: true },

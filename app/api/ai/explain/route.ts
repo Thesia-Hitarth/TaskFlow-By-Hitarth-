@@ -4,6 +4,7 @@ import { BASE_TUTOR_PERSONA } from "@/lib/ai/prompts";
 import { limitExplain } from "@/lib/ai/rateLimit";
 import { getNodeDetail } from "@/lib/roadmaps";
 import { NextRequest } from "next/server";
+import { validateUserInput } from "@/lib/ai/validation";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -21,6 +22,11 @@ export async function POST(req: NextRequest) {
 
     if (!roadmapId || !nodeId || !question) {
       return new Response("Missing parameters", { status: 400 });
+    }
+
+    const validation = validateUserInput(question, 500);
+    if (!validation.valid) {
+      return new Response(validation.error || "Invalid input", { status: 400 });
     }
 
     const nodeDetail = getNodeDetail(roadmapId, nodeId);

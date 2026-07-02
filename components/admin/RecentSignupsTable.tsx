@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface UserItem {
   id: string;
   name?: string | null;
@@ -26,9 +28,12 @@ export function RecentSignupsTable({ users }: { users: UserItem[] }) {
             <tr key={user.id} className="hover:bg-surface/30">
               <td className="py-3 font-semibold text-text-primary flex items-center gap-2">
                 {user.image && (
-                  <img
+                  <Image
                     src={user.image}
                     alt={user.name || "avatar"}
+                    width={24}
+                    height={24}
+                    unoptimized={true}
                     className="w-6 h-6 rounded-full border border-border"
                   />
                 )}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyToken } from "@/lib/email/tokens";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -10,7 +11,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const email = Buffer.from(token, "base64").toString("utf-8");
+    const email = verifyToken(token, "confirm");
+    if (!email) {
+      return NextResponse.json({ error: "Invalid or expired confirmation token" }, { status: 400 });
+    }
 
     // Update in database
     await prisma.subscriber.updateMany({
@@ -32,7 +36,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
     return NextResponse.redirect(`${appUrl}/?subscribed=true`);
   } catch (error) {
     console.error("[Email Confirmation] Failed:", error);

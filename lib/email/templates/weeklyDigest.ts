@@ -14,7 +14,7 @@ interface WeeklyDigestData {
 
 export async function sendWeeklyDigestEmail(data: WeeklyDigestData) {
   const firstName = data.user.name?.split(" ")[0] ?? "there";
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const { stats, recentCompletions, suggestedNextNode } = data;
 
   // Don't send a digest if the user had zero activity this week

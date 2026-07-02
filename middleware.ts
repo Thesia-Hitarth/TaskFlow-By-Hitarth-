@@ -2,15 +2,28 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
+import { isAdmin } from "@/lib/admin/auth";
+
 // Use Node.js runtime to avoid Edge-incompatible APIs from jose/@auth/core
 export const runtime = "nodejs";
 
-export default auth((req: any) => {
+import { NextRequest } from "next/server";
+
+interface AuthRequest extends NextRequest {
+  auth?: {
+    user?: {
+      email?: string | null;
+      username?: string | null;
+    } | null;
+  } | null;
+}
+
+export default auth((req: AuthRequest) => {
   const { pathname } = req.nextUrl;
   const session = req.auth;
 
   const isLoggedIn = !!session?.user;
-  const hasUsername = !!(session?.user as any)?.username;
+  const hasUsername = !!session?.user?.username;
 
   // Protect routes — redirect to sign-in if not authenticated
   const isProtectedPath =
@@ -24,11 +37,9 @@ export default auth((req: any) => {
     return NextResponse.redirect(signInUrl);
   }
 
-  // Admin route protection - only allow matches to ADMIN_EMAIL
+  // Admin route protection
   if (pathname.startsWith("/admin")) {
-    const userEmail = session?.user?.email;
-    const adminEmail = process.env.ADMIN_EMAIL || "hitarththesia123@gmail.com";
-    if (!userEmail || userEmail !== adminEmail) {
+    if (!isAdmin(session)) {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }

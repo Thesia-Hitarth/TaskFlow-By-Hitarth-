@@ -214,10 +214,11 @@ export async function getAICodeReview(exerciseTitle: string, userCode: string) {
     return { success: false as const, error: "Hourly code review limit reached. Try again later." };
   }
 
-  if (userCode.length > 3000) {
+  const validation = validateUserInput(userCode, 3000);
+  if (!validation.valid) {
     return {
       success: false as const,
-      error: "Code is too long for review. Try reviewing a smaller section.",
+      error: validation.error || "Invalid code submission",
     };
   }
 

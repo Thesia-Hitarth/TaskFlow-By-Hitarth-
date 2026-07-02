@@ -9,7 +9,7 @@ import { QuizQuestion } from "@/lib/guides-quiz-data"
 
 interface Props {
   guideSlug: string
-  staticQuestions?: QuizQuestion[]
+  staticQuestions?: Omit<QuizQuestion, "correctIndex" | "explanation">[]
 }
 
 export function GuideQuizSection({ guideSlug, staticQuestions }: Props) {

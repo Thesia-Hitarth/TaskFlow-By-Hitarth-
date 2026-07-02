@@ -11,6 +11,8 @@ import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from 
 import { usePathname } from "next/navigation";
 import { NotificationBell } from "./ui/NotificationBell";
 
+import { taskflows } from "@/lib/taskflows-data";
+
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -18,23 +20,13 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
+  const taskflowSlugs = new Set(taskflows.map((t) => t.slug));
+  const pathSlug = pathname.split("/")[1];
+
   const isTaskflowActive =
     pathname.startsWith("/taskflows") ||
     pathname.startsWith("/projects") ||
-    (pathname !== "/" &&
-      !pathname.startsWith("/guides") &&
-      !pathname.startsWith("/best-practices") &&
-      !pathname.startsWith("/compare") &&
-      !pathname.startsWith("/playground") &&
-      !pathname.startsWith("/path-finder") &&
-      !pathname.startsWith("/dashboard") &&
-      !pathname.startsWith("/profile") &&
-      !pathname.startsWith("/showcase") &&
-      !pathname.startsWith("/activity") &&
-      !pathname.startsWith("/setup") &&
-      !pathname.startsWith("/admin") &&
-      !pathname.startsWith("/u/") &&
-      !pathname.startsWith("/signin"));
+    taskflowSlugs.has(pathSlug);
 
   useEffect(() => {
     const handleScroll = () => {

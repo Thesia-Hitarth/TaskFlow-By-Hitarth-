@@ -32,12 +32,17 @@ export default async function DashboardPage() {
 
   const userId = session.user.id;
 
-  // Retroactively sync past exercise solves and completed nodes to UserActivity table
-  await syncPastActivities(userId);
+  const activityCount = await prisma.userActivity.count({
+    where: { userId },
+  });
+  if (activityCount === 0) {
+    await syncPastActivities(userId);
+  }
 
   const [records, user, activeBuddies] = await prisma.$transaction([
     prisma.userProgress.findMany({
       where: { userId },
+      select: { taskflowSlug: true, nodeId: true, status: true },
     }),
     prisma.user.findUnique({
       where: { id: userId },
@@ -48,6 +53,11 @@ export default async function DashboardPage() {
         streakDays: true,
         longestStreak: true,
         activities: {
+          where: {
+            date: {
+              gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
+            }
+          },
           orderBy: { date: "asc" },
         },
         badges: {
@@ -111,17 +121,41 @@ export default async function DashboardPage() {
 
   // Calculate overall achievements based on child subtopics (milestones are ignored)
   let totalDoneCount = 0;
+  let estimatedHours = 0;
   for (const slug of started) {
     const content = taskflowContent[slug];
+    if (!content) continue;
+
     const childNodeIds = new Set(
       content.nodes.filter((n) => n.kind === "subtopic").map((n) => n.id)
     );
     totalDoneCount += Object.entries(bySlug[slug]).filter(
       ([id, s]) => childNodeIds.has(id) && s === "done"
     ).length;
-  }
 
-  const estimatedHours = totalDoneCount * 2; // Estimate ~2h per node
+    // Parse and map estimated hours for subtopic nodes
+    const nodeHoursMap = new Map<string, number>();
+    for (const node of content.nodes) {
+      if (node.kind === "subtopic") {
+        const timeStr = node.estimatedTime || "";
+        const match = timeStr.match(/(\d+)(?:-(\d+))?\s*(?:hrs|hours)/i);
+        if (match) {
+          const start = parseInt(match[1], 10);
+          const end = match[2] ? parseInt(match[2], 10) : start;
+          nodeHoursMap.set(node.id, Math.ceil((start + end) / 2));
+        } else {
+          nodeHoursMap.set(node.id, 2);
+        }
+      }
+    }
+
+    // Sum estimated hours for completed nodes
+    for (const [nodeId, status] of Object.entries(bySlug[slug])) {
+      if (status === "done" && nodeHoursMap.has(nodeId)) {
+        estimatedHours += nodeHoursMap.get(nodeId)!;
+      }
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -324,12 +358,21 @@ export default async function DashboardPage() {
                         size={40}
                       />
                       <div className="min-w-0">
-                        <Link
-                          href={profileUrl}
-                          className="font-extrabold text-sm text-text-primary hover:text-accent transition-colors truncate block"
-                        >
-                          {buddy.name || buddy.username}
-                        </Link>
+                        {buddy.username ? (
+                          <Link
+                            href={profileUrl}
+                            className="font-extrabold text-sm text-text-primary hover:text-accent transition-colors truncate block"
+                          >
+                            {buddy.name || buddy.username}
+                          </Link>
+                        ) : (
+                          <span
+                            className="font-extrabold text-sm text-text-primary truncate block cursor-not-allowed text-text-secondary/60"
+                            title="This user has not set a username yet"
+                          >
+                            {buddy.name || "Anonymous Learner"}
+                          </span>
+                        )}
                         <p className="text-[10px] text-text-secondary/60 font-semibold mt-0.5 truncate uppercase">
                           🔥 {buddy.streakDays} days &middot; {buddy.roadmapId.replace(/-/g, " ")}
                         </p>

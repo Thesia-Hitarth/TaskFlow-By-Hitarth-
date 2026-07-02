@@ -5,6 +5,9 @@ import { z } from "zod";
 import { sendEmail } from "@/lib/email/send";
 import { baseTemplate, h1, p, ctaButton } from "@/lib/email/templates/components";
 
+import { generateToken, verifyToken } from "@/lib/email/tokens";
+import { auth } from "@/auth";
+
 const schema = z.object({ email: z.string().email() });
 
 export async function subscribeEmailAction(email: string) {
@@ -30,8 +33,8 @@ export async function subscribeEmailAction(email: string) {
   });
 
   // 3. Send confirmation email
-  const confirmToken = Buffer.from(normalizedEmail).toString("base64");
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const confirmToken = generateToken(normalizedEmail, "confirm");
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const confirmUrl = `${appUrl}/api/email/confirm?token=${confirmToken}`;
 
   const html = baseTemplate({
@@ -64,7 +67,16 @@ export async function subscribeEmailAction(email: string) {
   return { success: true, message: "Confirmation email sent! Please check your inbox." };
 }
 
-export async function updateEmailPreferences(email: string, preferences: Record<string, boolean>) {
+export async function updateEmailPreferences(emailOrToken: string, preferences: Record<string, boolean>) {
+  let email = verifyToken(emailOrToken, "unsubscribe");
+  if (!email) {
+    const session = await auth();
+    if (!session?.user?.email || session.user.email.toLowerCase() !== emailOrToken.trim().toLowerCase()) {
+      return { success: false, error: "Unauthorized access to preferences." };
+    }
+    email = emailOrToken;
+  }
+
   const normalizedEmail = email.trim().toLowerCase();
 
   // Find if a user exists with this email
@@ -93,7 +105,16 @@ export async function updateEmailPreferences(email: string, preferences: Record<
   return { success: true };
 }
 
-export async function unsubscribeAllAction(email: string) {
+export async function unsubscribeAllAction(emailOrToken: string) {
+  let email = verifyToken(emailOrToken, "unsubscribe");
+  if (!email) {
+    const session = await auth();
+    if (!session?.user?.email || session.user.email.toLowerCase() !== emailOrToken.trim().toLowerCase()) {
+      return { success: false, error: "Unauthorized access to preferences." };
+    }
+    email = emailOrToken;
+  }
+
   const normalizedEmail = email.trim().toLowerCase();
 
   const user = await prisma.user.findUnique({

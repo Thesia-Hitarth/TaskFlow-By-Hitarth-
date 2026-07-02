@@ -6,7 +6,7 @@ export async function sendBadgeEarnedEmail(
   badge: { name: string; emoji: string; description: string }
 ) {
   const firstName = user.name?.split(" ")[0] ?? "there";
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   const html = baseTemplate({
     preheader: `You earned the "${badge.name}" badge — ${badge.description}`,

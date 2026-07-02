@@ -30,11 +30,11 @@ export default async function BuddiesPage({ params }: BuddiesPageProps) {
       progress: {
         some: { taskflowSlug: slug, status: "done" },
       },
-      // Exclude users with already active connections
+      // Exclude users with active or pending connections
       NOT: {
         OR: [
-          { buddyConnections1: { some: { userId2: userId, roadmapId: slug, status: "active" } } },
-          { buddyConnections2: { some: { userId1: userId, roadmapId: slug, status: "active" } } },
+          { buddyConnections1: { some: { userId2: userId, roadmapId: slug, status: { in: ["active", "pending"] } } } },
+          { buddyConnections2: { some: { userId1: userId, roadmapId: slug, status: { in: ["active", "pending"] } } } },
         ],
       },
     },
@@ -59,6 +59,7 @@ export default async function BuddiesPage({ params }: BuddiesPageProps) {
   const connections = await prisma.studyBuddyConnection.findMany({
     where: {
       roadmapId: slug,
+      status: { in: ["pending", "active"] },
       OR: [
         { userId1: userId },
         { userId2: userId },

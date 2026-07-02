@@ -1,3 +1,5 @@
+import { generateToken } from "@/lib/email/tokens";
+
 interface BaseTemplateOptions {
   preheader?: string; // 40-90 chars shown in inbox preview next to subject line
   content: string;    // inner HTML, inserted into the wrapper
@@ -5,8 +7,8 @@ interface BaseTemplateOptions {
 }
 
 export function baseTemplate({ preheader = "", content, emailAddress = "{{EMAIL}}" }: BaseTemplateOptions): string {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const unsubscribeUrl = `${appUrl}/unsubscribe?token=${Buffer.from(emailAddress).toString("base64")}`;
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const unsubscribeUrl = `${appUrl}/unsubscribe?token=${generateToken(emailAddress, "unsubscribe")}`;
 
   return `
 <!DOCTYPE html>

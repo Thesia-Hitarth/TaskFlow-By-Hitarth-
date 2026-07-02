@@ -1,43 +1,71 @@
 "use server"
 
-import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { isAdminUser } from "@/lib/admin/auth"
 
-const ADMIN_EMAILS = [
-  process.env.ADMIN_EMAIL || ""
-].filter(Boolean)
-
-async function isAdminUser() {
-  const session = await auth()
-  if (!session?.user?.email) return false
-  return ADMIN_EMAILS.includes(session.user.email)
-}
-
-async function deleteCommentCascade(commentId: string) {
+export async function deleteCommentCascade(commentId: string) {
   const replies = await prisma.comment.findMany({
     where: { parentId: commentId },
     select: { id: true },
-  })
+  });
+  const commentIds = [commentId, ...replies.map((r) => r.id)];
 
-  for (const reply of replies) {
-    await deleteCommentCascade(reply.id)
-  }
-
-  await prisma.commentReport.deleteMany({
-    where: { commentId },
-  })
-
-  await prisma.commentVote.deleteMany({
-    where: { commentId },
-  })
-
-  await prisma.comment.delete({
-    where: { id: commentId },
-  })
+  await prisma.$transaction([
+    prisma.commentVote.deleteMany({
+      where: { commentId: { in: commentIds } },
+    }),
+    prisma.commentReport.deleteMany({
+      where: { commentId: { in: commentIds } },
+    }),
+    prisma.comment.deleteMany({
+      where: { id: { in: commentIds.filter(id => id !== commentId) } },
+    }),
+    prisma.comment.delete({
+      where: { id: commentId },
+    }),
+  ]);
 }
 
 export async function hideComment(commentId: string) {
+  const isAuthorized = await isAdminUser()
+  if (!isAuthorized) return { error: "Unauthorized. Admin privileges required." }
+
+  try {
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { nodeTarget: true, guideTarget: true },
+    })
+
+    if (!comment) return { error: "Comment not found." }
+
+    await prisma.comment.update({
+      where: { id: commentId },
+      data: { isHidden: true },
+    })
+
+    if (comment.nodeTarget) {
+      const [roadmapId] = comment.nodeTarget.split(":")
+      revalidatePath(`/${roadmapId}`)
+    }
+    if (comment.guideTarget) {
+      if (comment.guideTarget.startsWith("best-practice-")) {
+        const slug = comment.guideTarget.replace("best-practice-", "")
+        revalidatePath(`/best-practices/${slug}`)
+      } else {
+        revalidatePath(`/guides/${comment.guideTarget}`)
+      }
+    }
+
+    revalidatePath("/admin/reports")
+    return { success: true }
+  } catch (error) {
+    console.error("Failed to hide comment:", error)
+    return { error: "Database error." }
+  }
+}
+
+export async function deleteCommentPermanently(commentId: string) {
   const isAuthorized = await isAdminUser()
   if (!isAuthorized) return { error: "Unauthorized. Admin privileges required." }
 

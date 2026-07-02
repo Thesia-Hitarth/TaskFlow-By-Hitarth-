@@ -10,12 +10,12 @@ export async function sendBuddyRequest(targetUserId: string, roadmapId: string) 
   if (session.user.id === targetUserId) return { error: "You cannot buddy with yourself." }
 
   try {
-    // Check if a connection already exists
+    // Check if a connection already exists (ignoring ended connections)
     const existing = await prisma.studyBuddyConnection.findFirst({
       where: {
         OR: [
-          { userId1: session.user.id, userId2: targetUserId, roadmapId },
-          { userId1: targetUserId, userId2: session.user.id, roadmapId },
+          { userId1: session.user.id, userId2: targetUserId, roadmapId, status: { in: ["pending", "active"] } },
+          { userId1: targetUserId, userId2: session.user.id, roadmapId, status: { in: ["pending", "active"] } },
         ],
       },
     })
@@ -87,9 +87,16 @@ export async function rejectBuddyRequest(connectionId: string) {
 
     if (!conn) return { error: "Connection not found." }
 
-    await prisma.studyBuddyConnection.delete({
-      where: { id: connectionId },
-    })
+    if (conn.status === "active") {
+      await prisma.studyBuddyConnection.update({
+        where: { id: connectionId },
+        data: { status: "ended" },
+      })
+    } else {
+      await prisma.studyBuddyConnection.delete({
+        where: { id: connectionId },
+      })
+    }
 
     revalidatePath(`/dashboard`)
     revalidatePath(`/${conn.roadmapId}/buddies`)

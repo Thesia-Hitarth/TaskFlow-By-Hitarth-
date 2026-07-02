@@ -1,28 +1,12 @@
-// app/api/subscribe/route.ts
 import { subscribeEmailAction } from "@/lib/actions/subscribe";
+import { limitSubscribe } from "@/lib/ai/rateLimit";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const ipCache = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW = 10 * 60 * 1000;
-const MAX_REQUESTS = 5;
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const record = ipCache.get(ip);
-
-  if (!record) {
-    ipCache.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-    return false;
-  }
-
-  if (now > record.resetTime) {
-    ipCache.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-    return false;
-  }
-
-  record.count += 1;
-  return record.count > MAX_REQUESTS;
+function isValidIP(ip: string): boolean {
+  const ipv4Regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
+  return ipv4Regex.test(ip) || ipv6Regex.test(ip);
 }
 
 function getAllowedOrigin(): string {
@@ -30,11 +14,16 @@ function getAllowedOrigin(): string {
 }
 
 export async function POST(req: Request) {
-  const ip = req.headers.get("x-real-ip")
-    ?? req.headers.get("x-forwarded-for")?.split(",")[0].trim()
-    ?? "127.0.0.1";
+  let ip = req.headers.get("x-real-ip")
+    || req.headers.get("x-forwarded-for")?.split(",")[0].trim()
+    || "127.0.0.1";
 
-  if (isRateLimited(ip)) {
+  if (!isValidIP(ip)) {
+    ip = "unknown";
+  }
+
+  const { success } = await limitSubscribe(ip);
+  if (!success) {
     return Response.json(
       { error: "Too many subscription requests. Please try again later in 10 minutes." },
       { status: 429 }

@@ -2,11 +2,12 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 
+import { isAdmin } from "@/lib/admin/auth";
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
-  const adminEmail = process.env.ADMIN_EMAIL || "hitarththesia123@gmail.com";
   
-  if (!session?.user?.email || session.user.email !== adminEmail) {
+  if (!isAdmin(session)) {
     redirect("/");
   }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 
 export default function ErrorPage({
@@ -12,6 +13,7 @@ export default function ErrorPage({
 }) {
   useEffect(() => {
     console.error("[app error boundary]", error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

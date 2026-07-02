@@ -5,6 +5,7 @@ import { upvoteProject } from "@/lib/actions/showcase"
 import { ExternalLink, Github, ThumbsUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import Image from "next/image"
 import { UserAvatar } from "../ui/UserAvatar"
 
 interface ShowcaseProjectWithMeta {
@@ -74,9 +75,12 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
           className="aspect-video bg-border flex items-center justify-center text-4xl relative overflow-hidden select-none block"
         >
           {project.thumbnailUrl ? (
-            <img
+            <Image
               src={project.thumbnailUrl}
               alt={project.title}
+              width={384}
+              height={216}
+              unoptimized={true}
               className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
             />
           ) : (
@@ -141,6 +145,7 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
       <div className="p-5 pt-0 mt-auto border-t border-border/20 flex flex-col gap-2">
         <div className="flex items-center justify-between mt-3">
           <button
+            type="button"
             onClick={handleUpvote}
             disabled={voted}
             className={cn(

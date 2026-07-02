@@ -70,6 +70,10 @@ export default function RootLayout({
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
+                  var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                  if (tz) {
+                    document.cookie = "user-timezone=" + encodeURIComponent(tz) + "; path=/; max-age=31536000; SameSite=Lax";
+                  }
                 } catch (e) {}
               })();
             `,

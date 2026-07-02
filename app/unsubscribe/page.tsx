@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { UnsubscribeForm } from "@/components/email/UnsubscribeForm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { verifyToken } from "@/lib/email/tokens";
+import { auth } from "@/auth";
 
 export default async function UnsubscribePage({
   searchParams,
@@ -9,15 +11,29 @@ export default async function UnsubscribePage({
   searchParams: Promise<{ email?: string; token?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const email = resolvedSearchParams.email
-    || (resolvedSearchParams.token ? Buffer.from(resolvedSearchParams.token, "base64").toString("utf-8") : null);
+  const token = resolvedSearchParams.token || null;
+
+  let email: string | null = null;
+  if (token) {
+    email = verifyToken(token, "unsubscribe");
+  } else if (resolvedSearchParams.email) {
+    const session = await auth();
+    if (session?.user?.email && session.user.email.toLowerCase() === resolvedSearchParams.email.trim().toLowerCase()) {
+      email = resolvedSearchParams.email;
+    }
+  } else {
+    const session = await auth();
+    if (session?.user?.email) {
+      email = session.user.email;
+    }
+  }
 
   if (!email) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col justify-between">
         <Navbar />
         <div className="text-center py-20">
-          <p className="text-slate-500">Invalid or missing unsubscribe link details.</p>
+          <p className="text-slate-500">Invalid, expired or missing unsubscribe link details.</p>
         </div>
         <Footer />
       </div>
@@ -53,7 +69,7 @@ export default async function UnsubscribePage({
       <div className="max-w-lg mx-auto px-6 py-16 text-center w-full">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">Email Preferences</h1>
         <p className="text-slate-500 mb-8">Manage which emails you receive for <strong>{email}</strong>.</p>
-        <UnsubscribeForm email={email} initialPreferences={userPrefs} />
+        <UnsubscribeForm tokenOrEmail={token || email} initialPreferences={userPrefs} />
       </div>
       <Footer />
     </div>

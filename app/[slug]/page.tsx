@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { UserAvatar } from "@/components/ui/UserAvatar";
 import { taskflows } from "@/lib/taskflows-data";
 import { taskflowContent } from "@/lib/taskflow-content";
 import GuideCard from "@/components/GuideCard";
@@ -11,9 +10,7 @@ import RoadmapProgressBar from "@/components/roadmap/RoadmapProgressBar";
 import { getAllGuides } from "@/lib/guides/getAllGuides";
 import { getRelatedGuidesForNode } from "@/lib/guides/getRelatedGuidesForNode";
 import { getProjectsForRoadmap } from "@/lib/projects/getAllProjects";
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
-import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
+import { RoadmapDynamicIsland } from "@/components/roadmap/RoadmapDynamicIsland";
 import { roadmapJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
 
 interface PageProps {
@@ -62,52 +59,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   const content = taskflowContent[slug];
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
 
-  // Fetch whether user has seen welcome tour
-  const session = await auth();
-  let hasSeenTour = false;
-  if (session?.user?.id) {
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { hasSeenTour: true },
-    });
-    hasSeenTour = user?.hasSeenTour ?? false;
-  }
-
-  // Fetch social proof (learner counts & recently active avatars)
-  const learnerCount = await prisma.userProgress.groupBy({
-    by: ["userId"],
-    where: { taskflowSlug: slug, status: { in: ["done", "in_progress"] } },
-  }).then(res => res.length);
-
-  const recentLearnerRecords = await prisma.userProgress.findMany({
-    where: { taskflowSlug: slug, status: { in: ["done", "in_progress"] } },
-    orderBy: { updatedAt: "desc" },
-    take: 50,
-    select: {
-      userId: true,
-      user: {
-        select: {
-          image: true,
-          name: true,
-          username: true,
-        },
-      },
-    },
-  });
-
-  const uniqueLearnersWithImages: Array<{ image: string; name: string; username: string }> = [];
-  const seenUsers = new Set<string>();
-  for (const p of recentLearnerRecords) {
-    if (p.user.image && !seenUsers.has(p.userId)) {
-      seenUsers.add(p.userId);
-      uniqueLearnersWithImages.push({
-        image: p.user.image,
-        name: p.user.name || "",
-        username: p.user.username || "",
-      });
-      if (uniqueLearnersWithImages.length >= 5) break;
-    }
-  }
+  // Dynamic proof and tour are deferred to the RoadmapDynamicIsland component below
 
   // Enrich nodes with related guides on the server
   const enrichedNodes = content
@@ -179,37 +131,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
             {taskflow?.description || `Step by step guide to learning ${title}`}
           </p>
 
-          {/* Social Proof (Learners count & avatars) */}
-          {learnerCount > 0 && (
-            <div className="flex flex-wrap items-center gap-3 mt-4">
-              {uniqueLearnersWithImages.length > 0 && (
-                <div className="flex -space-x-2.5">
-                  {uniqueLearnersWithImages.map((l, i) => (
-                    <UserAvatar
-                      key={i}
-                      src={l.image}
-                      name={l.name}
-                      username={l.username}
-                      className="w-7 h-7 ring-2 ring-background"
-                      size={28}
-                    />
-                  ))}
-                </div>
-              )}
-              <p className="text-xs font-bold text-text-secondary/70">
-                <span className="text-accent">{learnerCount.toLocaleString()}</span> learner{learnerCount > 1 ? "s" : ""} on this path
-              </p>
-              
-              <span className="text-text-secondary/30 text-xs">•</span>
-              
-              <Link
-                href={`/${slug}/buddies`}
-                className="text-xs font-bold text-accent hover:underline flex items-center gap-1"
-              >
-                Find study buddies &rarr;
-              </Link>
-            </div>
-          )}
+          <RoadmapDynamicIsland slug={slug} />
         </header>
 
         {enrichedContent && (
@@ -299,7 +221,6 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
         </div>
       </main>
       <Footer />
-      <WelcomeTour hasSeenTour={hasSeenTour} />
     </>
   );
 }

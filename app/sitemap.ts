@@ -3,7 +3,7 @@ import { taskflows } from "@/lib/taskflows-data";
 import { guides } from "@/lib/guides-data";
 import { bestPractices } from "@/lib/best-practices-data";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const taskflowUrls = taskflows.map((t) => ({

@@ -5,7 +5,7 @@ export async function sendNewGuideEmail(
   user: { email: string; name?: string | null },
   guide: { title: string; slug: string; description: string; readTime: number }
 ) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const html = baseTemplate({
     preheader: `New guide: ${guide.title} — ${guide.readTime} min read`,
     emailAddress: user.email,

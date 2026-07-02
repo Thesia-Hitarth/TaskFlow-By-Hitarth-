@@ -10,7 +10,7 @@ export async function sendStreakWarningEmail(
   }
 ) {
   const firstName = user.name?.split(" ")[0] ?? "there";
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   const html = baseTemplate({
     preheader: `Don't break your ${context.currentStreak}-day streak, ${firstName}!`,
