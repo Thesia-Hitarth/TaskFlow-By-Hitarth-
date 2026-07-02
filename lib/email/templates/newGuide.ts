@@ -1,10 +1,10 @@
 import { baseTemplate, ctaButton, h1 } from "./components";
 import { queueEmail } from "../queue";
 
-export async function sendNewGuideEmail(
+export function buildNewGuideEmailPayload(
   user: { email: string; name?: string | null },
   guide: { title: string; slug: string; description: string; readTime: number }
-) {
+): { to: string; subject: string; html: string; text: string } {
   const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const html = baseTemplate({
     preheader: `New guide: ${guide.title} — ${guide.readTime} min read`,
@@ -21,5 +21,13 @@ export async function sendNewGuideEmail(
   });
 
   const text = `New guide: ${guide.title}\n\n${guide.description}\n\nRead it: ${appUrl}/guides/${guide.slug}`;
-  await queueEmail({ to: user.email, subject: `New guide: ${guide.title}`, html, text });
+  return { to: user.email, subject: `New guide: ${guide.title}`, html, text };
+}
+
+export async function sendNewGuideEmail(
+  user: { email: string; name?: string | null },
+  guide: { title: string; slug: string; description: string; readTime: number }
+) {
+  const payload = buildNewGuideEmailPayload(user, guide);
+  await queueEmail(payload);
 }

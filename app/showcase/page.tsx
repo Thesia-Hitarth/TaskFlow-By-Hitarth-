@@ -6,13 +6,27 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { ArrowRight, Sparkles } from "lucide-react"
 import { ShowcaseProjectWithMeta } from "@/types/community"
+import { showcaseJsonLd } from "@/lib/seo/jsonld"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Community Showcase | TaskFlow",
+  description: "Browse and discover web development projects built by fellow learners on TaskFlow, or showcase your own portfolio.",
+}
 
 interface ShowcasePageProps {
   searchParams: Promise<{ roadmap?: string; sort?: string }>
 }
 
 export default async function ShowcasePage({ searchParams }: ShowcasePageProps) {
-  const { roadmap, sort } = await searchParams
+  const resolvedParams = await searchParams
+  const rawRoadmap = resolvedParams.roadmap
+  const rawSort = resolvedParams.sort
+
+  const roadmaps = getRoadmapMetaAll()
+  const validRoadmaps = new Set(roadmaps.map(r => r.slug))
+  const roadmap = rawRoadmap && validRoadmaps.has(rawRoadmap) ? rawRoadmap : undefined
+  const sort = rawSort === "newest" ? "newest" : "popular"
 
   const projects = await prisma.showcaseProject.findMany({
     where: {
@@ -39,10 +53,14 @@ export default async function ShowcasePage({ searchParams }: ShowcasePageProps) 
     take: 30,
   })
 
-  const roadmaps = getRoadmapMetaAll()
-
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(showcaseJsonLd()),
+        }}
+      />
       <Navbar />
       <main className="flex-1 bg-background text-text-primary py-12 px-4 sm:px-8 w-full max-w-5xl mx-auto flex flex-col transition-colors duration-200">
         
@@ -124,7 +142,7 @@ export default async function ShowcasePage({ searchParams }: ShowcasePageProps) 
         </div>
 
         {/* Projects Grid */}
-        <ShowcaseGrid projects={projects as unknown as ShowcaseProjectWithMeta[]} />
+        <ShowcaseGrid projects={projects as ShowcaseProjectWithMeta[]} />
 
       </main>
       <Footer />

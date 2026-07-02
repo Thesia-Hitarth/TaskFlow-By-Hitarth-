@@ -62,3 +62,23 @@ export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
     }))
   };
 }
+
+export function showcaseJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "TaskFlow Community Showcase",
+    "description": "Browse and discover web development projects built by fellow learners on TaskFlow.",
+    "url": "https://task-flow-by-hitarth.vercel.app/showcase"
+  };
+}
+
+export function activityJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Community Activity Feed",
+    "description": "Real-time updates of guide completions and project submissions on the TaskFlow platform.",
+    "url": "https://task-flow-by-hitarth.vercel.app/activity"
+  };
+}

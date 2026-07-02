@@ -3,29 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { isAdminUser } from "@/lib/admin/auth"
-
-export async function deleteCommentCascade(commentId: string) {
-  const replies = await prisma.comment.findMany({
-    where: { parentId: commentId },
-    select: { id: true },
-  });
-  const commentIds = [commentId, ...replies.map((r) => r.id)];
-
-  await prisma.$transaction([
-    prisma.commentVote.deleteMany({
-      where: { commentId: { in: commentIds } },
-    }),
-    prisma.commentReport.deleteMany({
-      where: { commentId: { in: commentIds } },
-    }),
-    prisma.comment.deleteMany({
-      where: { id: { in: commentIds.filter(id => id !== commentId) } },
-    }),
-    prisma.comment.delete({
-      where: { id: commentId },
-    }),
-  ]);
-}
+import { deleteCommentCascade } from "@/lib/comments/cascadeDelete"
 
 export async function hideComment(commentId: string) {
   const isAuthorized = await isAdminUser()

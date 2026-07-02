@@ -4,6 +4,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { deleteCommentCascade } from "@/lib/comments/cascadeDelete"
 
 // ── Validation schema ───────────────────────────────────────────
 const CommentSchema = z.object({
@@ -100,28 +101,7 @@ export async function createComment(input: z.infer<typeof CommentSchema>) {
   }
 }
 
-export async function deleteCommentCascade(commentId: string) {
-  const replies = await prisma.comment.findMany({
-    where: { parentId: commentId },
-    select: { id: true },
-  });
-  const commentIds = [commentId, ...replies.map((r) => r.id)];
 
-  await prisma.$transaction([
-    prisma.commentVote.deleteMany({
-      where: { commentId: { in: commentIds } },
-    }),
-    prisma.commentReport.deleteMany({
-      where: { commentId: { in: commentIds } },
-    }),
-    prisma.comment.deleteMany({
-      where: { id: { in: commentIds.filter(id => id !== commentId) } },
-    }),
-    prisma.comment.delete({
-      where: { id: commentId },
-    }),
-  ]);
-}
 
 // ── Delete a comment ─────────────────────────────────────────────
 export async function deleteComment(commentId: string) {
@@ -245,8 +225,13 @@ export async function voteComment(commentId: string) {
     }
 
     return { success: true }
-  } catch {
-    return { error: "Already voted." }
+  } catch (error) {
+    // Prisma unique constraint error code is P2002
+    if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
+      return { error: "Already voted." }
+    }
+    console.error("Failed to vote for comment:", error)
+    return { error: "Database error. Failed to cast vote." }
   }
 }
 
@@ -283,16 +268,17 @@ export async function acceptAnswer(commentId: string) {
 
   try {
     // Clear accepted status for all sibling replies under the same parent
-    await prisma.comment.updateMany({
-      where: { parentId: comment.parentId, isAccepted: true },
-      data: { isAccepted: false },
-    })
-
-    // Set accepted status on this reply
-    await prisma.comment.update({
-      where: { id: commentId },
-      data: { isAccepted: true },
-    })
+    // and set accepted status on this reply in a single transaction
+    await prisma.$transaction([
+      prisma.comment.updateMany({
+        where: { parentId: comment.parentId, isAccepted: true },
+        data: { isAccepted: false },
+      }),
+      prisma.comment.update({
+        where: { id: commentId },
+        data: { isAccepted: true },
+      }),
+    ]);
 
     if (comment.nodeTarget) {
       const [roadmapId] = comment.nodeTarget.split(":")

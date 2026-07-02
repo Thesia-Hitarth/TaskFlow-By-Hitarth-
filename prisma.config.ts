@@ -14,5 +14,4 @@ export default defineConfig({
   seed: {
     run: "node prisma/seed.js",
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any);
+} as Parameters<typeof defineConfig>[0]);

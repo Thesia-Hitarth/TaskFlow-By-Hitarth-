@@ -3,8 +3,10 @@ import Footer from "@/components/Footer"
 import { ActivityFeed } from "@/components/community/ActivityFeed"
 import { Activity } from "lucide-react"
 import { ActivityPullToRefresh } from "@/components/activity/ActivityPullToRefresh"
+import { activityJsonLd } from "@/lib/seo/jsonld"
+import { Metadata } from "next"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Recent Community Activity — TaskFlow",
   description: "See what other developers are learning and building on TaskFlow in real-time.",
 }
@@ -12,6 +14,12 @@ export const metadata = {
 export default function GlobalActivityPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(activityJsonLd()),
+        }}
+      />
       <Navbar />
       <main className="flex-1 bg-background text-text-primary py-12 px-4 sm:px-8 w-full max-w-2xl mx-auto flex flex-col transition-colors duration-200">
         

@@ -29,7 +29,9 @@ export async function createSuggestion(formData: FormData) {
   const session = await auth();
   const title = (formData.get("title") as string)?.trim();
   const description = (formData.get("description") as string)?.trim();
-  const type = (formData.get("type") as string) ?? "guide";
+  const rawType = (formData.get("type") as string) ?? "guide";
+  const VALID_TYPES = ["roadmap", "guide", "exercise", "feature"];
+  const type = VALID_TYPES.includes(rawType) ? rawType : "guide";
 
   if (!title || title.length < 5) {
     return { error: "Title must be at least 5 characters long." };

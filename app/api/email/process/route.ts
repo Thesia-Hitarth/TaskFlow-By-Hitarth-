@@ -9,12 +9,24 @@ export async function GET(request: NextRequest) {
   const isDev = process.env.NODE_ENV === "development";
   const cronSecret = process.env.CRON_SECRET;
 
-  if (!isDev) {
+  const host = request.headers.get("host") ?? "";
+  const isLocalDev = isDev && (host.startsWith("localhost") || host.startsWith("127.0.0.1"));
+
+  if (!isLocalDev) {
     const expectedHeader = cronSecret ? `Bearer ${cronSecret}` : null;
     if (!cronSecret || !authHeader || !safeCompare(authHeader, expectedHeader)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
+
+  // Retention cleanup: purge AIUsageLog records older than 90 days (resolves INFO-003 & LOW-008)
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+  prisma.aIUsageLog
+    .deleteMany({
+      where: { createdAt: { lt: ninetyDaysAgo } },
+    })
+    .catch((err) => console.error("Failed to clean up old AIUsageLog records:", err));
 
   // Fetch up to 100 pending emails at a time
   const pending = await prisma.emailQueue.findMany({

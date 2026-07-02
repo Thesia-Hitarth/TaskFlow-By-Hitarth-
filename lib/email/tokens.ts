@@ -1,12 +1,16 @@
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 
-const SECRET = process.env.AUTH_SECRET || "default_auth_secret_for_taskflow_dev_fallback_123456";
+const SECRET = process.env.AUTH_SECRET;
+if (!SECRET) {
+  throw new Error("AUTH_SECRET environment variable is required for signing email tokens.");
+}
+const tokenSecret = SECRET as string;
 
 export function generateToken(email: string, purpose: "unsubscribe" | "confirm"): string {
   const normalizedEmail = email.trim().toLowerCase();
   const timestamp = Date.now();
   const data = `${normalizedEmail}:${purpose}:${timestamp}`;
-  const hmac = createHmac("sha256", SECRET).update(data).digest("hex");
+  const hmac = createHmac("sha256", tokenSecret).update(data).digest("hex");
   return Buffer.from(`${normalizedEmail}:${timestamp}:${hmac}`).toString("base64url");
 }
 
@@ -32,8 +36,12 @@ export function verifyToken(token: string, purpose: "unsubscribe" | "confirm"): 
 
     // Verify signature
     const data = `${email}:${purpose}:${timestampStr}`;
-    const expectedSignature = createHmac("sha256", SECRET).update(data).digest("hex");
-    if (signature === expectedSignature) {
+    const expectedSignature = createHmac("sha256", tokenSecret).update(data).digest("hex");
+    
+    const sigBuf = Buffer.from(signature);
+    const expectedBuf = Buffer.from(expectedSignature);
+    
+    if (sigBuf.length === expectedBuf.length && timingSafeEqual(sigBuf, expectedBuf)) {
       return email;
     }
   } catch {

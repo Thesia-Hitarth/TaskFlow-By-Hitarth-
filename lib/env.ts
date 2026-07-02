@@ -12,6 +12,7 @@ if (typeof window === "undefined") {
     "AUTH_GITHUB_SECRET",
     "AUTH_GOOGLE_ID",
     "AUTH_GOOGLE_SECRET",
+    "GEMINI_API_KEY",
   ];
 
   const missing = required.filter((key) => !process.env[key]);

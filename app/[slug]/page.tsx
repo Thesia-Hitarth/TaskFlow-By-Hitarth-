@@ -17,6 +17,7 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+// Next.js static analysis compiler requires a literal number for page configs
 export const revalidate = 86400; // rebuild at most once per 24 hours
 
 export async function generateStaticParams() {
@@ -38,6 +39,9 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title,
     description,
+    alternates: {
+      canonical: `${siteUrl}/${slug}`,
+    },
     openGraph: {
       title,
       description,

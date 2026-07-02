@@ -36,7 +36,9 @@ export default async function DashboardPage() {
     where: { userId },
   });
   if (activityCount === 0) {
-    await syncPastActivities(userId);
+    syncPastActivities(userId).catch((err) => {
+      console.error("Failed to sync past activities in background:", err);
+    });
   }
 
   const [records, user, activeBuddies] = await prisma.$transaction([
@@ -162,7 +164,7 @@ export default async function DashboardPage() {
       <Navbar />
       <PostLoginSync />
 
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <main id="main-content" className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Top Profile Summary Card */}
         <div className="relative rounded-3xl border border-border bg-card/40 backdrop-blur-md p-6 sm:p-8 overflow-hidden mb-10 shadow-lg">
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />

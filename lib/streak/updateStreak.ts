@@ -125,21 +125,46 @@ export async function syncPastActivities(userId: string): Promise<void> {
     nodeProgress.forEach((n: { updatedAt: Date }) => addDate(n.updatedAt));
     projects.forEach((p: { createdAt: Date }) => addDate(p.createdAt));
 
-    // Sync entries
-    for (const [date, count] of Object.entries(activityMap)) {
-      const existing = await prisma.userActivity.findUnique({
-        where: { userId_date: { userId, date } },
+    // Sync entries in a batch to avoid N+1 queries
+    const dates = Object.keys(activityMap);
+    if (dates.length === 0) return;
+
+    const existingActivities = await prisma.userActivity.findMany({
+      where: {
+        userId,
+        date: { in: dates },
+      },
+    });
+
+    const existingMap = new Set(existingActivities.map((ea) => ea.date));
+    const existingCountMap = new Map(existingActivities.map((ea) => [ea.date, ea.count]));
+
+    const toCreate = dates
+      .filter((d) => !existingMap.has(d))
+      .map((d) => ({
+        userId,
+        date: d,
+        count: activityMap[d],
+      }));
+
+    if (toCreate.length > 0) {
+      await prisma.userActivity.createMany({
+        data: toCreate,
+        skipDuplicates: true,
       });
-      if (!existing) {
-        await prisma.userActivity.create({
-          data: { userId, date, count },
-        });
-      } else if (existing.count < count) {
-        await prisma.userActivity.update({
-          where: { userId_date: { userId, date } },
-          data: { count },
-        });
-      }
+    }
+
+    const updates = dates
+      .filter((d) => existingMap.has(d) && (existingCountMap.get(d) ?? 0) < activityMap[d])
+      .map((d) =>
+        prisma.userActivity.update({
+          where: { userId_date: { userId, date: d } },
+          data: { count: activityMap[d] },
+        })
+      );
+
+    if (updates.length > 0) {
+      await prisma.$transaction(updates);
     }
   } catch (error) {
     console.error("Failed to sync past activities:", error);

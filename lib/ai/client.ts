@@ -50,7 +50,9 @@ export async function generateAIResponse(params: GenerateResponseParams): Promis
     if (response.usageMetadata) {
       const inputTokens = response.usageMetadata.promptTokenCount ?? 0;
       const outputTokens = response.usageMetadata.candidatesTokenCount ?? 0;
-      console.log(`[AI Usage] feature=${params.feature ?? "unknown"} input_tokens=${inputTokens} output_tokens=${outputTokens}`);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`[AI Usage] feature=${params.feature ?? "unknown"} input_tokens=${inputTokens} output_tokens=${outputTokens}`);
+      }
 
       if (params.userId) {
         // Dynamic import to prevent circular dependencies

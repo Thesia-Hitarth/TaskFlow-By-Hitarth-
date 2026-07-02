@@ -30,10 +30,10 @@ export default async function UnsubscribePage({
 
   if (!email) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col justify-between">
+      <div className="min-h-screen bg-background text-text-primary flex flex-col justify-between transition-colors duration-200">
         <Navbar />
         <div className="text-center py-20">
-          <p className="text-slate-500">Invalid, expired or missing unsubscribe link details.</p>
+          <p className="text-text-secondary">Invalid, expired or missing unsubscribe link details.</p>
         </div>
         <Footer />
       </div>
@@ -64,11 +64,11 @@ export default async function UnsubscribePage({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col justify-between">
+    <div className="min-h-screen bg-background text-text-primary flex flex-col justify-between transition-colors duration-200">
       <Navbar />
       <div className="max-w-lg mx-auto px-6 py-16 text-center w-full">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">Email Preferences</h1>
-        <p className="text-slate-500 mb-8">Manage which emails you receive for <strong>{email}</strong>.</p>
+        <h1 className="text-2xl font-bold text-text-primary mb-3">Email Preferences</h1>
+        <p className="text-text-secondary mb-8">Manage which emails you receive for <strong>{email}</strong>.</p>
         <UnsubscribeForm tokenOrEmail={token || email} initialPreferences={userPrefs} />
       </div>
       <Footer />

@@ -9,9 +9,23 @@ import { ArrowLeft, ExternalLink, Github, ThumbsUp } from "lucide-react"
 import Link from "next/link"
 import { CommentWithAuthor } from "@/types/community"
 import { UserAvatar } from "@/components/ui/UserAvatar"
+import { Metadata } from "next"
 
 interface ShowcaseDetailPageProps {
   params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({ params }: ShowcaseDetailPageProps): Promise<Metadata> {
+  const { id } = await params
+  const project = await prisma.showcaseProject.findUnique({
+    where: { id },
+    select: { title: true, description: true },
+  })
+  if (!project) return {}
+  return {
+    title: `${project.title} — Community Showcase`,
+    description: project.description.slice(0, 160),
+  }
 }
 
 export default async function ShowcaseProjectDetailPage({ params }: ShowcaseDetailPageProps) {

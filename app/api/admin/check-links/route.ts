@@ -9,7 +9,10 @@ export async function GET(request: NextRequest) {
   const isDev = process.env.NODE_ENV === "development";
   const cronSecret = process.env.CRON_SECRET;
 
-  if (!isDev) {
+  const host = request.headers.get("host") ?? "";
+  const isLocalDev = isDev && (host.startsWith("localhost") || host.startsWith("127.0.0.1"));
+
+  if (!isLocalDev) {
     const expectedHeader = cronSecret ? `Bearer ${cronSecret}` : null;
     if (!cronSecret || !authHeader || !safeCompare(authHeader, expectedHeader)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

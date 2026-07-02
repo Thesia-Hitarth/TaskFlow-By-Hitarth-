@@ -19,7 +19,9 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
       replyTo: payload.replyTo,
     });
 
-    console.log(`[Email] Sent to ${payload.to} — MessageId: ${info.messageId}`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[Email] Sent to ${payload.to} — MessageId: ${info.messageId}`);
+    }
     return { success: true };
   } catch (error) {
     console.error(`[Email] Failed to send to ${payload.to}:`, error);

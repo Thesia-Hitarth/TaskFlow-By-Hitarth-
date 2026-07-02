@@ -77,6 +77,8 @@ model User {
   publicProfile    Boolean  @default(true)
   notifications    Notification[]
   contentRequests  ContentRequest[]
+  contentRequestVotes ContentRequestVote[]
+  resourceVotes        ResourceVote[]
   
   // Email Preferences & Subscription
   emailUnsubscribed Boolean  @default(false)
@@ -389,6 +391,7 @@ model ContentRequestVote {
   userId    String
   requestId String
   request   ContentRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([userId, requestId])
 }
 
@@ -416,6 +419,7 @@ model ResourceVote {
   nodeId     String
   resourceId String   // matches Resource.id in the config file
   createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roadmapId, nodeId, resourceId])
   @@index([roadmapId, nodeId, resourceId])

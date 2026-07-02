@@ -14,7 +14,7 @@ import { CommentSection } from "@/components/community/CommentSection";
 import { getComments } from "@/lib/actions/comments";
 import { CommentWithAuthor } from "@/types/community";
 
-export const revalidate = 0;
+
 
 // New components & helpers
 import { getGuideBySlug, getAllGuides } from "@/lib/guides/getAllGuides";
@@ -44,6 +44,9 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${guide.frontmatter.title} — task-flow-by-hitarth`,
     description: guide.frontmatter.description,
+    alternates: {
+      canonical: `${siteUrl}/guides/${slug}`,
+    },
     openGraph: {
       title: guide.frontmatter.title,
       description: guide.frontmatter.description,

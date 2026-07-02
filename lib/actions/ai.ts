@@ -104,9 +104,10 @@ export async function getAIPathRecommendation(userDescription: string) {
     return { success: false as const, error: validation.error };
   }
 
-  const { success: withinLimit } = await limitExplain(session.user.id);
+  const { success: withinLimit, reset } = await limitExplain(session.user.id);
   if (!withinLimit) {
-    return { success: false as const, error: "Hourly limit reached. Try again later." };
+    const mins = Math.ceil((reset.getTime() - Date.now()) / 60000);
+    return { success: false as const, error: `Hourly limit reached. Please try again in ${mins} minute(s).` };
   }
 
   const validRoadmapIds = getAllRoadmapIds();
@@ -209,9 +210,10 @@ export async function getAICodeReview(exerciseTitle: string, userCode: string) {
     return { success: false as const, error: "Please sign in to use AI features." };
   }
 
-  const { success: withinLimit } = await limitCodeReview(session.user.id);
+  const { success: withinLimit, reset } = await limitCodeReview(session.user.id);
   if (!withinLimit) {
-    return { success: false as const, error: "Hourly code review limit reached. Try again later." };
+    const mins = Math.ceil((reset.getTime() - Date.now()) / 60000);
+    return { success: false as const, error: `Hourly code review limit reached. Please try again in ${mins} minute(s).` };
   }
 
   const validation = validateUserInput(userCode, 3000);
@@ -265,9 +267,10 @@ export async function generateGuideQuiz(guideSlug: string) {
     }
   }
 
-  const { success: withinLimit } = await limitQuizGen(session.user.id);
+  const { success: withinLimit, reset } = await limitQuizGen(session.user.id);
   if (!withinLimit) {
-    return { success: false as const, error: "Hourly quiz generation limit reached." };
+    const mins = Math.ceil((reset.getTime() - Date.now()) / 60000);
+    return { success: false as const, error: `Hourly quiz generation limit reached. Please try again in ${mins} minute(s).` };
   }
 
   const guide = getGuideBySlug(guideSlug);
