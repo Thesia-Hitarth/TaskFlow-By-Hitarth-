@@ -1,35 +1,39 @@
-import { prisma } from "@/lib/prisma";
 import { after } from "next/server";
-import { processEmailQueue } from "./process";
+import { sendEmail } from "./send";
 
 export async function queueEmail(payload: {
   to: string;
   subject: string;
   html: string;
   text: string;
-  scheduledAt?: Date; // optional: schedule for future
+  scheduledAt?: Date; // ignored now as emails are sent directly
 }) {
-  const record = await prisma.emailQueue.create({
-    data: {
+  const runSend = () => {
+    sendEmail({
       to: payload.to,
       subject: payload.subject,
       html: payload.html,
       text: payload.text,
-      scheduledAt: payload.scheduledAt ?? new Date(),
-    },
-  });
+    }).catch((err) => {
+      console.error(`[Nodemailer after] Failed to send email to ${payload.to}:`, err);
+    });
+  };
 
   try {
     after(() => {
-      processEmailQueue().catch((err) =>
-        console.error("[after] Email queue processing error:", err)
-      );
+      runSend();
     });
   } catch {
-    processEmailQueue().catch((err) =>
-      console.error("[direct] Email queue processing error:", err)
-    );
+    // Fallback for environment/contexts where next/server after() is not supported/ready
+    runSend();
   }
 
-  return record;
+  // Return a mock object mimicking the Prisma record signature for backward compatibility
+  return {
+    id: "direct-sent",
+    status: "sent",
+    attempts: 1,
+    sentAt: new Date(),
+    ...payload,
+  };
 }
