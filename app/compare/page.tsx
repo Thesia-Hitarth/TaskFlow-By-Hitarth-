@@ -3,6 +3,12 @@ import { ComparisonPicker } from "@/components/compare/ComparisonPicker"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import Link from "next/link"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Compare Learning Paths — TaskFlow",
+  description: "Compare multiple developer learning paths side-by-side to choose the right engineering roadmap for your career.",
+}
 
 interface Props {
   searchParams: Promise<{ a?: string; b?: string; c?: string }>

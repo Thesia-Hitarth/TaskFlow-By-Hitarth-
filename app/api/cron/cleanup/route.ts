@@ -4,22 +4,12 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { safeCompare } from "@/lib/utils/crypto";
+
+import { verifyCronRequest } from "@/lib/auth/verifyCronRequest";
 
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const isDev = process.env.NODE_ENV === "development";
-  const cronSecret = process.env.CRON_SECRET;
-
-  const host = request.headers.get("host") ?? "";
-  const isLocalDev =
-    isDev && (host.startsWith("localhost") || host.startsWith("127.0.0.1"));
-
-  if (!isLocalDev) {
-    const expectedHeader = cronSecret ? `Bearer ${cronSecret}` : null;
-    if (!cronSecret || !authHeader || !safeCompare(authHeader, expectedHeader)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!verifyCronRequest(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const now = new Date();
@@ -59,6 +49,21 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error("[cleanup] Failed to clean expired sessions:", err);
     results.expiredSessionsError = String(err);
+  }
+
+  try {
+    // 4. Stale AI Cache entries (lastHitAt older than 30 days and hitCount < 5)
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const cachedDeleted = await prisma.aICache.deleteMany({
+      where: {
+        lastHitAt: { lt: thirtyDaysAgo },
+        hitCount: { lt: 5 }
+      }
+    });
+    results.aiCacheDeleted = cachedDeleted.count;
+  } catch (err) {
+    console.error("[cleanup] Failed to clean AICache:", err);
+    results.aiCacheError = String(err);
   }
 
   return NextResponse.json({ ok: true, timestamp: now.toISOString(), ...results });

@@ -6,6 +6,8 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { taskflows } from "@/lib/taskflows-data"
 
+import { httpUrlSchema } from "@/lib/utils/url"
+
 const SubmitProjectSchema = z.object({
   title: z
     .string()
@@ -15,16 +17,8 @@ const SubmitProjectSchema = z.object({
     .string()
     .min(10, "Description must be at least 10 characters.")
     .max(500, "Description cannot exceed 500 characters."),
-  liveUrl: z
-    .string()
-    .url("Live URL must be a valid URL.")
-    .optional()
-    .or(z.literal("")),
-  repoUrl: z
-    .string()
-    .url("Repository URL must be a valid URL.")
-    .optional()
-    .or(z.literal("")),
+  liveUrl: httpUrlSchema.optional().or(z.literal("")),
+  repoUrl: httpUrlSchema.optional().or(z.literal("")),
   roadmapId: z.string().min(1, "Please select a learning path."),
   tags: z.array(z.string()).max(5, "You can add at most 5 tags."),
 })

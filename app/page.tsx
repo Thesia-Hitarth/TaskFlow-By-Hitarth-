@@ -8,6 +8,12 @@ import PathRecommender from "@/components/PathRecommender";
 import { changelogEntries } from "@/lib/changelog-data";
 import { SubscribeForm } from "@/components/home/SubscribeForm";
 import { PersonalizedHomeBanner } from "@/components/home/PersonalizedHomeBanner";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "TaskFlow — Step-by-Step Learning Roadmaps for Developers",
+  description: "Browse community-created step-by-step developer roadmaps, guides, and exercises to grow your software engineering skills.",
+};
 
 // Custom inline GitHub icon to avoid lucide-react version export mismatches
 function GithubIcon({ className, ...props }: React.SVGProps<SVGSVGElement>) {

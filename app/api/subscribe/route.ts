@@ -1,17 +1,9 @@
 import { subscribeEmailAction } from "@/lib/actions/subscribe";
 import { limitSubscribe } from "@/lib/ai/rateLimit";
+import { isValidIP } from "@/lib/utils/ip";
+import { isValidOrigin } from "@/lib/auth/verifyOrigin";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function isValidIP(ip: string): boolean {
-  const ipv4Regex = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-  const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
-  return ipv4Regex.test(ip) || ipv6Regex.test(ip);
-}
-
-function getAllowedOrigin(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-}
 
 export async function POST(req: Request) {
   let ip = req.headers.get("x-real-ip")
@@ -30,11 +22,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const origin = req.headers.get("origin");
-  const allowedOrigin = getAllowedOrigin();
-
-  if (origin && origin !== allowedOrigin && allowedOrigin !== "http://localhost:3000") {
-    // If not matching, fail. But allow localhost during dev.
+  if (!isValidOrigin(req)) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 

@@ -6,6 +6,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard — TaskFlow",
+  description: "Track your progress, view earned badges, and manage your learning paths.",
+  robots: { index: false, follow: false },
+};
 import {
   GraduationCap,
   Trophy,

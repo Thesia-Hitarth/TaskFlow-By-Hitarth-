@@ -1,6 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
+import { isAdmin } from "@/lib/admin/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -116,8 +117,7 @@ export async function deleteComment(commentId: string) {
   if (!comment) return { error: "Comment not found." }
   
   // Allow the author or an admin to delete the comment
-  const isAdmin = !!process.env.ADMIN_EMAIL && session.user.email === process.env.ADMIN_EMAIL
-  if (comment.authorId !== session.user.id && !isAdmin) {
+  if (comment.authorId !== session.user.id && !isAdmin(session)) {
     return { error: "You are not authorized to delete this comment." }
   }
 
@@ -259,10 +259,7 @@ export async function acceptAnswer(commentId: string) {
   if (!parent) return { error: "Parent comment not found." }
 
   // Check if caller is author of the question (parent) or an admin
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const isAdmin = adminEmail && session.user.email?.toLowerCase() === adminEmail.toLowerCase();
-  
-  if (parent.authorId !== session.user.id && !isAdmin) {
+  if (parent.authorId !== session.user.id && !isAdmin(session)) {
     return { error: "Only the author of the question can accept an answer." }
   }
 
@@ -307,6 +304,11 @@ export async function reportComment(
 ) {
   const session = await auth()
   if (!session?.user?.id) return { error: "Not authenticated." }
+
+  const validReasons = ["spam", "harassment", "off_topic", "misinformation"];
+  if (!validReasons.includes(reason)) {
+    return { error: "Invalid report reason." };
+  }
 
   try {
     await prisma.commentReport.create({

@@ -5,6 +5,7 @@ import Footer from "@/components/Footer"
 import { CommentSection } from "@/components/community/CommentSection"
 import { getComments } from "@/lib/actions/comments"
 import { formatTimeAgo } from "@/lib/utils"
+import { isSafeHttpUrl } from "@/lib/utils/url"
 import { ArrowLeft, ExternalLink, Github, ThumbsUp } from "lucide-react"
 import Link from "next/link"
 import { CommentWithAuthor } from "@/types/community"
@@ -132,7 +133,7 @@ export default async function ShowcaseProjectDetailPage({ params }: ShowcaseDeta
           {/* URLs & Vote Summary */}
           <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-border/40">
             <div className="flex gap-4">
-              {project.liveUrl && (
+              {project.liveUrl && isSafeHttpUrl(project.liveUrl) && (
                 <a
                   href={project.liveUrl}
                   target="_blank"
@@ -143,7 +144,7 @@ export default async function ShowcaseProjectDetailPage({ params }: ShowcaseDeta
                   <span>Visit Live App</span>
                 </a>
               )}
-              {project.repoUrl && (
+              {project.repoUrl && isSafeHttpUrl(project.repoUrl) && (
                 <a
                   href={project.repoUrl}
                   target="_blank"

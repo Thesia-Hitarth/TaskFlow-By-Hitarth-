@@ -33,7 +33,6 @@ export function UserAvatar({ src, name, username, className, size = 32 }: UserAv
         width={size}
         height={size}
         onError={() => setError(true)}
-        unoptimized={true}
         className={cn("rounded-full border border-border object-cover shrink-0 select-none", className)}
         style={{ width: `${size}px`, height: `${size}px` }}
       />

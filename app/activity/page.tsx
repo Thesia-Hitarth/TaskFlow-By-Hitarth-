@@ -5,16 +5,20 @@ import { Activity } from "lucide-react"
 import { ActivityPullToRefresh } from "@/components/activity/ActivityPullToRefresh"
 import { activityJsonLd } from "@/lib/seo/jsonld"
 import { Metadata } from "next"
+import { headers } from "next/headers"
 
 export const metadata: Metadata = {
   title: "Recent Community Activity — TaskFlow",
   description: "See what other developers are learning and building on TaskFlow in real-time.",
 }
 
-export default function GlobalActivityPage() {
+export default async function GlobalActivityPage() {
+  const nonce = (await headers()).get("x-nonce") || "";
+
   return (
     <>
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(activityJsonLd()),

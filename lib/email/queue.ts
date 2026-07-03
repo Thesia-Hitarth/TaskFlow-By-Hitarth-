@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { after } from "next/server";
+import { processEmailQueue } from "./process";
 
 export async function queueEmail(payload: {
   to: string;
@@ -7,7 +9,7 @@ export async function queueEmail(payload: {
   text: string;
   scheduledAt?: Date; // optional: schedule for future
 }) {
-  return prisma.emailQueue.create({
+  const record = await prisma.emailQueue.create({
     data: {
       to: payload.to,
       subject: payload.subject,
@@ -16,4 +18,18 @@ export async function queueEmail(payload: {
       scheduledAt: payload.scheduledAt ?? new Date(),
     },
   });
+
+  try {
+    after(() => {
+      processEmailQueue().catch((err) =>
+        console.error("[after] Email queue processing error:", err)
+      );
+    });
+  } catch {
+    processEmailQueue().catch((err) =>
+      console.error("[direct] Email queue processing error:", err)
+    );
+  }
+
+  return record;
 }

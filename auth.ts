@@ -20,11 +20,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     session({ session, user }) {
-      // Attach DB user.id and username to session. Types are declared in types/next-auth.d.ts.
+      // Attach DB user.id, username and role to session. Types are declared in types/next-auth.d.ts.
       if (session.user) {
         session.user.id = user.id;
-        // user is the DB User record from PrismaAdapter — cast to access the username field
+        // user is the DB User record from PrismaAdapter — cast to access fields
         session.user.username = (user as { username?: string | null }).username ?? null;
+        session.user.role = (user as { role?: string | null }).role ?? "user";
       }
       return session;
     },

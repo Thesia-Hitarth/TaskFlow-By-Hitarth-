@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { headers } from "next/headers";
 import { taskflows } from "@/lib/taskflows-data";
 import { taskflowContent } from "@/lib/taskflow-content";
 import GuideCard from "@/components/GuideCard";
@@ -64,6 +65,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   if (!taskflow) notFound();
   const content = taskflowContent[slug];
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
+  const nonce = (await headers()).get("x-nonce") || "";
 
   // Dynamic proof and tour are deferred to the RoadmapDynamicIsland component below
 
@@ -95,6 +97,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   return (
     <>
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
@@ -107,6 +110,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
         }}
       />
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(

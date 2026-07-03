@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { Check, Trash2, Shield, Link2 } from "lucide-react"
 import { isAdmin } from "@/lib/admin/auth"
+import { isSafeHttpUrl } from "@/lib/utils/url"
 import Link from "next/link"
 
 interface PageProps {
@@ -99,13 +100,13 @@ export default async function AdminShowcasePage({ searchParams }: PageProps) {
               )}
 
               <div className="flex flex-col sm:flex-row gap-4 mb-6 text-xs font-semibold text-text-secondary">
-                {project.liveUrl && (
+                {project.liveUrl && isSafeHttpUrl(project.liveUrl) && (
                   <a href={project.liveUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-accent">
                     <Link2 size={14} />
                     <span>Live Demo: {project.liveUrl}</span>
                   </a>
                 )}
-                {project.repoUrl && (
+                {project.repoUrl && isSafeHttpUrl(project.repoUrl) && (
                   <a href={project.repoUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-accent">
                     <Link2 size={14} />
                     <span>GitHub: {project.repoUrl}</span>

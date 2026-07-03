@@ -7,16 +7,7 @@ import { NodeStatus } from "@prisma/client";
 import { updateStreak } from "@/lib/streak/updateStreak";
 import { checkAndAwardBadges } from "@/lib/badges/checkBadges";
 
-function getAllowedOrigin(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-}
-
-function isValidOrigin(req: Request): boolean {
-  const origin = req.headers.get("origin");
-  if (!origin) return true;
-  const allowedOrigin = getAllowedOrigin();
-  return origin === allowedOrigin;
-}
+import { isValidOrigin } from "@/lib/auth/verifyOrigin";
 
 const VALID_STATUSES = new Set(["pending", "in-progress", "done", "skipped"]);
 

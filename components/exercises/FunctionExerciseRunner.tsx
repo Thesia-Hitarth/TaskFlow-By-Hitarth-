@@ -228,12 +228,66 @@ function TestCaseRow({ testCase }: { testCase: TestResult }) {
   )
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 // Minimal markdown renderer for exercise descriptions
 function renderSimpleMarkdown(text: string): string {
-  return text
-    .replace(/`([^`]+)`/g, "<code class='bg-background/80 text-accent px-1.5 py-0.5 rounded border border-border/40 font-mono text-[11px]'>$1</code>")
-    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/\n\n/g, "</p><p class='mt-2'>")
-    .replace(/^/, "<p>")
-    .replace(/$/, "</p>")
+  const escaped = escapeHtml(text.trim());
+  const placeholders: string[] = [];
+
+  // 1. Fenced code blocks (```lang\n...\n```)
+  let processed = escaped.replace(/```(?:javascript|js|typescript|ts)?\n([\s\S]*?)\n```/g, (_, code) => {
+    const id = placeholders.length;
+    placeholders.push(`<pre class="bg-background/80 p-3 rounded-lg border border-border/40 font-mono text-[11px] overflow-x-auto whitespace-pre my-2">${code}</pre>`);
+    return `\n\n__PLACEHOLDER_${id}__\n\n`;
+  });
+
+  // 2. Inline code blocks (`code`)
+  processed = processed.replace(/`([^`]+)`/g, (_, code) => {
+    const id = placeholders.length;
+    placeholders.push(`<code class="bg-background/80 text-accent px-1.5 py-0.5 rounded border border-border/40 font-mono text-[11px]">${code}</code>`);
+    return `__PLACEHOLDER_${id}__`;
+  });
+
+  // 3. Bold (**bold**)
+  processed = processed.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+
+  // 4. Split by double-newlines to handle paragraphs and lists
+  const blocks = processed.split(/\n\n+/);
+  const htmlBlocks = blocks.map((block) => {
+    const trimmed = block.trim();
+    if (!trimmed) return "";
+
+    // If it is just a fenced code block placeholder
+    if (/^__PLACEHOLDER_\d+__$/.test(trimmed)) {
+      return trimmed;
+    }
+
+    // Handle list items
+    if (trimmed.startsWith("- ") || trimmed.startsWith("* ") || /^\d+\. /.test(trimmed)) {
+      const items = trimmed.split("\n").map(item => {
+        const match = item.match(/^(?:-|\*|\d+\.)\s+(.*)$/);
+        return match ? `<li class="ml-4 list-disc">${match[1]}</li>` : `<li>${item}</li>`;
+      }).join("");
+      return `<ul class="my-2 space-y-1">${items}</ul>`;
+    }
+
+    return `<p class="mt-2">${trimmed}</p>`;
+  });
+
+  let result = htmlBlocks.filter(Boolean).join("\n");
+
+  // 5. Restore placeholders
+  for (let i = 0; i < placeholders.length; i++) {
+    result = result.replaceAll(`__PLACEHOLDER_${i}__`, placeholders[i]);
+  }
+
+  return result;
 }

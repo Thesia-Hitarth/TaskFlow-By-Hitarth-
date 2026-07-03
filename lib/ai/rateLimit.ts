@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { after } from "next/server";
 
 export async function checkRateLimit(
   key: string,
@@ -9,19 +10,35 @@ export async function checkRateLimit(
   const windowStart = new Date(now.getTime() - windowSeconds * 1000);
 
   try {
-    // Fire-and-forget delete of records older than 24 hours to keep the table clean.
-    // Errors are logged (not swallowed) so table-bloat failures are visible in monitoring.
-    prisma.aIRateLimit
-      .deleteMany({
-        where: {
-          timestamp: {
-            lt: new Date(now.getTime() - 24 * 60 * 60 * 1000),
-          },
-        },
-      })
-      .catch((err) => {
-        console.error("[RateLimit] Failed to clean up old AIRateLimit records:", err);
+    // Delete of records older than 24 hours to keep the table clean.
+    // Errors are logged so table-bloat failures are visible in monitoring.
+    try {
+      after(() => {
+        prisma.aIRateLimit
+          .deleteMany({
+            where: {
+              timestamp: {
+                lt: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+              },
+            },
+          })
+          .catch((err) => {
+            console.error("[RateLimit] Failed to clean up old AIRateLimit records in after:", err);
+          });
       });
+    } catch {
+      prisma.aIRateLimit
+        .deleteMany({
+          where: {
+            timestamp: {
+              lt: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+            },
+          },
+        })
+        .catch((err) => {
+          console.error("[RateLimit] Failed to clean up old AIRateLimit records directly:", err);
+        });
+    }
 
     // Create the record first (write first to prevent race condition)
     const record = await prisma.aIRateLimit.create({
@@ -103,4 +120,8 @@ export async function limitQuizGen(userId: string) {
 
 export async function limitSubscribe(ip: string) {
   return checkRateLimit(`ip:subscribe:${ip}`, 5, 600); // 5 per 10 minutes
+}
+
+export async function limitSearch(ip: string) {
+  return checkRateLimit(`ip:search:${ip}`, 30, 60); // 30 per minute
 }

@@ -1,8 +1,8 @@
 // middleware.ts
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-
 import { isAdmin } from "@/lib/admin/auth";
+import type { Session } from "next-auth";
 
 // Use Node.js runtime to avoid Edge-incompatible APIs from jose/@auth/core
 export const runtime = "nodejs";
@@ -10,12 +10,7 @@ export const runtime = "nodejs";
 import { NextRequest } from "next/server";
 
 interface AuthRequest extends NextRequest {
-  auth?: {
-    user?: {
-      email?: string | null;
-      username?: string | null;
-    } | null;
-  } | null;
+  auth: Session | null;
 }
 
 export default auth((req: AuthRequest) => {
@@ -55,15 +50,45 @@ export default auth((req: AuthRequest) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Allow the request to proceed
-  return NextResponse.next();
+  // Generate dynamic CSP nonce
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-nonce", nonce);
+
+  // Allow the request to proceed and set headers
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  const isPlayground = pathname.startsWith("/playground");
+  const cspHeader = [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' ${isPlayground ? "'unsafe-eval'" : ""} https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vitals.vercel-insights.com`,
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "img-src 'self' data: blob: https:",
+    "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://avatars.githubusercontent.com https://lh3.googleusercontent.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+    "worker-src 'self' blob:",
+    "frame-src 'self' data: blob:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join("; ");
+
+  response.headers.set("Content-Security-Policy", cspHeader);
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+
+  return response;
 });
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/showcase/submit",
-    "/admin/:path*",
-    "/api/progress/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.json|assets|images|api/auth).*)",
   ],
 };

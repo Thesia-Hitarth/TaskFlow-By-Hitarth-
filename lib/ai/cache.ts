@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { prisma } from "@/lib/prisma";
+import { after } from "next/server";
 
 function buildCacheKey(parts: (string | undefined)[]): string {
   const normalized = parts
@@ -17,13 +18,23 @@ export async function getCachedResponse(parts: (string | undefined)[]): Promise<
     });
 
     if (cached) {
-      // Fire-and-forget hit count increment
-      prisma.aICache
-        .update({
-          where: { cacheKey },
-          data: { hitCount: { increment: 1 } },
-        })
-        .catch(() => {});
+      try {
+        after(() => {
+          prisma.aICache
+            .update({
+              where: { cacheKey },
+              data: { hitCount: { increment: 1 } },
+            })
+            .catch(() => {});
+        });
+      } catch {
+        prisma.aICache
+          .update({
+            where: { cacheKey },
+            data: { hitCount: { increment: 1 } },
+          })
+          .catch(() => {});
+      }
 
       return cached.response;
     }

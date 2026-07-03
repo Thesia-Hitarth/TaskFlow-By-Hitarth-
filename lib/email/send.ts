@@ -10,8 +10,13 @@ export interface EmailPayload {
 
 export async function sendEmail(payload: EmailPayload): Promise<{ success: boolean; error?: string }> {
   try {
+    const fromAddress = process.env.EMAIL_FROM;
+    if (!fromAddress) {
+      throw new Error("SMTP configuration error: EMAIL_FROM environment variable is not defined.");
+    }
+
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || "TaskFlow <no-reply@yourdomain.com>",
+      from: fromAddress,
       to: payload.to,
       subject: payload.subject,
       html: payload.html,

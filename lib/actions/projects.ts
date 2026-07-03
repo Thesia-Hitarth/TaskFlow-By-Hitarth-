@@ -1,9 +1,11 @@
-// lib/actions/projects.ts
 "use server"
 
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { updateStreak } from "@/lib/streak/updateStreak"
+import { getProjectById } from "@/lib/projects/getAllProjects"
+import { httpUrlSchema } from "@/lib/utils/url"
+import { z } from "zod"
 
 interface SubmissionData {
   repoUrl: string
@@ -11,9 +13,24 @@ interface SubmissionData {
   description?: string
 }
 
+const ProjectSubmissionSchema = z.object({
+  projectId: z.string().min(1, "Project ID is required.").refine(
+    (id) => getProjectById(id) !== null,
+    { message: "Invalid project ID." }
+  ),
+  repoUrl: httpUrlSchema,
+  liveUrl: httpUrlSchema.optional().or(z.literal("")),
+  description: z.string().max(1000, "Description cannot exceed 1000 characters.").optional().or(z.literal("")),
+})
+
 export async function submitProject(projectId: string, data: SubmissionData) {
   const session = await auth()
   if (!session?.user?.id) return { success: false, error: "Unauthorized" }
+
+  const parsed = ProjectSubmissionSchema.safeParse({ projectId, ...data })
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message }
+  }
 
   try {
     await prisma.projectSubmission.upsert({

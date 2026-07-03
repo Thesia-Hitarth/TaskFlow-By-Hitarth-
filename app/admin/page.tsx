@@ -5,6 +5,13 @@ import { HardestNodesTable } from "@/components/admin/HardestNodesTable";
 import { RecentSignupsTable } from "@/components/admin/RecentSignupsTable";
 import { guides } from "@/lib/guides-data";
 import { BroadcastGuideCard } from "@/components/admin/BroadcastGuideCard";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Console — TaskFlow",
+  description: "Monitor and moderate platform activities.",
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminDashboard() {
   const stats = await getPlatformStats();

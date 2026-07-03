@@ -2,21 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendStreakWarningEmail } from "@/lib/email/templates/streakWarning";
 
-import { safeCompare } from "@/lib/utils/crypto";
+import { verifyCronRequest } from "@/lib/auth/verifyCronRequest";
 
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const isDev = process.env.NODE_ENV === "development";
-  const cronSecret = process.env.CRON_SECRET;
-
-  const host = request.headers.get("host") ?? "";
-  const isLocalDev = isDev && (host.startsWith("localhost") || host.startsWith("127.0.0.1"));
-
-  if (!isLocalDev) {
-    const expectedHeader = cronSecret ? `Bearer ${cronSecret}` : null;
-    if (!cronSecret || !authHeader || !safeCompare(authHeader, expectedHeader)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!verifyCronRequest(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Two days ago string in YYYY-MM-DD

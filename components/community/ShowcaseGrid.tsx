@@ -4,6 +4,7 @@ import { useState } from "react"
 import { upvoteProject } from "@/lib/actions/showcase"
 import { ExternalLink, Github, ThumbsUp } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { isSafeHttpUrl } from "@/lib/utils/url"
 import Link from "next/link"
 import Image from "next/image"
 import { UserAvatar } from "../ui/UserAvatar"
@@ -160,7 +161,7 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
           </button>
 
           <div className="flex items-center gap-3">
-            {project.liveUrl && (
+            {project.liveUrl && isSafeHttpUrl(project.liveUrl) && (
               <a
                 href={project.liveUrl}
                 target="_blank"
@@ -171,7 +172,7 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
                 <span>Live</span>
               </a>
             )}
-            {project.repoUrl && (
+            {project.repoUrl && isSafeHttpUrl(project.repoUrl) && (
               <a
                 href={project.repoUrl}
                 target="_blank"

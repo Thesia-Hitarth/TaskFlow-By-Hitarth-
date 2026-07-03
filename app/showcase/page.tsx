@@ -4,6 +4,7 @@ import { getRoadmapMetaAll } from "@/lib/roadmaps"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { headers } from "next/headers"
 import { ArrowRight, Sparkles } from "lucide-react"
 import { ShowcaseProjectWithMeta } from "@/types/community"
 import { showcaseJsonLd } from "@/lib/seo/jsonld"
@@ -22,6 +23,7 @@ export default async function ShowcasePage({ searchParams }: ShowcasePageProps) 
   const resolvedParams = await searchParams
   const rawRoadmap = resolvedParams.roadmap
   const rawSort = resolvedParams.sort
+  const nonce = (await headers()).get("x-nonce") || "";
 
   const roadmaps = getRoadmapMetaAll()
   const validRoadmaps = new Set(roadmaps.map(r => r.slug))
@@ -56,6 +58,7 @@ export default async function ShowcasePage({ searchParams }: ShowcasePageProps) 
   return (
     <>
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(showcaseJsonLd()),

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -70,6 +71,7 @@ export default async function GuidePage({ params }: PageProps) {
 
   const { frontmatter, content } = guide;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
+  const nonce = (await headers()).get("x-nonce") || "";
 
   const session = await auth();
   if (session?.user?.id) {
@@ -109,6 +111,7 @@ export default async function GuidePage({ params }: PageProps) {
   return (
     <div className="flex flex-col min-h-screen bg-background transition-colors duration-200">
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
@@ -122,6 +125,7 @@ export default async function GuidePage({ params }: PageProps) {
         }}
       />
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(

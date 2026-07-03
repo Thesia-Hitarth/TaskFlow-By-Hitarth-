@@ -4,6 +4,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { verifyToken } from "@/lib/email/tokens";
 import { auth } from "@/auth";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Unsubscribe — TaskFlow",
+  description: "Manage your email preferences and unsubscribe from TaskFlow notifications.",
+  robots: { index: false, follow: false },
+};
 
 export default async function UnsubscribePage({
   searchParams,
