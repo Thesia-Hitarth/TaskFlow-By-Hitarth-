@@ -73,12 +73,15 @@ export function ActivityHeatmap({ activities, weeks = 12 }: ActivityHeatmapProps
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-4 bg-surface border border-border p-5 rounded-2xl shadow-md">
       <div className="flex gap-2 min-w-0 flex-1 overflow-x-auto pb-2 scrollbar-thin">
-        {/* Row Labels (Mon, Wed, Fri only, to keep it clean) */}
-        <div className="flex flex-col justify-between py-1 text-[10px] font-bold text-text-secondary select-none w-7 shrink-0 text-right pr-2">
-          <span>Sun</span>
-          <span>Tue</span>
-          <span>Thu</span>
-          <span>Sat</span>
+        {/* Row Labels (Mon, Wed, Fri aligned to rows) */}
+        <div className="flex flex-col gap-1 text-[9px] font-bold text-text-secondary select-none w-7 shrink-0 text-right pr-2">
+          <span className="h-3.5 leading-[14px]"></span>
+          <span className="h-3.5 leading-[14px]">Mon</span>
+          <span className="h-3.5 leading-[14px]"></span>
+          <span className="h-3.5 leading-[14px]">Wed</span>
+          <span className="h-3.5 leading-[14px]"></span>
+          <span className="h-3.5 leading-[14px]">Fri</span>
+          <span className="h-3.5 leading-[14px]"></span>
         </div>
 
         <div

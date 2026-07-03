@@ -18,6 +18,10 @@ export async function GET(request: Request) {
   const slug = new URL(request.url).searchParams.get("slug");
   if (!slug) return NextResponse.json({ error: "Missing slug" }, { status: 400 });
 
+  if (!taskflowContent[slug]) {
+    return NextResponse.json({ error: "Unknown slug" }, { status: 400 });
+  }
+
   const records = await prisma.userProgress.findMany({
     where: { userId: session.user.id, taskflowSlug: slug },
   });

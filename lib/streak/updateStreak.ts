@@ -34,7 +34,7 @@ export async function updateStreak(userId: string): Promise<boolean> {
 
     // Check if returned after 7+ days of absence
     const diffTime = Math.abs(new Date(today).getTime() - new Date(lastDate).getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays >= 7) {
       isComeback = true;
     }

@@ -17,7 +17,6 @@ if (typeof window === "undefined") {
     // INFO-001: Email sender must be set so emails don't bounce from a placeholder domain
     "EMAIL_FROM",
     "CRON_SECRET",
-    "NEXT_PUBLIC_SENTRY_DSN",
     ...(isProd ? ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS"] : []),
   ];
 

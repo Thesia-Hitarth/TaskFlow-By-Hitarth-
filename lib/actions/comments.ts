@@ -213,9 +213,21 @@ export async function voteComment(commentId: string) {
   }
 
   try {
-    await prisma.commentVote.create({
-      data: { commentId, userId: session.user.id, value: 1 },
-    })
+    const existing = await prisma.commentVote.findUnique({
+      where: {
+        commentId_userId: { commentId, userId: session.user.id }
+      }
+    });
+
+    if (existing) {
+      await prisma.commentVote.delete({
+        where: { id: existing.id }
+      });
+    } else {
+      await prisma.commentVote.create({
+        data: { commentId, userId: session.user.id, value: 1 },
+      });
+    }
 
     if (comment.nodeTarget) {
       const [roadmapId] = comment.nodeTarget.split(":")
@@ -227,10 +239,6 @@ export async function voteComment(commentId: string) {
 
     return { success: true }
   } catch (error) {
-    // Prisma unique constraint error code is P2002
-    if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
-      return { error: "Already voted." }
-    }
     console.error("Failed to vote for comment:", error)
     return { error: "Database error. Failed to cast vote." }
   }

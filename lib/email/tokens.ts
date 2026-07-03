@@ -1,12 +1,15 @@
 import { createHmac, timingSafeEqual } from "crypto";
 
-const SECRET = process.env.AUTH_SECRET;
-if (!SECRET) {
-  throw new Error("AUTH_SECRET environment variable is required for signing email tokens.");
+function getTokenSecret(): string {
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) {
+    throw new Error("AUTH_SECRET environment variable is required for signing email tokens.");
+  }
+  return secret;
 }
-const tokenSecret = SECRET as string;
 
 export function generateToken(email: string, purpose: "unsubscribe" | "confirm"): string {
+  const tokenSecret = getTokenSecret();
   const normalizedEmail = email.trim().toLowerCase();
   const timestamp = Date.now();
   const data = `${normalizedEmail}:${purpose}:${timestamp}`;
@@ -16,6 +19,7 @@ export function generateToken(email: string, purpose: "unsubscribe" | "confirm")
 
 export function verifyToken(token: string, purpose: "unsubscribe" | "confirm"): string | null {
   try {
+    const tokenSecret = getTokenSecret();
     const decoded = Buffer.from(token, "base64url").toString("utf-8");
     const parts = decoded.split(":");
     if (parts.length < 3) return null;

@@ -7,8 +7,18 @@ import { cookies } from "next/headers"
 import { Prisma } from "@prisma/client"
 import type { QuizAnswers, QuizRecommendation } from "@/lib/onboarding/scoreQuiz"
 
+import { z } from "zod"
+
+const QuizAnswersSchema = z.record(z.string(), z.string().or(z.array(z.string())))
+
 export async function saveQuizResult(answers: QuizAnswers, recommendation: QuizRecommendation) {
   const session = await auth()
+  
+  const parsedAnswers = QuizAnswersSchema.safeParse(answers)
+  if (!parsedAnswers.success) {
+    throw new Error("Invalid quiz answers format.")
+  }
+
   const timeCommitment = (answers["time"] as string) ?? "part-time"
 
   const result = await prisma.quizResult.create({

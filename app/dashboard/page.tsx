@@ -51,6 +51,7 @@ export default async function DashboardPage() {
   const [records, user, activeBuddies] = await prisma.$transaction([
     prisma.userProgress.findMany({
       where: { userId },
+      take: 1000,
       select: { taskflowSlug: true, nodeId: true, status: true },
     }),
     prisma.user.findUnique({

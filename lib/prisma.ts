@@ -36,9 +36,9 @@ export const prisma = client.$extends({
             err.code === "P1001" || // Cannot reach DB
             err.code === "P2024";   // Connection timeout
 
-          const isCreate = operation === "create" || operation === "createMany";
+          const isReadOperation = operation.startsWith("find") || ["count", "aggregate", "groupBy"].includes(operation);
 
-          if (isConnectionError && !isCreate && attempt < maxRetries) {
+          if (isConnectionError && isReadOperation && attempt < maxRetries) {
             console.warn(
               `[Prisma] Connection lost on ${model || "system"}.${operation}. Retrying in ${delay}ms... (Attempt ${attempt + 1}/${maxRetries})`
             );

@@ -85,6 +85,7 @@ export async function checkAndAwardBadges(
   const nightProgressPromise = !owned.has("night-owl")
     ? prisma.userProgress.findMany({
         where: { userId, status: "done" },
+        take: 1000,
         select: { updatedAt: true },
       })
     : Promise.resolve(null);

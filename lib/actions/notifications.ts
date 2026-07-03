@@ -10,6 +10,7 @@ export async function getUnreadNotifications() {
   return prisma.notification.findMany({
     where: {
       userId: session.user.id,
+      isRead: false,
     },
     orderBy: {
       createdAt: "desc",

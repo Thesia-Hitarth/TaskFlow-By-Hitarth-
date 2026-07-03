@@ -18,10 +18,8 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-// ISR: Roadmap pages are statically generated and rebuilt at most once per 24 hours.
-// The 86400 literal is intentional — Next.js static analysis requires a literal number
-// here; using a named constant or expression would disable ISR silently.
-export const revalidate = 86400;
+// Dynamic rendering since it uses request headers for CSP nonces
+export const revalidate = 0;
 
 export async function generateStaticParams() {
   return taskflows.map((tf) => ({

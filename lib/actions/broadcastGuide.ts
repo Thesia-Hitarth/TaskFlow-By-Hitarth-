@@ -70,15 +70,60 @@ export async function broadcastNewGuideAction(guideSlug: string) {
             subject: payload.subject,
             html: payload.html,
             text: payload.text,
-            status: "pending",
           };
         });
 
       if (emailsToQueue.length > 0) {
         await prisma.emailQueue.createMany({
-          data: emailsToQueue,
+          data: emailsToQueue.map((e) => ({
+            ...e,
+            status: "sent",
+            sentAt: new Date(),
+            attempts: 1,
+          })),
           skipDuplicates: true,
         });
+
+        try {
+          const { after } = await import("next/server");
+          const { sendEmail } = await import("@/lib/email/send");
+          after(async () => {
+            const SEND_BATCH_SIZE = 10;
+            for (let k = 0; k < emailsToQueue.length; k += SEND_BATCH_SIZE) {
+              const batch = emailsToQueue.slice(k, k + SEND_BATCH_SIZE);
+              await Promise.allSettled(
+                batch.map((email) =>
+                  sendEmail({
+                    to: email.to,
+                    subject: email.subject,
+                    html: email.html,
+                    text: email.text,
+                  }).catch((err) => {
+                    console.error(`[broadcast] Failed to send email to ${email.to}:`, err);
+                  })
+                )
+              );
+              if (emailsToQueue.length > SEND_BATCH_SIZE) {
+                await new Promise((r) => setTimeout(r, 200));
+              }
+            }
+          });
+        } catch {
+          const { sendEmail } = await import("@/lib/email/send");
+          Promise.allSettled(
+            emailsToQueue.map((email) =>
+              sendEmail({
+                to: email.to,
+                subject: email.subject,
+                html: email.html,
+                text: email.text,
+              }).catch((err) => {
+                console.error(`[broadcast fallback] Failed to send email to ${email.to}:`, err);
+              })
+            )
+          );
+        }
+
         totalQueued += emailsToQueue.length;
       }
 
