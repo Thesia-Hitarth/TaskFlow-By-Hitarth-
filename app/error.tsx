@@ -22,6 +22,7 @@ export default function ErrorPage({
       <p className="text-text-secondary mt-3 max-w-md font-semibold">We hit an unexpected error. Our team has been notified.</p>
       <div className="flex gap-4 mt-6">
         <button
+          type="button"
           onClick={reset}
           className="rounded-xl border border-border px-5 py-2.5 text-text-primary hover:border-accent hover:bg-card transition-all duration-200 font-semibold cursor-pointer active:scale-[0.98]"
         >

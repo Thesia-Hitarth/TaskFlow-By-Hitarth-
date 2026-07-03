@@ -4,6 +4,7 @@ if (typeof window === "undefined") {
   // NOTE: These names follow NextAuth v5's auto-env-detection convention
   // (AUTH_<PROVIDER>_ID / AUTH_<PROVIDER>_SECRET), NOT the v4-style
   // GITHUB_ID/GITHUB_SECRET. Do not rename without updating auth.ts providers config.
+  const isProd = process.env.NODE_ENV === "production";
   const required = [
     "AUTH_SECRET",
     "DATABASE_URL",
@@ -15,6 +16,9 @@ if (typeof window === "undefined") {
     "GEMINI_API_KEY",
     // INFO-001: Email sender must be set so emails don't bounce from a placeholder domain
     "EMAIL_FROM",
+    "CRON_SECRET",
+    "NEXT_PUBLIC_SENTRY_DSN",
+    ...(isProd ? ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS"] : []),
   ];
 
   const missing = required.filter((key) => !process.env[key]);

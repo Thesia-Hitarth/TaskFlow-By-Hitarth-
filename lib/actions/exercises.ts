@@ -1,13 +1,20 @@
-// lib/actions/exercises.ts
 "use server"
 
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { updateStreak } from "@/lib/streak/updateStreak"
+import { getExerciseById } from "@/lib/exercises/getAllExercises"
 
 export async function saveExerciseProgress(exerciseId: string, code: string, solved: boolean) {
   const session = await auth()
   if (!session?.user?.id) return { success: false, error: "Unauthorized" }
+
+  const exercise = getExerciseById(exerciseId)
+  if (!exercise) {
+    return { success: false, error: "Invalid exercise ID." }
+  }
+
+
 
   try {
     await prisma.exerciseAttempt.upsert({

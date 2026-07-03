@@ -40,60 +40,66 @@ export async function checkRateLimit(
         });
     }
 
-    // Create the record first (write first to prevent race condition)
-    const record = await prisma.aIRateLimit.create({
-      data: {
-        key,
-        timestamp: now,
-      },
-    });
+    const result = await prisma.$transaction(async (tx) => {
+      // Use transaction-level advisory locks for PostgreSQL if available.
+      // This prevents race conditions on sliding window counts across serverless instances.
+      const isPostgres = process.env.DATABASE_URL?.startsWith("postgres:") || process.env.DATABASE_URL?.startsWith("postgresql:");
+      if (isPostgres) {
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${key}))`;
+      }
 
-    // Count records in the current sliding window
-    const count = await prisma.aIRateLimit.count({
-      where: {
-        key,
-        timestamp: {
-          gte: windowStart,
-        },
-      },
-    });
-
-    if (count > limit) {
-      // Over limit! Delete the created record so we don't block subsequent windows artificially
-      await prisma.aIRateLimit.delete({
-        where: { id: record.id },
-      }).catch(() => {});
-
-      const oldestInWindow = await prisma.aIRateLimit.findFirst({
+      // Count records in the current sliding window
+      const count = await tx.aIRateLimit.count({
         where: {
           key,
           timestamp: {
             gte: windowStart,
           },
         },
-        orderBy: {
-          timestamp: "asc",
+      });
+
+      if (count >= limit) {
+        const oldestInWindow = await tx.aIRateLimit.findFirst({
+          where: {
+            key,
+            timestamp: {
+              gte: windowStart,
+            },
+          },
+          orderBy: {
+            timestamp: "asc",
+          },
+        });
+
+        const resetTime = oldestInWindow
+          ? new Date(oldestInWindow.timestamp.getTime() + windowSeconds * 1000)
+          : new Date(now.getTime() + windowSeconds * 1000);
+
+        return {
+          success: false,
+          limit,
+          remaining: 0,
+          reset: resetTime,
+        };
+      }
+
+      // Record this request
+      await tx.aIRateLimit.create({
+        data: {
+          key,
+          timestamp: now,
         },
       });
 
-      const resetTime = oldestInWindow
-        ? new Date(oldestInWindow.timestamp.getTime() + windowSeconds * 1000)
-        : new Date(now.getTime() + windowSeconds * 1000);
-
       return {
-        success: false,
+        success: true,
         limit,
-        remaining: 0,
-        reset: resetTime,
+        remaining: limit - (count + 1),
+        reset: new Date(now.getTime() + windowSeconds * 1000),
       };
-    }
+    });
 
-    return {
-      success: true,
-      limit,
-      remaining: limit - count,
-      reset: new Date(now.getTime() + windowSeconds * 1000),
-    };
+    return result;
   } catch (err) {
     console.error("[Rate Limit Error]", err);
     // Fail closed in case of database issues
@@ -105,6 +111,7 @@ export async function checkRateLimit(
     };
   }
 }
+
 
 export async function limitExplain(userId: string) {
   return checkRateLimit(`user:explain:${userId}`, 20, 3600); // 20 per hour

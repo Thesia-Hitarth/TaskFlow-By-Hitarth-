@@ -64,12 +64,15 @@ export async function updateStreak(userId: string): Promise<boolean> {
   if (isComeback) {
     try {
       const badgeId = "comeback-kid";
+      // Perform a safe check followed by atomic upsert to avoid duplicate record exceptions
       const existingBadge = await prisma.userBadge.findUnique({
         where: { userId_badgeId: { userId, badgeId } },
       });
       if (!existingBadge) {
-        await prisma.userBadge.create({
-          data: { userId, badgeId },
+        await prisma.userBadge.upsert({
+          where: { userId_badgeId: { userId, badgeId } },
+          update: {},
+          create: { userId, badgeId },
         });
         return true; // indicates comeback badge was awarded
       }
@@ -95,21 +98,24 @@ export async function syncPastActivities(userId: string): Promise<void> {
   try {
     const timezone = await getUserTimezone();
 
-    // 1. Fetch solved exercise attempts
+    const oneYearAgo = new Date();
+    oneYearAgo.setDate(oneYearAgo.getDate() - 365);
+
+    // 1. Fetch solved exercise attempts within 365 days
     const exercises = await prisma.exerciseAttempt.findMany({
-      where: { userId, status: "solved", solvedAt: { not: null } },
+      where: { userId, status: "solved", solvedAt: { not: null, gte: oneYearAgo } },
       select: { solvedAt: true },
     });
 
-    // 2. Fetch completed roadmap nodes
+    // 2. Fetch completed roadmap nodes within 365 days
     const nodeProgress = await prisma.userProgress.findMany({
-      where: { userId, status: "done" },
+      where: { userId, status: "done", updatedAt: { gte: oneYearAgo } },
       select: { updatedAt: true },
     });
 
-    // 3. Fetch project submissions
+    // 3. Fetch project submissions within 365 days
     const projects = await prisma.projectSubmission.findMany({
-      where: { userId },
+      where: { userId, createdAt: { gte: oneYearAgo } },
       select: { createdAt: true },
     });
 

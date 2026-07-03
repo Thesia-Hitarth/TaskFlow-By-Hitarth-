@@ -71,13 +71,18 @@ export async function updateEmailPreferences(emailOrToken: string, preferences: 
   let email = verifyToken(emailOrToken, "unsubscribe");
   if (!email) {
     const session = await auth();
-    if (!session?.user?.email || session.user.email.toLowerCase() !== emailOrToken.trim().toLowerCase()) {
+    if (!session?.user?.email) {
       return { success: false, error: "Unauthorized access to preferences." };
     }
-    email = emailOrToken;
+    email = session.user.email;
   }
 
   const normalizedEmail = email.trim().toLowerCase();
+
+  const ALLOWED_PREFS = ["weekly_digest", "new_guides", "badges", "streak"];
+  const sanitizedPreferences = Object.fromEntries(
+    Object.entries(preferences).filter(([k]) => ALLOWED_PREFS.includes(k))
+  );
 
   // Find if a user exists with this email
   const user = await prisma.user.findUnique({
@@ -88,14 +93,14 @@ export async function updateEmailPreferences(emailOrToken: string, preferences: 
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        emailPreferences: preferences,
-        emailUnsubscribed: Object.values(preferences).every(v => v === false),
+        emailPreferences: sanitizedPreferences,
+        emailUnsubscribed: Object.values(sanitizedPreferences).every(v => v === false),
       },
     });
   }
 
   // Update in Subscriber table as well
-  const isSubscribed = Object.values(preferences).some(v => v === true);
+  const isSubscribed = Object.values(sanitizedPreferences).some(v => v === true);
   await prisma.subscriber.upsert({
     where: { email: normalizedEmail },
     update: { confirmed: isSubscribed },
@@ -109,10 +114,10 @@ export async function unsubscribeAllAction(emailOrToken: string) {
   let email = verifyToken(emailOrToken, "unsubscribe");
   if (!email) {
     const session = await auth();
-    if (!session?.user?.email || session.user.email.toLowerCase() !== emailOrToken.trim().toLowerCase()) {
+    if (!session?.user?.email) {
       return { success: false, error: "Unauthorized access to preferences." };
     }
-    email = emailOrToken;
+    email = session.user.email;
   }
 
   const normalizedEmail = email.trim().toLowerCase();
@@ -143,3 +148,4 @@ export async function unsubscribeAllAction(emailOrToken: string) {
 
   return { success: true };
 }
+

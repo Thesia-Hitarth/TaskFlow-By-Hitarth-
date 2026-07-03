@@ -87,15 +87,22 @@ export async function rejectBuddyRequest(connectionId: string) {
 
     if (!conn) return { error: "Connection not found." }
 
-    if (conn.status === "active") {
+    if (conn.status === "pending") {
+      // Senders of pending requests cannot reject them; they must withdraw
+      if (conn.userId2 !== session.user.id) {
+        return { error: "Only the recipient can reject a pending buddy request." }
+      }
+      await prisma.studyBuddyConnection.delete({
+        where: { id: connectionId },
+      })
+    } else if (conn.status === "active") {
+      // Either party can end an active connection
       await prisma.studyBuddyConnection.update({
         where: { id: connectionId },
         data: { status: "ended" },
       })
     } else {
-      await prisma.studyBuddyConnection.delete({
-        where: { id: connectionId },
-      })
+      return { error: "Connection is in a status that cannot be rejected or ended." }
     }
 
     revalidatePath(`/dashboard`)
@@ -106,3 +113,34 @@ export async function rejectBuddyRequest(connectionId: string) {
     return { error: "Database error." }
   }
 }
+
+export async function withdrawBuddyRequest(connectionId: string) {
+  const session = await auth()
+  if (!session?.user?.id) return { error: "Not authenticated." }
+
+  try {
+    const conn = await prisma.studyBuddyConnection.findFirst({
+      where: {
+        id: connectionId,
+        userId1: session.user.id,
+        status: "pending",
+      },
+    })
+
+    if (!conn) {
+      return { error: "Pending request not found or not sent by you." }
+    }
+
+    await prisma.studyBuddyConnection.delete({
+      where: { id: connectionId },
+    })
+
+    revalidatePath(`/dashboard`)
+    revalidatePath(`/${conn.roadmapId}/buddies`)
+    return { success: true }
+  } catch (error) {
+    console.error("Failed to withdraw buddy request:", error)
+    return { error: "Database error." }
+  }
+}
+

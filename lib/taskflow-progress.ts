@@ -38,6 +38,13 @@ function safeDecodeBase64(str: string): string | null {
   }
 }
 
+function getStatusRank(status: NodeStatus): number {
+  if (status === "done") return 3;
+  if (status === "in-progress") return 2;
+  if (status === "skipped") return 1;
+  return 0;
+}
+
 // NOTE: next-auth v5 auto-detects AUTH_<PROVIDER>_ID and AUTH_<PROVIDER>_SECRET env vars
 // for GitHub and Google without needing explicit credentials config inside auth.ts.
 export function useTaskflowProgress(slug: string) {
@@ -79,11 +86,24 @@ export function useTaskflowProgress(slug: string) {
             );
             
             if (isValid) {
-              const count = Object.values(shared).filter(v => v === "done" || v === "in-progress").length;
-              if (count > 0) {
-                const confirmed = window.confirm(`Import ${count} completed/in-progress steps from this shared link?`);
+              // Safely merge: only import steps that upgrade the user's current progress
+              const mergedProgress = { ...baseProgress };
+              let upgradeCount = 0;
+
+              for (const [nodeId, sharedStatus] of Object.entries(shared)) {
+                const currentStatus = baseProgress[nodeId] ?? "pending";
+                if (getStatusRank(sharedStatus) > getStatusRank(currentStatus)) {
+                  mergedProgress[nodeId] = sharedStatus;
+                  if (sharedStatus === "done" || sharedStatus === "in-progress") {
+                    upgradeCount++;
+                  }
+                }
+              }
+
+              if (upgradeCount > 0) {
+                const confirmed = window.confirm(`Import ${upgradeCount} new completed/in-progress steps from this shared link?`);
                 if (confirmed) {
-                  baseProgress = { ...baseProgress, ...shared };
+                  baseProgress = mergedProgress;
 
                   if (isAuthed) {
                     await fetch("/api/progress/sync", {

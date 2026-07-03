@@ -171,6 +171,7 @@ export async function getComments(target: {
   try {
     const comments = await prisma.comment.findMany({
       where: whereClause,
+      take: 100, // Capped to prevent OOM/network load under massive activity
       include: {
         author: { select: { id: true, name: true, image: true, username: true } },
         votes: true,
@@ -310,6 +311,17 @@ export async function reportComment(
     return { error: "Invalid report reason." };
   }
 
+  // Prevent throwaway accounts (under 24 hours old with 0 progress) from reporting comments
+  const reporter = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { createdAt: true, progress: { take: 1 } },
+  });
+  if (!reporter) return { error: "Reporter not found." };
+  const ageInHours = (Date.now() - reporter.createdAt.getTime()) / (1000 * 60 * 60);
+  if (ageInHours < 24 && reporter.progress.length === 0) {
+    return { error: "Your account must be at least 24 hours old or have completed at least one taskflow node to report comments." };
+  }
+
   try {
     await prisma.commentReport.create({
       data: { commentId, reporterId: session.user.id, reason },
@@ -322,6 +334,24 @@ export async function reportComment(
         where: { id: commentId },
         data: { isHidden: true },
       })
+
+      // Notify admins of the moderation action
+      const admins = await prisma.user.findMany({
+        where: { role: "admin" },
+        select: { id: true },
+      });
+      if (admins.length > 0) {
+        await prisma.notification.createMany({
+          data: admins.map((admin) => ({
+            userId: admin.id,
+            type: "badge_earned", // general notification type mapped to DB schema string
+            title: "Comment Auto-Hidden",
+            message: `A comment was auto-hidden after receiving ${reportCount} reports.`,
+            linkUrl: "/admin/reports",
+            isRead: false,
+          })),
+        }).catch((err) => console.error("Failed to notify admins of comment auto-hide:", err));
+      }
     }
     
     const comment = await prisma.comment.findUnique({
