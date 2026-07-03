@@ -10,13 +10,14 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SkipLink } from "@/components/ui/SkipLink";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
+import { SITE_URL } from "@/lib/config/site";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = SITE_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

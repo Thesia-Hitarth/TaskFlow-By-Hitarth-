@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { headers } from "next/headers";
 import { taskflows } from "@/lib/taskflows-data";
+import { SITE_URL } from "@/lib/config/site";
 import { taskflowContent } from "@/lib/taskflow-content";
 import GuideCard from "@/components/GuideCard";
 import LazyTaskflowDiagram from "@/components/taskflow/LazyTaskflowDiagram";
@@ -32,8 +33,8 @@ export async function generateMetadata({ params }: PageProps) {
   const taskflow = taskflows.find((tf) => tf.slug === slug);
   if (!taskflow) return {};
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const title = `${taskflow.title} Taskflow 2026`;
+  const siteUrl = SITE_URL;
+  const title = `${taskflow.title} Taskflow ${new Date().getFullYear()}`;
   const description =
     taskflow.description || `Step by step guide to becoming a ${taskflow.title} developer.`;
 

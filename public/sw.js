@@ -72,7 +72,10 @@ self.addEventListener("fetch", (event) => {
         })
         .catch((err) => {
           console.error("Fetch failed; returning offline fallback if available:", err);
-          return caches.match("/");
+          if (event.request.mode === "navigate") {
+            return caches.match("/");
+          }
+          return new Response(null, { status: 404, statusText: "Offline" });
         });
     })
   );

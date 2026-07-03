@@ -65,7 +65,7 @@ export default auth((req: AuthRequest) => {
   const isPlayground = pathname.startsWith("/playground");
   const cspHeader = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' ${isPlayground ? "'unsafe-eval'" : ""} https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vitals.vercel-insights.com`,
+    `script-src 'self' 'nonce-${nonce}' 'sha256-n46vPwSWuMC0W703pBofImv82Z26xo4LXymv0E9caPk=' ${isPlayground ? "'unsafe-eval'" : ""} https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vitals.vercel-insights.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
     "font-src 'self' data: https://fonts.gstatic.com",
     "img-src 'self' data: blob: https:",

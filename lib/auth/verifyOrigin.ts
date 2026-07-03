@@ -7,7 +7,9 @@ export function isValidOrigin(req: Request): boolean {
     const method = req.method.toUpperCase();
     return method === "GET" || method === "HEAD" || method === "OPTIONS";
   }
-  return origin === SITE_URL;
+  const normalizedOrigin = origin.replace(/\/$/, "");
+  const normalizedSiteUrl = SITE_URL.replace(/\/$/, "");
+  return normalizedOrigin === normalizedSiteUrl;
 }
 
 

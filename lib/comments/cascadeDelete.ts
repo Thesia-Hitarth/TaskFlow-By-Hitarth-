@@ -1,11 +1,23 @@
 import { prisma } from "@/lib/prisma";
 
 export async function deleteCommentCascade(commentId: string): Promise<void> {
-  const replies = await prisma.comment.findMany({
-    where: { parentId: commentId },
-    select: { id: true },
-  });
-  const commentIds = [commentId, ...replies.map((r) => r.id)];
+  const allIds = new Set<string>([commentId]);
+  
+  async function collectChildren(parentId: string) {
+    const children = await prisma.comment.findMany({
+      where: { parentId },
+      select: { id: true },
+    });
+    for (const child of children) {
+      if (!allIds.has(child.id)) {
+        allIds.add(child.id);
+        await collectChildren(child.id);
+      }
+    }
+  }
+
+  await collectChildren(commentId);
+  const commentIds = Array.from(allIds);
 
   await prisma.$transaction([
     prisma.commentVote.deleteMany({

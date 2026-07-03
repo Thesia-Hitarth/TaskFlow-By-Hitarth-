@@ -51,35 +51,50 @@ export async function createComment(input: z.infer<typeof CommentSchema>) {
     finalGuideTarget = finalGuideTarget || parent.guideTarget
   }
 
-  // Rate limiting: max 10 comments per user per hour
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
-  const recentCount = await prisma.comment.count({
-    where: { authorId: session.user.id, createdAt: { gte: oneHourAgo } },
-  })
-  if (recentCount >= 10) {
-    return { error: "You're posting too fast. Please wait before commenting again." }
-  }
-
   try {
-    const comment = await prisma.comment.create({
-      data: {
-        body: input.body.trim(),
-        authorId: session.user.id,
-        nodeTarget: finalNodeTarget,
-        guideTarget: finalGuideTarget,
-        parentId: input.parentId,
-      },
-      include: {
-        author: { select: { id: true, name: true, image: true, username: true } },
-        votes: true,
-        replies: {
-          include: {
-            author: { select: { id: true, name: true, image: true, username: true } },
-            votes: true,
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
+
+    const result = await prisma.$transaction(async (tx) => {
+      const isPostgres = process.env.DATABASE_URL?.startsWith("postgres:") || process.env.DATABASE_URL?.startsWith("postgresql:")
+      if (isPostgres) {
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`comment:limit:${session.user.id}`}))`
+      }
+
+      const recentCount = await tx.comment.count({
+        where: { authorId: session.user.id, createdAt: { gte: oneHourAgo } },
+      })
+      if (recentCount >= 10) {
+        return { error: "You're posting too fast. Please wait before commenting again." }
+      }
+
+      const comment = await tx.comment.create({
+        data: {
+          body: input.body.trim(),
+          authorId: session.user.id,
+          nodeTarget: finalNodeTarget,
+          guideTarget: finalGuideTarget,
+          parentId: input.parentId,
+        },
+        include: {
+          author: { select: { id: true, name: true, image: true, username: true } },
+          votes: true,
+          replies: {
+            include: {
+              author: { select: { id: true, name: true, image: true, username: true } },
+              votes: true,
+            },
           },
         },
-      },
+      })
+
+      return { comment }
     })
+
+    if ("error" in result) {
+      return { error: result.error }
+    }
+
+    const comment = result.comment
 
     // Revalidate target paths
     if (finalNodeTarget) {
@@ -331,42 +346,56 @@ export async function reportComment(
   }
 
   try {
-    await prisma.commentReport.create({
-      data: { commentId, reporterId: session.user.id, reason },
-    })
-    
-    // Auto-hide if 10+ reports come in
-    const reportCount = await prisma.commentReport.count({ where: { commentId } })
-    if (reportCount >= 10) {
-      await prisma.comment.update({
-        where: { id: commentId },
-        data: { isHidden: true },
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Create the report
+      await tx.commentReport.create({
+        data: { commentId, reporterId: session.user.id, reason },
       })
 
-      // Notify admins of the moderation action
-      const admins = await prisma.user.findMany({
-        where: { role: "admin" },
-        select: { id: true },
-      });
-      if (admins.length > 0) {
-        await prisma.notification.createMany({
-          data: admins.map((admin) => ({
-            userId: admin.id,
-            type: "badge_earned", // general notification type mapped to DB schema string
-            title: "Comment Auto-Hidden",
-            message: `A comment was auto-hidden after receiving ${reportCount} reports.`,
-            linkUrl: "/admin/reports",
-            isRead: false,
-          })),
-        }).catch((err) => console.error("Failed to notify admins of comment auto-hide:", err));
+      // 2. Fetch the comment to see if it is already hidden
+      const comment = await tx.comment.findUnique({
+        where: { id: commentId },
+        select: { id: true, isHidden: true, nodeTarget: true, guideTarget: true },
+      })
+
+      if (!comment) {
+        throw new Error("Comment not found.")
       }
-    }
-    
-    const comment = await prisma.comment.findUnique({
-      where: { id: commentId },
-      select: { nodeTarget: true, guideTarget: true },
+
+      // 3. Count reports
+      const reportCount = await tx.commentReport.count({ where: { commentId } })
+
+      let hidIt = false
+      if (reportCount >= 10 && !comment.isHidden) {
+        await tx.comment.update({
+          where: { id: commentId },
+          data: { isHidden: true },
+        })
+        hidIt = true
+
+        // Notify admins of the moderation action
+        const admins = await tx.user.findMany({
+          where: { role: "admin" },
+          select: { id: true },
+        })
+        if (admins.length > 0) {
+          await tx.notification.createMany({
+            data: admins.map((admin) => ({
+              userId: admin.id,
+              type: "system",
+              title: "Comment Auto-Hidden",
+              message: `A comment was auto-hidden after receiving ${reportCount} reports.`,
+              linkUrl: "/admin/reports",
+              isRead: false,
+            })),
+          })
+        }
+      }
+
+      return { comment, hidIt }
     })
-    
+
+    const comment = result.comment
     if (comment) {
       if (comment.nodeTarget) {
         const [roadmapId] = comment.nodeTarget.split(":")

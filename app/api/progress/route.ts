@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { taskflowContent } from "@/lib/taskflow-content";
+import { taskflows } from "@/lib/taskflows-data";
 import { NodeStatus } from "@prisma/client";
 import { updateStreak } from "@/lib/streak/updateStreak";
 import { checkAndAwardBadges } from "@/lib/badges/checkBadges";
@@ -119,6 +120,8 @@ export async function POST(request: Request) {
         if (totalCompleted === 1) {
           const { sendFirstNodeEmail } = await import("@/lib/email/templates/milestone");
           const roadmapConfig = taskflowContent[slug];
+          const roadmapMeta = taskflows.find((t) => t.slug === slug);
+          const roadmapTitle = roadmapMeta?.title || slug.toUpperCase();
           const nodeConfig = roadmapConfig?.nodes.find((n) => n.id === nodeId);
           const nextEdge = roadmapConfig?.edges.find((e) => e.source === nodeId);
           const nextNode = nextEdge ? roadmapConfig?.nodes.find((n) => n.id === nextEdge.target) : undefined;
@@ -127,7 +130,7 @@ export async function POST(request: Request) {
             { email: dbUser.email, name: dbUser.name },
             {
               nodeLabel: nodeConfig?.label || nodeId,
-              roadmapTitle: slug.toUpperCase(),
+              roadmapTitle,
               roadmapId: slug,
               nextNodeLabel: nextNode?.label,
             }
@@ -163,9 +166,11 @@ export async function POST(request: Request) {
           });
           if (doneCount === childNodeIds.length && childNodeIds.length > 0) {
             const { sendRoadmapCompleteEmail } = await import("@/lib/email/templates/roadmapComplete");
+            const roadmapMeta = taskflows.find((t) => t.slug === slug);
+            const roadmapTitle = roadmapMeta?.title || slug.toUpperCase();
             await sendRoadmapCompleteEmail(
               { email: dbUser.email, name: dbUser.name },
-              { title: slug.toUpperCase(), id: slug }
+              { title: roadmapTitle, id: slug }
             );
           }
         }

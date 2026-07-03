@@ -1,11 +1,6 @@
-import { auth } from "@/auth"
-import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { hideComment, deleteCommentPermanently } from "@/lib/actions/admin"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
 import { AlertCircle, EyeOff, Shield } from "lucide-react"
-import { isAdmin } from "@/lib/admin/auth"
 import Link from "next/link"
 
 interface PageProps {
@@ -13,11 +8,6 @@ interface PageProps {
 }
 
 export default async function AdminReportsPage({ searchParams }: PageProps) {
-  const session = await auth()
-
-  if (!isAdmin(session)) {
-    redirect("/")
-  }
 
   const resolvedParams = await searchParams;
   const page = parseInt(resolvedParams.page || "1", 10);
@@ -63,9 +53,7 @@ export default async function AdminReportsPage({ searchParams }: PageProps) {
   }
 
   return (
-    <>
-      <Navbar />
-      <main className="flex-1 bg-background text-text-primary py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
+    <main className="flex-1 bg-background text-text-primary py-12 px-4 sm:px-8 w-full max-w-4xl mx-auto flex flex-col transition-colors duration-200">
         <div className="flex items-center gap-2 mb-6 pb-4 border-b border-border">
           <Shield size={24} className="text-red-500" />
           <h1 className="text-2xl font-black tracking-tight">Reported Comments</h1>
@@ -180,7 +168,5 @@ export default async function AdminReportsPage({ searchParams }: PageProps) {
           </div>
         )}
       </main>
-      <Footer />
-    </>
   )
 }

@@ -17,6 +17,9 @@ export async function getMoreActivityAction(
   limit = 10
 ): Promise<{ items: FeedItem[]; nextBeforeTimeISO: string | null }> {
   const beforeTime = new Date(beforeTimeISO);
+  if (isNaN(beforeTime.getTime())) {
+    return { items: [], nextBeforeTimeISO: null };
+  }
 
   // Run both queries concurrently (MED-004) and filter by publicProfile (HIGH-005)
   const [recentProgress, recentProjects] = await Promise.all([

@@ -194,7 +194,6 @@ model ProjectSubmission {
   repoUrl     String?
   liveUrl     String?
   description String?
-  upvotes     Int      @default(0)
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -385,15 +384,14 @@ model ContentRequest {
   title       String
   description String?
   type        String   // "roadmap" | "guide" | "exercise" | "feature"
-  upvotes     Int      @default(0)
   status      String   @default("open") // "open" | "in_progress" | "done" | "declined"
   createdAt   DateTime @default(now())
 
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   votes       ContentRequestVote[]
 
-  // MED-001: indexes for WHERE status != 'declined' ORDER BY upvotes DESC
-  @@index([status, upvotes])
+  // Indexes for WHERE status != 'declined'
+  @@index([status])
   @@index([userId])
 }
 

@@ -109,6 +109,9 @@ export default function SubmitProjectPage() {
                   className="w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent text-text-primary font-medium transition-all"
                   required
                 />
+                <p className="text-[10px] text-text-secondary/50 text-right mt-1 font-bold">
+                  {form.title.length}/100
+                </p>
               </div>
 
               {/* Description */}

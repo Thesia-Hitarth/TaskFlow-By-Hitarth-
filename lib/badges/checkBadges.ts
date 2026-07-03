@@ -124,7 +124,7 @@ export async function checkAndAwardBadges(
 
   // 3. 🎯 Halfway There & 💯 Completionist
   if (doneCount !== null) {
-    if (doneCount >= Math.ceil(totalSubtopics / 2)) {
+    if (totalSubtopics > 1 && doneCount >= Math.ceil(totalSubtopics / 2)) {
       await tryAward("halfway-there");
     }
     if (doneCount === totalSubtopics) {
@@ -156,7 +156,7 @@ export async function checkAndAwardBadges(
   if (progressRecords !== null) {
     const nightCompletions = progressRecords.filter((r) => {
       const hours = getLocalHours(new Date(r.updatedAt), timezone);
-      return hours >= 0 && hours < 5;
+      return hours >= 0 && hours <= 5;
     }).length;
     if (nightCompletions >= 10) {
       await tryAward("night-owl");

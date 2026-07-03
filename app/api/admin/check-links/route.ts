@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const broken: { roadmapId: string; nodeId: string; resourceId: string; url: string; status: number; error?: string }[] = [];
+  const itemsToCheck: { roadmapId: string; nodeId: string; resourceId: string; url: string }[] = [];
   const roadmapIds = getAllRoadmapIds();
 
   for (const roadmapId of roadmapIds) {
@@ -27,32 +27,43 @@ export async function GET(request: NextRequest) {
 
       for (const resource of combined) {
         if (!resource.url) continue;
+        itemsToCheck.push({
+          roadmapId,
+          nodeId: node.id,
+          resourceId: resource.id || resource.url,
+          url: resource.url,
+        });
+      }
+    }
+  }
+
+  const broken: { roadmapId: string; nodeId: string; resourceId: string; url: string; status: number; error?: string }[] = [];
+  const CONCURRENCY = 15;
+
+  for (let i = 0; i < itemsToCheck.length; i += CONCURRENCY) {
+    const batch = itemsToCheck.slice(i, i + CONCURRENCY);
+    await Promise.all(
+      batch.map(async (item) => {
         try {
-          const res = await fetch(resource.url, {
+          const res = await fetch(item.url, {
             method: "HEAD",
             signal: AbortSignal.timeout(5000), // 5s timeout per link
           });
           if (res.status >= 400) {
             broken.push({
-              roadmapId,
-              nodeId: node.id,
-              resourceId: resource.id || resource.url,
-              url: resource.url,
+              ...item,
               status: res.status,
             });
           }
         } catch (err) {
           broken.push({
-            roadmapId,
-            nodeId: node.id,
-            resourceId: resource.id || resource.url,
-            url: resource.url,
+            ...item,
             status: 0,
             error: err instanceof Error ? err.message : String(err),
           });
         }
-      }
-    }
+      })
+    );
   }
 
   if (broken.length > 0) {

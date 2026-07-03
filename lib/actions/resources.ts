@@ -2,6 +2,8 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getRoadmap } from "@/lib/roadmaps";
+import { getResourcesForNode } from "@/lib/resources";
 
 export async function voteResource(roadmapId: string, nodeId: string, resourceId: string) {
   const session = await auth();
@@ -9,6 +11,26 @@ export async function voteResource(roadmapId: string, nodeId: string, resourceId
     return { error: "Sign in to vote." };
   }
   const userId = session.user.id;
+
+  // Validate that the roadmap, node, and resource are all valid
+  const roadmap = getRoadmap(roadmapId);
+  if (!roadmap) {
+    return { error: "Invalid roadmap." };
+  }
+  const node = roadmap.nodes.find((n) => n.id === nodeId);
+  if (!node) {
+    return { error: "Invalid node." };
+  }
+  const resources = await getResourcesForNode(roadmapId, nodeId);
+  const links = node.links || [];
+  const combined = [
+    ...resources,
+    ...links.map((l) => ({ id: l.url, url: l.url })),
+  ];
+  const resourceExists = combined.some((r) => (r.id || r.url) === resourceId);
+  if (!resourceExists) {
+    return { error: "Resource not found." };
+  }
 
   try {
     const existing = await prisma.resourceVote.findUnique({

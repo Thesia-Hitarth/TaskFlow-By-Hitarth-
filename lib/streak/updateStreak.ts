@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import { getUserTimezone, getLocalDateString } from "@/lib/utils/timezone";
+import { getLocalDateString } from "@/lib/utils/timezone";
 
 export async function updateStreak(userId: string): Promise<boolean> {
-  const timezone = await getUserTimezone();
-  const today = getLocalDateString(new Date(), timezone);
+  const today = getLocalDateString(new Date(), "UTC");
 
   // 1. Upsert today's activity count
   await prisma.userActivity.upsert({
@@ -96,7 +95,7 @@ function getPreviousDay(dateStr: string): string {
 
 export async function syncPastActivities(userId: string): Promise<void> {
   try {
-    const timezone = await getUserTimezone();
+    const timezone = "UTC";
 
     const oneYearAgo = new Date();
     oneYearAgo.setDate(oneYearAgo.getDate() - 365);

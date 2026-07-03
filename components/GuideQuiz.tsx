@@ -104,11 +104,11 @@ export default function GuideQuiz({ guideSlug, questions }: Props) {
           </div>
         </div>
         <div className="space-y-6">
-          {[1, 2].map((i) => (
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="bg-card border border-border rounded-xl p-5">
               <div className="h-5 w-3/4 bg-border/60 rounded-md mb-4"></div>
               <div className="space-y-2">
-                {[1, 2, 3].map((j) => (
+                {[1, 2, 3, 4].map((j) => (
                   <div key={j} className="h-9 w-full bg-border/30 rounded-xl"></div>
                 ))}
               </div>
