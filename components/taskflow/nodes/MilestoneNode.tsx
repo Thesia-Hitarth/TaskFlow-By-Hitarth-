@@ -128,8 +128,8 @@ function MilestoneNodeComponent({ data, selected }: MilestoneNodeProps) {
 
           {/* In-progress sliding bar */}
           {status === "in-progress" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-xl overflow-hidden">
-              <div className="h-full bg-yellow-500 animate-progress-slide" />
+            <div className="absolute bottom-2 left-4 right-4 h-1 rounded-full overflow-hidden bg-yellow-500/20 pointer-events-none">
+              <div className="h-full bg-yellow-500 rounded-full animate-progress-slide" />
             </div>
           )}
 

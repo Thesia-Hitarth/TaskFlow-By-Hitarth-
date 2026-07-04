@@ -126,8 +126,8 @@ function SubtopicNodeComponent({ data, selected }: SubtopicNodeProps) {
 
           {/* In-progress sliding bar */}
           {status === "in-progress" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-lg overflow-hidden">
-              <div className="h-full bg-yellow-500 animate-progress-slide" />
+            <div className="absolute bottom-1.5 left-3 right-3 h-1 rounded-full overflow-hidden bg-yellow-500/20 pointer-events-none">
+              <div className="h-full bg-yellow-500 rounded-full animate-progress-slide" />
             </div>
           )}
         </div>
