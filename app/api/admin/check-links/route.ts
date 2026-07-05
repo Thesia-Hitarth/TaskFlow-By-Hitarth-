@@ -36,18 +36,26 @@ export async function GET(request: NextRequest) {
       }
     }
   }
+  // Shuffle links to get random coverage and slice to 100 items to avoid serverless function timeouts
+  for (let i = itemsToCheck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = itemsToCheck[i];
+    itemsToCheck[i] = itemsToCheck[j];
+    itemsToCheck[j] = temp;
+  }
+  const slicedItems = itemsToCheck.slice(0, 100);
 
   const broken: { roadmapId: string; nodeId: string; resourceId: string; url: string; status: number; error?: string }[] = [];
   const CONCURRENCY = 15;
 
-  for (let i = 0; i < itemsToCheck.length; i += CONCURRENCY) {
-    const batch = itemsToCheck.slice(i, i + CONCURRENCY);
+  for (let i = 0; i < slicedItems.length; i += CONCURRENCY) {
+    const batch = slicedItems.slice(i, i + CONCURRENCY);
     await Promise.all(
       batch.map(async (item) => {
         try {
           const res = await fetch(item.url, {
             method: "HEAD",
-            signal: AbortSignal.timeout(5000), // 5s timeout per link
+            signal: AbortSignal.timeout(3000), // 3s timeout per link
           });
           if (res.status >= 400) {
             broken.push({
@@ -67,8 +75,14 @@ export async function GET(request: NextRequest) {
   }
 
   if (broken.length > 0) {
-    console.warn(`[Link Health] ${broken.length} broken links found:`, broken);
+    console.warn(`[Link Health] ${broken.length} broken links found out of ${slicedItems.length} checked:`, broken);
   }
 
-  return NextResponse.json({ checked: "complete", brokenCount: broken.length, broken });
+  return NextResponse.json({
+    checked: "complete",
+    totalLinksFound: itemsToCheck.length,
+    checkedCount: slicedItems.length,
+    brokenCount: broken.length,
+    broken,
+  });
 }

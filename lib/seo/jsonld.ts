@@ -1,8 +1,4 @@
-// lib/seo/jsonld.ts
-// SITE_URL is derived from NEXT_PUBLIC_SITE_URL so preview and staging deployments
-// inject the correct canonical URLs into JSON-LD structured data.
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
+import { SITE_URL } from "@/lib/config/site";
 
 export function roadmapJsonLd(roadmap: { title: string; description: string; slug: string; estimatedTime?: string }) {
   return {

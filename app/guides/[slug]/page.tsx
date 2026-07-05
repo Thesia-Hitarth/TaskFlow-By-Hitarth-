@@ -25,6 +25,7 @@ import CompletionPrompt from "@/components/guides/CompletionPrompt";
 import SeriesNavigator from "@/components/guides/SeriesNavigator";
 import RelatedRoadmapLink from "@/components/guides/RelatedRoadmapLink";
 import { guideJsonLd, breadcrumbJsonLd } from "@/lib/seo/jsonld";
+import { SITE_URL } from "@/lib/config/site";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: PageProps) {
   const guide = getGuideBySlug(slug);
   if (!guide) return {};
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = SITE_URL;
 
   return {
     title: `${guide.frontmatter.title} — task-flow-by-hitarth`,
@@ -70,7 +71,7 @@ export default async function GuidePage({ params }: PageProps) {
   if (!guide) notFound();
 
   const { frontmatter, content } = guide;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
+  const siteUrl = SITE_URL;
   const nonce = (await headers()).get("x-nonce") || "";
 
   const session = await auth();

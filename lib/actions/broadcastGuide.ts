@@ -63,51 +63,37 @@ export async function broadcastNewGuideAction(guideSlug: string) {
       await prisma.emailQueue.createMany({
         data: emailsToQueue.map((e) => ({
           ...e,
-          status: "sent",
-          sentAt: new Date(),
-          attempts: 1,
+          status: "pending",
+          attempts: 0,
         })),
         skipDuplicates: true,
       });
 
+      const subject = `New guide: ${guide.title}`;
+
       try {
         const { after } = await import("next/server");
-        const { sendEmail } = await import("@/lib/email/send");
         after(async () => {
           const SEND_BATCH_SIZE = 10;
           for (let k = 0; k < emailsToQueue.length; k += SEND_BATCH_SIZE) {
             const batch = emailsToQueue.slice(k, k + SEND_BATCH_SIZE);
-            await Promise.allSettled(
-              batch.map((email) =>
-                sendEmail({
-                  to: email.to,
-                  subject: email.subject,
-                  html: email.html,
-                  text: email.text,
-                }).catch((err) => {
-                  console.error(`[broadcast] Failed to send email to ${email.to}:`, err);
-                })
-              )
-            );
+            await sendAndUpdateBatch(batch, subject);
             if (emailsToQueue.length > SEND_BATCH_SIZE) {
               await new Promise((r) => setTimeout(r, 200));
             }
           }
         });
       } catch {
-        const { sendEmail } = await import("@/lib/email/send");
-        Promise.allSettled(
-          emailsToQueue.map((email) =>
-            sendEmail({
-              to: email.to,
-              subject: email.subject,
-              html: email.html,
-              text: email.text,
-            }).catch((err) => {
-              console.error(`[broadcast fallback] Failed to send email to ${email.to}:`, err);
-            })
-          )
-        );
+        const runFallback = async () => {
+          const SEND_BATCH_SIZE = 10;
+          for (let k = 0; k < emailsToQueue.length; k += SEND_BATCH_SIZE) {
+            const batch = emailsToQueue.slice(k, k + SEND_BATCH_SIZE);
+            await sendAndUpdateBatch(batch, subject);
+          }
+        };
+        runFallback().catch((err) => {
+          console.error("[broadcast fallback execution failed]", err);
+        });
       }
     }
 
@@ -115,6 +101,68 @@ export async function broadcastNewGuideAction(guideSlug: string) {
   } catch (e) {
     console.error("Failed to broadcast new guide alert:", e);
     return { error: "Failed to broadcast notifications." };
+  }
+}
+
+async function sendAndUpdateBatch(
+  batch: { to: string; subject: string; html: string; text: string }[],
+  subject: string
+) {
+  const { sendEmail } = await import("@/lib/email/send");
+  const results = await Promise.allSettled(
+    batch.map((email) =>
+      sendEmail({
+        to: email.to,
+        subject: email.subject,
+        html: email.html,
+        text: email.text,
+      })
+    )
+  );
+
+  const succeededEmails: string[] = [];
+  const failedEmails: { to: string; error: string }[] = [];
+
+  results.forEach((res, idx) => {
+    const email = batch[idx];
+    if (res.status === "fulfilled") {
+      succeededEmails.push(email.to);
+    } else {
+      failedEmails.push({
+        to: email.to,
+        error: res.reason instanceof Error ? res.reason.message : String(res.reason),
+      });
+    }
+  });
+
+  if (succeededEmails.length > 0) {
+    await prisma.emailQueue.updateMany({
+      where: {
+        to: { in: succeededEmails },
+        subject,
+        status: "pending",
+      },
+      data: {
+        status: "sent",
+        sentAt: new Date(),
+        attempts: { increment: 1 },
+      },
+    });
+  }
+
+  for (const fail of failedEmails) {
+    await prisma.emailQueue.updateMany({
+      where: {
+        to: fail.to,
+        subject,
+        status: "pending",
+      },
+      data: {
+        status: "failed",
+        lastError: fail.error,
+        attempts: { increment: 1 },
+      },
+    });
   }
 }
 

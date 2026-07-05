@@ -63,7 +63,7 @@ export default async function TaskflowDetailPage({ params }: PageProps) {
   const taskflow = taskflows.find((tf) => tf.slug === slug);
   if (!taskflow) notFound();
   const content = taskflowContent[slug];
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://task-flow-by-hitarth.vercel.app";
+  const siteUrl = SITE_URL;
   const nonce = (await headers()).get("x-nonce") || "";
 
   // Dynamic proof and tour are deferred to the RoadmapDynamicIsland component below

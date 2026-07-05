@@ -264,43 +264,51 @@ export async function acceptAnswer(commentId: string) {
   const session = await auth()
   if (!session?.user?.id) return { error: "Not authenticated." }
 
-  const comment = await prisma.comment.findUnique({
-    where: { id: commentId },
-    select: { parentId: true, authorId: true, nodeTarget: true, guideTarget: true },
-  })
-  if (!comment) return { error: "Comment not found." }
-
-  // Must be a reply
-  if (!comment.parentId) {
-    return { error: "Only replies can be marked as accepted answers." }
-  }
-
-  // Fetch parent comment to verify ownership
-  const parent = await prisma.comment.findUnique({
-    where: { id: comment.parentId },
-    select: { authorId: true },
-  })
-  if (!parent) return { error: "Parent comment not found." }
-
-  // Check if caller is author of the question (parent) or an admin
-  if (parent.authorId !== session.user.id && !isAdmin(session)) {
-    return { error: "Only the author of the question can accept an answer." }
-  }
-
   try {
-    // Clear accepted status for all sibling replies under the same parent
-    // and set accepted status on this reply in a single transaction
-    await prisma.$transaction([
-      prisma.comment.updateMany({
+    const result = await prisma.$transaction(async (tx) => {
+      const comment = await tx.comment.findUnique({
+        where: { id: commentId },
+        select: { parentId: true, authorId: true, nodeTarget: true, guideTarget: true },
+      })
+      if (!comment) return { error: "Comment not found." }
+
+      // Must be a reply
+      if (!comment.parentId) {
+        return { error: "Only replies can be marked as accepted answers." }
+      }
+
+      // Fetch parent comment to verify ownership
+      const parent = await tx.comment.findUnique({
+        where: { id: comment.parentId },
+        select: { authorId: true },
+      })
+      if (!parent) return { error: "Parent comment not found." }
+
+      // Check if caller is author of the question (parent) or an admin
+      if (parent.authorId !== session.user.id && !isAdmin(session)) {
+        return { error: "Only the author of the question can accept an answer." }
+      }
+
+      // Clear accepted status for all sibling replies under the same parent
+      // and set accepted status on this reply in the transaction
+      await tx.comment.updateMany({
         where: { parentId: comment.parentId, isAccepted: true },
         data: { isAccepted: false },
-      }),
-      prisma.comment.update({
+      })
+
+      await tx.comment.update({
         where: { id: commentId },
         data: { isAccepted: true },
-      }),
-    ]);
+      })
 
+      return { success: true, comment }
+    })
+
+    if ("error" in result) {
+      return { error: result.error }
+    }
+
+    const comment = result.comment
     if (comment.nodeTarget) {
       const [roadmapId] = comment.nodeTarget.split(":")
       revalidatePath(`/${roadmapId}`)
@@ -347,6 +355,12 @@ export async function reportComment(
 
   try {
     const result = await prisma.$transaction(async (tx) => {
+      const isPostgres = process.env.DATABASE_URL?.startsWith("postgres:") || process.env.DATABASE_URL?.startsWith("postgresql:")
+      if (isPostgres) {
+        // Lock the comment row to prevent concurrent moderation actions / duplicate notifications
+        await tx.$executeRaw`SELECT id FROM "Comment" WHERE id = ${commentId} FOR UPDATE`
+      }
+
       // 1. Create the report
       await tx.commentReport.create({
         data: { commentId, reporterId: session.user.id, reason },
