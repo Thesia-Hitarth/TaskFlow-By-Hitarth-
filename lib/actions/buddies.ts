@@ -91,6 +91,35 @@ export async function rejectBuddyRequest(connectionId: string) {
     const conn = await prisma.studyBuddyConnection.findFirst({
       where: {
         id: connectionId,
+        userId2: session.user.id,
+        status: "pending",
+      },
+    })
+
+    if (!conn) return { error: "Pending buddy request not found or not addressed to you." }
+
+    await prisma.studyBuddyConnection.delete({
+      where: { id: connectionId },
+    })
+
+    revalidatePath(`/dashboard`)
+    revalidatePath(`/${conn.roadmapId}/buddies`)
+    return { success: true }
+  } catch (error) {
+    console.error("Failed to reject buddy request:", error)
+    return { error: "Database error." }
+  }
+}
+
+export async function endBuddyConnection(connectionId: string) {
+  const session = await auth()
+  if (!session?.user?.id) return { error: "Not authenticated." }
+
+  try {
+    const conn = await prisma.studyBuddyConnection.findFirst({
+      where: {
+        id: connectionId,
+        status: "active",
         OR: [
           { userId1: session.user.id },
           { userId2: session.user.id },
@@ -98,31 +127,30 @@ export async function rejectBuddyRequest(connectionId: string) {
       },
     })
 
-    if (!conn) return { error: "Connection not found." }
+    if (!conn) return { error: "Active buddy connection not found." }
 
-    if (conn.status === "pending") {
-      // Senders of pending requests cannot reject them; they must withdraw
-      if (conn.userId2 !== session.user.id) {
-        return { error: "Only the recipient can reject a pending buddy request." }
-      }
-      await prisma.studyBuddyConnection.delete({
-        where: { id: connectionId },
-      })
-    } else if (conn.status === "active") {
-      // Either party can end an active connection
-      await prisma.studyBuddyConnection.update({
-        where: { id: connectionId },
-        data: { status: "ended" },
-      })
-    } else {
-      return { error: "Connection is in a status that cannot be rejected or ended." }
-    }
+    await prisma.studyBuddyConnection.update({
+      where: { id: connectionId },
+      data: { status: "ended" },
+    })
+
+    // Notify the other partner that the connection has ended
+    const otherUserId = conn.userId1 === session.user.id ? conn.userId2 : conn.userId1;
+    await prisma.notification.create({
+      data: {
+        userId: otherUserId,
+        type: "buddy_ended",
+        title: "Study Buddy Connection Ended",
+        message: `${session.user.name || "A user"} has ended your study buddy connection.`,
+        isRead: false,
+      },
+    });
 
     revalidatePath(`/dashboard`)
     revalidatePath(`/${conn.roadmapId}/buddies`)
     return { success: true }
   } catch (error) {
-    console.error("Failed to reject/end buddy connection:", error)
+    console.error("Failed to end buddy connection:", error)
     return { error: "Database error." }
   }
 }

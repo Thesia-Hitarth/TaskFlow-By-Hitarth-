@@ -111,13 +111,17 @@ export async function POST(request: Request) {
       });
 
       if (dbUser && dbUser.email && !dbUser.emailUnsubscribed) {
-        const prefs = (dbUser.emailPreferences as Record<string, boolean> | null) || {};
+        const prefs = (dbUser.emailPreferences as Record<string, unknown> | null) || {};
+        const completedRoadmaps = Array.isArray(prefs.completed_roadmaps)
+          ? (prefs.completed_roadmaps as string[])
+          : [];
+        const firstNodeSent = prefs.first_node_sent === true;
 
         // 1. First completed topic milestone trigger
         const totalCompleted = await prisma.userProgress.count({
           where: { userId: session.user.id, status: "done" },
         });
-        if (totalCompleted === 1) {
+        if (totalCompleted === 1 && !firstNodeSent) {
           const { sendFirstNodeEmail } = await import("@/lib/email/templates/milestone");
           const roadmapConfig = taskflowContent[slug];
           const roadmapMeta = taskflows.find((t) => t.slug === slug);
@@ -135,6 +139,16 @@ export async function POST(request: Request) {
               nextNodeLabel: nextNode?.label,
             }
           );
+
+          await prisma.user.update({
+            where: { id: session.user.id },
+            data: {
+              emailPreferences: {
+                ...prefs,
+                first_node_sent: true,
+              },
+            },
+          });
         }
 
         // 2. New badges trigger
@@ -164,7 +178,7 @@ export async function POST(request: Request) {
               status: "done",
             },
           });
-          if (doneCount === childNodeIds.length && childNodeIds.length > 0) {
+          if (doneCount === childNodeIds.length && childNodeIds.length > 0 && !completedRoadmaps.includes(slug)) {
             const { sendRoadmapCompleteEmail } = await import("@/lib/email/templates/roadmapComplete");
             const roadmapMeta = taskflows.find((t) => t.slug === slug);
             const roadmapTitle = roadmapMeta?.title || slug.toUpperCase();
@@ -172,6 +186,16 @@ export async function POST(request: Request) {
               { email: dbUser.email, name: dbUser.name },
               { title: roadmapTitle, id: slug }
             );
+
+            await prisma.user.update({
+              where: { id: session.user.id },
+              data: {
+                emailPreferences: {
+                  ...prefs,
+                  completed_roadmaps: [...completedRoadmaps, slug],
+                },
+              },
+            });
           }
         }
       }

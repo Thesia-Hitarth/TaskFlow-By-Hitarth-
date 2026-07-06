@@ -50,6 +50,9 @@ export async function createSuggestion(formData: FormData) {
   if (title.length > 200) {
     return { error: "Title must be 200 characters or fewer." };
   }
+  if (description && description.length > 2000) {
+    return { error: "Description must be 2000 characters or fewer." };
+  }
 
   try {
     await prisma.contentRequest.create({

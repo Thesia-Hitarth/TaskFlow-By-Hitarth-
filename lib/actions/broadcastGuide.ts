@@ -6,6 +6,8 @@ import { guides } from "@/lib/guides-data";
 import { buildNewGuideEmailPayload } from "@/lib/email/templates/newGuide";
 import { isAdmin } from "@/lib/admin/auth";
 
+import { Prisma } from "@prisma/client";
+
 export async function broadcastNewGuideAction(guideSlug: string) {
   const session = await auth();
   if (!isAdmin(session)) {
@@ -21,43 +23,65 @@ export async function broadcastNewGuideAction(guideSlug: string) {
     const parsedReadTime = parseInt(guide.readingTime, 10);
     const readTimeNum = isNaN(parsedReadTime) ? 5 : parsedReadTime;
 
-    const learners = await prisma.user.findMany({
-      where: {
-        email: { not: null },
-        emailUnsubscribed: false,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        emailPreferences: true,
-      },
-      orderBy: { id: "asc" },
-    });
+    const emailsToQueue: { to: string; subject: string; html: string; text: string }[] = [];
+    let cursor: string | undefined = undefined;
+    let hasMore = true;
 
-    const emailsToQueue = learners
-      .filter((learner) => {
-        if (!learner.email) return false;
-        const prefs = (learner.emailPreferences as Record<string, boolean> | null) || {};
-        return prefs.new_guides !== false;
-      })
-      .map((learner) => {
-        const payload = buildNewGuideEmailPayload(
-          { email: learner.email!, name: learner.name },
-          {
-            title: guide.title,
-            slug: guide.slug,
-            description: guide.description,
-            readTime: readTimeNum,
-          }
-        );
-        return {
-          to: payload.to,
-          subject: payload.subject,
-          html: payload.html,
-          text: payload.text,
-        };
+    while (hasMore) {
+      const learners: {
+        id: string;
+        email: string | null;
+        name: string | null;
+        emailPreferences: Prisma.JsonValue;
+      }[] = await prisma.user.findMany({
+        where: {
+          email: { not: null },
+          emailUnsubscribed: false,
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          emailPreferences: true,
+        },
+        orderBy: { id: "asc" },
+        take: 500,
+        skip: cursor ? 1 : 0,
+        cursor: cursor ? { id: cursor } : undefined,
       });
+
+      if (learners.length === 0) {
+        hasMore = false;
+        break;
+      }
+
+      for (const learner of learners) {
+        if (!learner.email) continue;
+        const prefs = (learner.emailPreferences as Record<string, boolean> | null) || {};
+        if (prefs.new_guides !== false) {
+          const payload = buildNewGuideEmailPayload(
+            { email: learner.email, name: learner.name },
+            {
+              title: guide.title,
+              slug: guide.slug,
+              description: guide.description,
+              readTime: readTimeNum,
+            }
+          );
+          emailsToQueue.push({
+            to: payload.to,
+            subject: payload.subject,
+            html: payload.html,
+            text: payload.text,
+          });
+        }
+      }
+
+      cursor = learners[learners.length - 1].id;
+      if (learners.length < 500) {
+        hasMore = false;
+      }
+    }
 
     if (emailsToQueue.length > 0) {
       await prisma.emailQueue.createMany({

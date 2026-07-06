@@ -20,9 +20,9 @@ export async function generateMetadata({ params }: ShowcaseDetailPageProps): Pro
   const { id } = await params
   const project = await prisma.showcaseProject.findUnique({
     where: { id },
-    select: { title: true, description: true },
+    select: { title: true, description: true, isApproved: true },
   })
-  if (!project) return {}
+  if (!project || !project.isApproved) return {}
   return {
     title: `${project.title} — Community Showcase`,
     description: project.description.slice(0, 160),

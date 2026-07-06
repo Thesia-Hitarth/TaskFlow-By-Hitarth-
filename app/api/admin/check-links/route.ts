@@ -74,6 +74,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  if (itemsToCheck.length > slicedItems.length) {
+    console.warn(`[Link Health] Only checked a subset of links: ${slicedItems.length}/${itemsToCheck.length} checked. Review sitemap coverage or increase link check limit.`);
+  }
+
   if (broken.length > 0) {
     console.warn(`[Link Health] ${broken.length} broken links found out of ${slicedItems.length} checked:`, broken);
   }

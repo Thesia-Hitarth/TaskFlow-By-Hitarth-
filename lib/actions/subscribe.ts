@@ -8,9 +8,22 @@ import { baseTemplate, h1, p, ctaButton } from "@/lib/email/templates/components
 import { generateToken, verifyToken } from "@/lib/email/tokens";
 import { auth } from "@/auth";
 
+import { headers } from "next/headers";
+import { limitSubscribe } from "@/lib/ai/rateLimit";
+
 const schema = z.object({ email: z.string().email() });
 
 export async function subscribeEmailAction(email: string) {
+  try {
+    const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
+    const { success } = await limitSubscribe(ip);
+    if (!success) {
+      return { success: false, error: "Too many subscription attempts. Please try again later." };
+    }
+  } catch (error) {
+    console.error("Rate limiting failed on subscribe action:", error);
+  }
+
   const parsed = schema.safeParse({ email });
   if (!parsed.success) return { success: false, error: "Invalid email address." };
 

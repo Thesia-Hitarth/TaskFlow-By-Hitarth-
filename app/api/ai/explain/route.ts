@@ -6,6 +6,14 @@ import { getNodeDetail } from "@/lib/roadmaps";
 import { NextRequest } from "next/server";
 import { validateUserInput } from "@/lib/ai/validation";
 
+import { z } from "zod";
+
+const ExplainRequestSchema = z.object({
+  roadmapId: z.string().regex(/^[a-z0-9-]{1,50}$/),
+  nodeId: z.string().regex(/^[a-zA-Z0-9-]{1,100}$/),
+  question: z.string().min(1).max(500),
+});
+
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -18,11 +26,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { roadmapId, nodeId, question } = await req.json();
-
-    if (!roadmapId || !nodeId || !question) {
-      return new Response("Missing parameters", { status: 400 });
+    const body = await req.json();
+    const parsed = ExplainRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return new Response("Invalid parameters or input length exceeded", { status: 400 });
     }
+
+    const { roadmapId, nodeId, question } = parsed.data;
 
     const validation = validateUserInput(question, 500);
     if (!validation.valid) {

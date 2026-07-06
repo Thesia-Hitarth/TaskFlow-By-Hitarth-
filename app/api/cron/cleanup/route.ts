@@ -66,5 +66,75 @@ export async function GET(request: NextRequest) {
     results.aiCacheError = String(err);
   }
 
+  try {
+    // 5. Delete read notifications older than 90 days
+    const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+    const deletedNotifications = await prisma.notification.deleteMany({
+      where: {
+        isRead: true,
+        createdAt: { lt: ninetyDaysAgo },
+      },
+    });
+    results.notificationsDeleted = deletedNotifications.count;
+  } catch (err) {
+    console.error("[cleanup] Failed to clean notifications:", err);
+    results.notificationsError = String(err);
+  }
+
+  try {
+    // 6. Retry failed emails (attempts < 3)
+    const failedEmails = await prisma.emailQueue.findMany({
+      where: {
+        status: "failed",
+        attempts: { lt: 3 },
+      },
+      take: 20, // process in small batches to avoid timeouts
+    });
+
+    if (failedEmails.length > 0) {
+      const { sendEmail } = await import("@/lib/email/send");
+      const resultsList = await Promise.allSettled(
+        failedEmails.map((email) =>
+          sendEmail({
+            to: email.to,
+            subject: email.subject,
+            html: email.html,
+            text: email.text,
+          })
+        )
+      );
+
+      for (let i = 0; i < failedEmails.length; i++) {
+        const email = failedEmails[i];
+        const res = resultsList[i];
+        if (res.status === "fulfilled" && res.value.success) {
+          await prisma.emailQueue.update({
+            where: { id: email.id },
+            data: {
+              status: "sent",
+              sentAt: new Date(),
+              attempts: email.attempts + 1,
+            },
+          });
+        } else {
+          const errorMsg = res.status === "rejected"
+            ? String(res.reason)
+            : (res.value as { error?: string })?.error || "Unknown send error";
+          await prisma.emailQueue.update({
+            where: { id: email.id },
+            data: {
+              attempts: email.attempts + 1,
+              lastError: errorMsg,
+            },
+          });
+        }
+      }
+    }
+    results.emailsRetriedCount = failedEmails.length;
+  } catch (err) {
+    console.error("[cleanup] Failed to retry failed emails:", err);
+    results.emailsRetriedError = String(err);
+  }
+
   return NextResponse.json({ ok: true, timestamp: now.toISOString(), ...results });
 }

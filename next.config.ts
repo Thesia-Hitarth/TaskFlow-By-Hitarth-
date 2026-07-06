@@ -16,7 +16,6 @@ const sentryWebpackPluginOptions = {
   silent: true,
   widenClientFileUpload: true,
   hideSourceMaps: true,
-  disableLogger: true,
 };
 
 export default withSentryConfig(nextConfig, sentryWebpackPluginOptions);

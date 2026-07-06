@@ -80,7 +80,12 @@ export async function upvoteProject(projectId: string) {
     })
     revalidatePath("/showcase")
     return { success: true }
-  } catch {
-    return { error: "You have already upvoted this project." }
+  } catch (error) {
+    const err = error as { code?: string };
+    if (err && err.code === "P2002") {
+      return { error: "You have already upvoted this project." }
+    }
+    console.error("Failed to upvote project:", error)
+    return { error: "Database error. Failed to upvote project." }
   }
 }

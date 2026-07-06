@@ -105,6 +105,12 @@ enum NodeStatus {
   skipped
 }
 
+enum BuddyStatus {
+  pending
+  active
+  ended
+}
+
 model UserProgress {
   id           String     @id @default(cuid())
   userId       String
@@ -298,12 +304,12 @@ model CommentReport {
 
 // ── Study Buddies ─────────────────────────────────────────────────────────────
 model StudyBuddyConnection {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   userId1   String
   userId2   String
-  status    String   // "pending" | "active" | "ended"
+  status    BuddyStatus
   roadmapId String
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
 
   user1    User           @relation("BuddyUser1", fields: [userId1], references: [id], onDelete: Cascade)
   user2    User           @relation("BuddyUser2", fields: [userId2], references: [id], onDelete: Cascade)

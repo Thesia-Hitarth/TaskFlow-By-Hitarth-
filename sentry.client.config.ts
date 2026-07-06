@@ -13,4 +13,6 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
       }),
     ],
   });
+} else if (process.env.NODE_ENV !== "production") {
+  console.warn("[Sentry] NEXT_PUBLIC_SENTRY_DSN is not set. Error reporting is disabled in this environment.");
 }

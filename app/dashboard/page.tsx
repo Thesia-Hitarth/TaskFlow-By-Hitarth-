@@ -392,10 +392,10 @@ export default async function DashboardPage() {
                     <form
                       action={async (formData) => {
                         "use server"
-                        const { rejectBuddyRequest } = await import("@/lib/actions/buddies");
+                        const { endBuddyConnection } = await import("@/lib/actions/buddies");
                         const connectionId = formData.get("connectionId") as string;
                         if (connectionId) {
-                          await rejectBuddyRequest(connectionId);
+                          await endBuddyConnection(connectionId);
                         }
                       }}
                       className="shrink-0"

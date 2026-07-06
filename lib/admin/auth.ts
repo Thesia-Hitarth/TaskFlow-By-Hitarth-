@@ -16,13 +16,7 @@ interface AdminSession {
  */
 export function isAdmin(session: AdminSession | null | undefined): boolean {
   if (!session?.user) return false;
-  if (session.user.role === "admin") return true;
-
-  const adminEmail = process.env.ADMIN_EMAIL;
-  if (adminEmail && session.user.email) {
-    return session.user.email.toLowerCase() === adminEmail.trim().toLowerCase();
-  }
-  return false;
+  return session.user.role === "admin";
 }
 
 export async function isAdminUser(): Promise<boolean> {

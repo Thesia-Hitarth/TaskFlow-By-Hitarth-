@@ -16,9 +16,12 @@ if (typeof window === "undefined") {
     "GEMINI_API_KEY",
     // INFO-001: Email sender must be set so emails don't bounce from a placeholder domain
     "EMAIL_FROM",
-    "CRON_SECRET",
-    ...(isProd ? ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS"] : []),
+    ...(isProd ? ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS", "CRON_SECRET"] : []),
   ];
+
+  if (isProd && process.env.VERCEL === "1" && process.env.NEXT_PUBLIC_SITE_URL?.includes("localhost")) {
+    throw new Error("NEXT_PUBLIC_SITE_URL must not point to localhost in production");
+  }
 
   const missing = required.filter((key) => !process.env[key]);
 
