@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import type { NodeStatus } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "Dashboard — TaskFlow",
@@ -57,7 +58,38 @@ export default async function DashboardPage() {
     }
   }
 
-  let records: { taskflowSlug: string; nodeId: string; status: any }[] = [];
+  interface UserBadgeWithInfo {
+    id: string;
+    userId: string;
+    badgeId: string;
+    awardedAt: Date;
+    badge: {
+      id: string;
+      name: string;
+      description: string;
+      emoji: string;
+    };
+  }
+
+  interface BuddyInfo {
+    id: string;
+    name: string | null;
+    username: string | null;
+    image: string | null;
+    streakDays: number;
+  }
+
+  interface StudyBuddyConnectionWithUsers {
+    id: string;
+    roadmapId: string;
+    userId1: string;
+    userId2: string;
+    createdAt: Date;
+    user1: BuddyInfo;
+    user2: BuddyInfo;
+  }
+
+  let records: { taskflowSlug: string; nodeId: string; status: NodeStatus }[] = [];
   let user: {
     name: string | null;
     email: string | null;
@@ -65,9 +97,9 @@ export default async function DashboardPage() {
     streakDays: number;
     longestStreak: number;
     activities: { date: string; count: number }[];
-    badges: any[];
+    badges: UserBadgeWithInfo[];
   } | null = null;
-  let activeBuddies: any[] = [];
+  let activeBuddies: StudyBuddyConnectionWithUsers[] = [];
 
   try {
     const [fetchedRecords, fetchedUser, fetchedBuddies] = await prisma.$transaction([

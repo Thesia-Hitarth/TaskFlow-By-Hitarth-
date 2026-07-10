@@ -73,7 +73,7 @@ export default function ProgressSync() {
     <div className="fixed bottom-4 right-4 z-50 max-w-sm w-full bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl p-4 shadow-lg flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4">
       <div className="flex items-center gap-2 text-xs font-semibold">
         <span>⚠️</span>
-        <p>Sync failed for "{syncError}". Progress not saved on server.</p>
+        <p>Sync failed for &quot;{syncError}&quot;. Progress not saved on server.</p>
       </div>
       <button 
         onClick={() => setSyncError(null)}
