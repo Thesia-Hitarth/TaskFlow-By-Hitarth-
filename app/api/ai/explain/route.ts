@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { ai, AI_MODEL } from "@/lib/ai/client";
+import { getAIClient, AI_MODEL } from "@/lib/ai/client";
 import { BASE_TUTOR_PERSONA } from "@/lib/ai/prompts";
 import { limitExplain } from "@/lib/ai/rateLimit";
 import { getNodeDetail } from "@/lib/roadmaps";
@@ -52,6 +52,7 @@ Context on this topic: ${nodeDetail.whyLearn}
 Answer their question specifically in the context of this topic. Stay focused — 
 if they ask something unrelated to "${nodeDetail.label}", gently steer back. Keep response very short and concise.`;
 
+    const ai = getAIClient();
     const responseStream = await ai.models.generateContentStream({
       model: AI_MODEL,
       contents: question,

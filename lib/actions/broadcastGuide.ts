@@ -20,11 +20,21 @@ export async function broadcastNewGuideAction(guideSlug: string) {
     return { error: "Guide not found." };
   }
 
+  // BUG-L7: Deduplication guard — prevent double-broadcast if admin clicks twice
+  const dedupSubject = `New Guide: ${guide.title}`;
+  const alreadyQueued = await prisma.emailQueue.findFirst({
+    where: { subject: dedupSubject, status: { in: ["pending", "sent"] } },
+    select: { id: true },
+  });
+  if (alreadyQueued) {
+    return { error: "This guide has already been broadcast. Check the email queue." };
+  }
+
   try {
     const parsedReadTime = parseInt(guide.readingTime, 10);
     const readTimeNum = isNaN(parsedReadTime) ? 5 : parsedReadTime;
 
-    const emailsToQueue: { id: string; to: string; subject: string; html: string; text: string }[] = [];
+    let totalQueued = 0;
     let cursor: string | undefined = undefined;
     let hasMore = true;
 
@@ -56,6 +66,9 @@ export async function broadcastNewGuideAction(guideSlug: string) {
         break;
       }
 
+      // BUG-M1: Build and write this page to the DB immediately instead of
+      // accumulating all pages in memory (prevents OOM on large user bases).
+      const pageEmails: { id: string; to: string; subject: string; html: string; text: string }[] = [];
       for (const learner of learners) {
         if (!learner.email) continue;
         const prefs = (learner.emailPreferences as Record<string, boolean> | null) || {};
@@ -69,12 +82,56 @@ export async function broadcastNewGuideAction(guideSlug: string) {
               readTime: readTimeNum,
             }
           );
-          emailsToQueue.push({
+          pageEmails.push({
             id: crypto.randomUUID(),
             to: payload.to,
             subject: payload.subject,
             html: payload.html,
             text: payload.text,
+          });
+        }
+      }
+
+      if (pageEmails.length > 0) {
+        await prisma.emailQueue.createMany({
+          data: pageEmails.map((e) => ({
+            id: e.id,
+            to: e.to,
+            subject: e.subject,
+            html: e.html,
+            text: e.text,
+            status: "pending",
+            attempts: 0,
+          })),
+          skipDuplicates: true,
+        });
+
+        totalQueued += pageEmails.length;
+
+        // Send this page in the background
+        const pageCopy = [...pageEmails];
+        try {
+          const { after } = await import("next/server");
+          after(async () => {
+            const SEND_BATCH_SIZE = 10;
+            for (let k = 0; k < pageCopy.length; k += SEND_BATCH_SIZE) {
+              const batch = pageCopy.slice(k, k + SEND_BATCH_SIZE);
+              await sendAndUpdateBatch(batch);
+              if (pageCopy.length > SEND_BATCH_SIZE) {
+                await new Promise((r) => setTimeout(r, 200));
+              }
+            }
+          });
+        } catch {
+          const runFallback = async () => {
+            const SEND_BATCH_SIZE = 10;
+            for (let k = 0; k < pageCopy.length; k += SEND_BATCH_SIZE) {
+              const batch = pageCopy.slice(k, k + SEND_BATCH_SIZE);
+              await sendAndUpdateBatch(batch);
+            }
+          };
+          runFallback().catch((err) => {
+            console.error("[broadcast fallback execution failed]", err);
           });
         }
       }
@@ -85,47 +142,7 @@ export async function broadcastNewGuideAction(guideSlug: string) {
       }
     }
 
-    if (emailsToQueue.length > 0) {
-      await prisma.emailQueue.createMany({
-        data: emailsToQueue.map((e) => ({
-          id: e.id,
-          to: e.to,
-          subject: e.subject,
-          html: e.html,
-          text: e.text,
-          status: "pending",
-          attempts: 0,
-        })),
-        skipDuplicates: true,
-      });
-
-      try {
-        const { after } = await import("next/server");
-        after(async () => {
-          const SEND_BATCH_SIZE = 10;
-          for (let k = 0; k < emailsToQueue.length; k += SEND_BATCH_SIZE) {
-            const batch = emailsToQueue.slice(k, k + SEND_BATCH_SIZE);
-            await sendAndUpdateBatch(batch);
-            if (emailsToQueue.length > SEND_BATCH_SIZE) {
-              await new Promise((r) => setTimeout(r, 200));
-            }
-          }
-        });
-      } catch {
-        const runFallback = async () => {
-          const SEND_BATCH_SIZE = 10;
-          for (let k = 0; k < emailsToQueue.length; k += SEND_BATCH_SIZE) {
-            const batch = emailsToQueue.slice(k, k + SEND_BATCH_SIZE);
-            await sendAndUpdateBatch(batch);
-          }
-        };
-        runFallback().catch((err) => {
-          console.error("[broadcast fallback execution failed]", err);
-        });
-      }
-    }
-
-    return { success: true, count: emailsToQueue.length };
+    return { success: true, count: totalQueued };
   } catch (e) {
     console.error("Failed to broadcast new guide alert:", e);
     return { error: "Failed to broadcast notifications." };

@@ -98,15 +98,13 @@ export async function POST(request: Request) {
     });
   }
 
-  let badgesAwarded: string[] = [];
-  if (dbStatus === "done") {
+  // Return immediately — all side-effects run after the response is sent
+  // so the client never waits on streak updates, badge checks, or email sends.
+  const { after } = await import("next/server");
+  after(async () => {
     try {
-      const awardedComeback = await updateStreak(session.user.id);
-      if (awardedComeback) {
-        badgesAwarded.push("comeback-kid");
-      }
-      const newBadges = await checkAndAwardBadges(session.user.id, slug);
-      badgesAwarded = [...badgesAwarded, ...newBadges];
+      await updateStreak(session.user.id);
+      await checkAndAwardBadges(session.user.id, slug);
 
       // Fetch user's actual email and preferences
       const dbUser = await prisma.user.findUnique({
@@ -133,7 +131,7 @@ export async function POST(request: Request) {
           const nodeConfig = roadmapConfig?.nodes.find((n) => n.id === nodeId);
           const nextEdge = roadmapConfig?.edges.find((e) => e.source === nodeId);
           const nextNode = nextEdge ? roadmapConfig?.nodes.find((n) => n.id === nextEdge.target) : undefined;
-          
+
           await sendFirstNodeEmail(
             { email: dbUser.email, name: dbUser.name },
             {
@@ -146,31 +144,11 @@ export async function POST(request: Request) {
 
           await prisma.user.update({
             where: { id: session.user.id },
-            data: {
-              emailPreferences: {
-                ...prefs,
-                first_node_sent: true,
-              },
-            },
+            data: { emailPreferences: { ...prefs, first_node_sent: true } },
           });
         }
 
-        // 2. New badges trigger
-        if (badgesAwarded.length > 0 && prefs.badges !== false) {
-          const { sendBadgeEarnedEmail } = await import("@/lib/email/templates/badgeEarned");
-          const { BADGE_DEFINITIONS } = await import("@/lib/badges/definitions");
-          for (const badgeId of badgesAwarded) {
-            const badge = BADGE_DEFINITIONS[badgeId];
-            if (badge) {
-              await sendBadgeEarnedEmail(
-                { email: dbUser.email, name: dbUser.name },
-                badge
-              );
-            }
-          }
-        }
-
-        // 3. Roadmap complete trigger
+        // 2. Roadmap complete trigger
         const roadmapConfig = taskflowContent[slug];
         if (roadmapConfig) {
           const childNodeIds = roadmapConfig.nodes.filter((n) => n.kind === "subtopic").map((n) => n.id);
@@ -190,7 +168,6 @@ export async function POST(request: Request) {
               { email: dbUser.email, name: dbUser.name },
               { title: roadmapTitle, id: slug }
             );
-
             await prisma.user.update({
               where: { id: session.user.id },
               data: {
@@ -204,11 +181,13 @@ export async function POST(request: Request) {
         }
       }
     } catch (e) {
-      console.error("Failed to run streak/badge check or send trigger email:", e);
+      console.error("[progress/after] Failed to run streak/badge check or send trigger email:", e);
     }
-  }
+  });
 
-  return NextResponse.json({ ok: true, badgesAwarded });
+  // NOTE: badgesAwarded is always [] here because badges are now computed in after().
+  // The client will see newly-earned badges on the next page load / refresh.
+  return NextResponse.json({ ok: true, badgesAwarded: [] });
 }
 
 export async function DELETE(request: Request) {

@@ -14,14 +14,19 @@ import { limitSubscribe } from "@/lib/ai/rateLimit";
 const schema = z.object({ email: z.string().email() });
 
 export async function subscribeEmailAction(email: string) {
+  // Rate limiting — separated from the main try/catch so a DB error does not
+  // silently bypass the limit (was: early-return inside try swallowed by catch).
+  let rateLimitPassed = true;
   try {
     const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
     const { success } = await limitSubscribe(ip);
-    if (!success) {
-      return { success: false, error: "Too many subscription attempts. Please try again later." };
-    }
+    rateLimitPassed = success;
   } catch (error) {
-    console.error("Rate limiting failed on subscribe action:", error);
+    // DB error: fail-open so transient outages don't block legitimate users.
+    console.error("Rate limiting check failed on subscribe action:", error);
+  }
+  if (!rateLimitPassed) {
+    return { success: false, error: "Too many subscription attempts. Please try again later." };
   }
 
   const parsed = schema.safeParse({ email });

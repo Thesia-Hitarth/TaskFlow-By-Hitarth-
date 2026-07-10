@@ -16,24 +16,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid or expired confirmation token" }, { status: 400 });
     }
 
-    // Update in database
+    // Update subscriber table
     await prisma.subscriber.updateMany({
       where: { email },
       data: { confirmed: true },
     });
 
-    // Also update any matching User record if they exist
+    // For any matching User, only clear the unsubscribed flag.
+    // Do NOT overwrite emailPreferences — that would reset custom category opt-outs (BUG-M8).
     await prisma.user.updateMany({
       where: { email },
-      data: {
-        emailUnsubscribed: false,
-        emailPreferences: {
-          weekly_digest: true,
-          new_guides: true,
-          badges: true,
-          streak: true,
-        },
-      },
+      data: { emailUnsubscribed: false },
     });
 
     const appUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";

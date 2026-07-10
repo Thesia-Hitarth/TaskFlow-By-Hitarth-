@@ -1,9 +1,25 @@
 import { cookies } from "next/headers";
 
+/**
+ * Validates that a string is a recognized IANA timezone identifier.
+ * Unknown or attacker-supplied values are rejected and fall back to UTC.
+ */
+function isValidIANATimezone(tz: string): boolean {
+  if (!tz || tz.length > 64) return false;
+  try {
+    Intl.DateTimeFormat(undefined, { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function getUserTimezone(): Promise<string> {
   try {
     const cookieStore = await cookies();
-    return cookieStore.get("user-timezone")?.value || "UTC";
+    const tz = cookieStore.get("user-timezone")?.value;
+    if (tz && isValidIANATimezone(tz)) return tz;
+    return "UTC";
   } catch {
     return "UTC";
   }

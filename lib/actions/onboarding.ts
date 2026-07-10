@@ -49,34 +49,38 @@ function verifySignedId(signed: string): string | null {
 export async function saveQuizResult(answers: QuizAnswers, recommendation: QuizRecommendation) {
   const session = await auth()
 
-  // Rate limiting based on IP
+  // Rate limiting based on IP — check separately so a DB failure does not
+  // silently bypass the limit (was: throw inside try swallowed by catch).
+  let rateLimitPassed = true;
   try {
     const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
     const { success } = await checkRateLimit(`ip:savequiz:${ip}`, 10, 3600); // 10 quiz saves per hour per IP
-    if (!success) {
-      throw new Error("Too many quiz submissions. Please try again later.");
-    }
+    rateLimitPassed = success;
   } catch (err) {
-    console.error("Rate limiting failed on quiz save:", err);
+    // DB error: fail-open so a transient outage doesn't block users.
+    console.error("Rate limiting check failed on quiz save:", err);
   }
-  
+  if (!rateLimitPassed) {
+    return { error: "Too many quiz submissions. Please try again later." };
+  }
+
   const parsedAnswers = QuizAnswersSchema.safeParse(answers)
   if (!parsedAnswers.success) {
-    throw new Error("Invalid quiz answers format.")
+    return { error: "Invalid quiz answers format." }
   }
 
   const parsedRecommendation = RecommendationSchema.safeParse(recommendation)
   if (!parsedRecommendation.success) {
-    throw new Error("Invalid quiz recommendation format.")
+    return { error: "Invalid quiz recommendation format." }
   }
 
   // Validate roadmap IDs
   const validRoadmapIds = new Set(getAllRoadmapIds())
   if (!validRoadmapIds.has(recommendation.primary.roadmapId)) {
-    throw new Error("Invalid primary roadmap ID.")
+    return { error: "Invalid primary roadmap ID." }
   }
   if (recommendation.secondary && !validRoadmapIds.has(recommendation.secondary.roadmapId)) {
-    throw new Error("Invalid secondary roadmap ID.")
+    return { error: "Invalid secondary roadmap ID." }
   }
 
   const timeCommitment = (answers["time"] as string) ?? "part-time"

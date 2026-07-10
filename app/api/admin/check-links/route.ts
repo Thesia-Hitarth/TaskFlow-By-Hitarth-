@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllRoadmapIds, getRoadmap } from "@/lib/roadmaps";
 import { getResourcesForNode } from "@/lib/resources";
-
 import { verifyCronRequest } from "@/lib/auth/verifyCronRequest";
+import { isAdminUser } from "@/lib/admin/auth";
 
 export async function GET(request: NextRequest) {
-  if (!verifyCronRequest(request)) {
+  // Allow access if: authenticated admin (browser) OR valid cron secret (Vercel scheduler)
+  const [adminOk, cronOk] = await Promise.all([
+    isAdminUser(),
+    Promise.resolve(verifyCronRequest(request)),
+  ]);
+  if (!adminOk && !cronOk) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

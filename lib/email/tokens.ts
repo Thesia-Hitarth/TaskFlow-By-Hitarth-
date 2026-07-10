@@ -1,4 +1,5 @@
-import { createHmac, timingSafeEqual } from "crypto";
+import { createHmac } from "crypto";
+import { safeCompare } from "@/lib/utils/crypto";
 
 function getTokenSecret(): string {
   const secret = process.env.AUTH_SECRET;
@@ -33,19 +34,17 @@ export function verifyToken(token: string, purpose: "unsubscribe" | "confirm"): 
 
     // Check expiry
     const now = Date.now();
-    const expiry = purpose === "confirm" ? 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000; // 24 hours for confirm, 30 days for unsubscribe
+    const expiry = purpose === "confirm" ? 72 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000; // 72 hours for confirm, 30 days for unsubscribe
     if (now - timestamp > expiry) {
       return null;
     }
 
-    // Verify signature
+    // Verify signature using constant-time comparison via safeCompare()
+    // (avoids the hex/UTF-8 encoding mismatch of raw Buffer.from(hexString) comparisons)
     const data = `${email}:${purpose}:${timestampStr}`;
     const expectedSignature = createHmac("sha256", tokenSecret).update(data).digest("hex");
-    
-    const sigBuf = Buffer.from(signature);
-    const expectedBuf = Buffer.from(expectedSignature);
-    
-    if (sigBuf.length === expectedBuf.length && timingSafeEqual(sigBuf, expectedBuf)) {
+
+    if (safeCompare(signature, expectedSignature)) {
       return email;
     }
   } catch {

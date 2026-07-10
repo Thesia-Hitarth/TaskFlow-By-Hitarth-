@@ -12,52 +12,53 @@ export async function updateStreak(userId: string): Promise<boolean> {
     create: { userId, date: today, count: 1 },
   });
 
-  // 2. Fetch user's current streak state
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { streakDays: true, longestStreak: true, lastActivityDate: true },
-  });
-
-  if (!user) return false;
-
-  const lastDate = user.lastActivityDate;
-  const yesterday = getPreviousDay(today);
-
-  let newStreak = user.streakDays;
-  let isComeback = false;
-
-  if (lastDate) {
-    if (lastDate === today) {
-      // Already active today, streak doesn't change
-      return false;
+  // 2. Read-compute-write streak inside a transaction with an advisory lock
+  // to prevent TOCTOU races from concurrent node completions (BUG-M9).
+  const { newStreak, isComeback } = await prisma.$transaction(async (tx) => {
+    const isPostgres =
+      process.env.DATABASE_URL?.startsWith("postgres:") ||
+      process.env.DATABASE_URL?.startsWith("postgresql:");
+    if (isPostgres) {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`streak:${userId}`}))`;
     }
 
-    // Check if returned after 7+ days of absence
-    const diffTime = Math.abs(new Date(today).getTime() - new Date(lastDate).getTime());
-    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-    if (diffDays >= 7) {
-      isComeback = true;
-    }
+    const user = await tx.user.findUnique({
+      where: { id: userId },
+      select: { streakDays: true, longestStreak: true, lastActivityDate: true },
+    });
 
-    if (lastDate === yesterday) {
-      // Consecutive activity, extend streak
-      newStreak = user.streakDays + 1;
+    if (!user) return { newStreak: 0, isComeback: false };
+
+    const lastDate = user.lastActivityDate;
+    const yesterday = getPreviousDay(today);
+
+    let newStreak = user.streakDays;
+    let isComeback = false;
+
+    if (lastDate) {
+      if (lastDate === today) {
+        return { newStreak: user.streakDays, isComeback: false };
+      }
+
+      const diffTime = Math.abs(new Date(today).getTime() - new Date(lastDate).getTime());
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays >= 7) isComeback = true;
+
+      newStreak = lastDate === yesterday ? user.streakDays + 1 : 1;
     } else {
-      // Gap in activity (excluding consecutive or today), reset streak to 1
       newStreak = 1;
     }
-  } else {
-    // First activity ever, start streak at 1
-    newStreak = 1;
-  }
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      streakDays: newStreak,
-      lastActivityDate: today,
-      longestStreak: Math.max(newStreak, user.longestStreak),
-    },
+    await tx.user.update({
+      where: { id: userId },
+      data: {
+        streakDays: newStreak,
+        lastActivityDate: today,
+        longestStreak: Math.max(newStreak, user.longestStreak),
+      },
+    });
+
+    return { newStreak, isComeback };
   });
 
   // Award the Comeback Kid badge immediately if it's a comeback

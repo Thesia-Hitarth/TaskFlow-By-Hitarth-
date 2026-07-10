@@ -77,11 +77,11 @@ export async function createComment(input: z.infer<typeof CommentSchema>) {
         },
         include: {
           author: { select: { id: true, name: true, image: true, username: true } },
-          votes: true,
+          _count: { select: { votes: true } },
           replies: {
             include: {
               author: { select: { id: true, name: true, image: true, username: true } },
-              votes: true,
+              _count: { select: { votes: true } },
             },
           },
         },
@@ -189,12 +189,12 @@ export async function getComments(target: {
       take: 100, // Capped to prevent OOM/network load under massive activity
       include: {
         author: { select: { id: true, name: true, image: true, username: true } },
-        votes: true,
+        _count: { select: { votes: true } },
         replies: {
           where: { isHidden: false },
           include: {
             author: { select: { id: true, name: true, image: true, username: true } },
-            votes: true,
+            _count: { select: { votes: true } },
           },
           orderBy: { createdAt: "asc" },
         },

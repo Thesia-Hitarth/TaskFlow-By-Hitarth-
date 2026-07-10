@@ -1,4 +1,4 @@
-import { Comment, CommentVote, ShowcaseProject } from "@prisma/client"
+import { Comment, ShowcaseProject } from "@prisma/client"
 
 export type CommentAuthor = {
   id: string
@@ -9,12 +9,12 @@ export type CommentAuthor = {
 
 export type CommentReply = Comment & {
   author: CommentAuthor
-  votes: CommentVote[]
+  _count: { votes: number }
 }
 
 export type CommentWithAuthor = Comment & {
   author: CommentAuthor
-  votes: CommentVote[]
+  _count: { votes: number }
   replies: CommentReply[]
 }
 

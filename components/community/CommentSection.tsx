@@ -57,7 +57,7 @@ export function CommentSection({
         image: session.user.image ?? null,
         username: (session.user as { username?: string | null }).username ?? null,
       },
-      votes: [],
+      _count: { votes: 0 },
       replies: [],
     }
 

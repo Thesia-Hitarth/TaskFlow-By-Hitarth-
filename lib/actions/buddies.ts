@@ -24,27 +24,20 @@ export async function sendBuddyRequest(targetUserId: string, roadmapId: string) 
       if (existing.status === "pending" || existing.status === "active") {
         return { error: "A buddy request or connection already exists between you." }
       }
-      
-      // Reuse the ended connection, resetting status to pending and ordering requester as userId1
-      await prisma.studyBuddyConnection.update({
-        where: { id: existing.id },
-        data: {
-          userId1: session.user.id,
-          userId2: targetUserId,
-          status: "pending",
-          createdAt: new Date(),
-        },
-      })
-    } else {
-      await prisma.studyBuddyConnection.create({
-        data: {
-          userId1: session.user.id,
-          userId2: targetUserId,
-          roadmapId,
-          status: "pending",
-        },
-      })
+
+      // Delete the ended connection and create a fresh one so userId1/userId2
+      // always reflect the actual requester, avoiding unique-constraint violations.
+      await prisma.studyBuddyConnection.delete({ where: { id: existing.id } })
     }
+
+    await prisma.studyBuddyConnection.create({
+      data: {
+        userId1: session.user.id,
+        userId2: targetUserId,
+        roadmapId,
+        status: "pending",
+      },
+    })
 
     revalidatePath(`/${roadmapId}/buddies`)
     return { success: true }

@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
 
 async function getUserByUsername(username: string) {
   return prisma.user.findUnique({
-    where: { username },
+    where: { username, publicProfile: true },
     select: {
       id: true,
       name: true,
@@ -235,7 +235,7 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                   key={c.id}
                   className="bg-card border border-border rounded-xl p-4 shadow-xs"
                 >
-                  <p className="text-sm text-text-secondary line-clamp-3 whitespace-pre-wrap leading-relaxed font-medium">
+                  <p className="text-sm text-text-secondary line-clamp-3 whitespace-pre-wrap break-words leading-relaxed font-medium">
                     {c.body}
                   </p>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-xs font-bold text-text-secondary/60">

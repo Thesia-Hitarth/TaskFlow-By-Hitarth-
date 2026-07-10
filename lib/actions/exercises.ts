@@ -9,6 +9,11 @@ export async function saveExerciseProgress(exerciseId: string, code: string, sol
   const session = await auth()
   if (!session?.user?.id) return { success: false, error: "Unauthorized" }
 
+  // Guard against oversized payloads — 50k chars is well above any real exercise submission
+  if (code.length > 50_000) {
+    return { success: false, error: "Code submission is too large." }
+  }
+
   const exercise = getExerciseById(exerciseId)
   if (!exercise) {
     return { success: false, error: "Invalid exercise ID." }

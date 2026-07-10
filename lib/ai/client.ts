@@ -1,9 +1,17 @@
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize the Gemini SDK client
-export const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY || "",
-});
+// Lazy singleton — initialized on first use so the SDK is never constructed
+// with an empty API key during module load / cold-start env validation.
+let _ai: GoogleGenAI | null = null;
+export function getAIClient(): GoogleGenAI {
+  if (!_ai) {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new AIServiceError("GEMINI_API_KEY is not configured.");
+    }
+    _ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  }
+  return _ai;
+}
 
 export const AI_MODEL = "gemini-2.5-flash";
 
@@ -29,6 +37,7 @@ export async function generateAIResponse(params: GenerateResponseParams): Promis
       throw new AIServiceError("GEMINI_API_KEY is not configured.");
     }
 
+    const ai = getAIClient();
     const response = await ai.models.generateContent({
       model: AI_MODEL,
       contents: params.userMessage,

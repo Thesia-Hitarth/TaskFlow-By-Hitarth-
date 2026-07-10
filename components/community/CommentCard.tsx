@@ -33,11 +33,9 @@ export function CommentCard({
   const [showReplyForm, setShowReplyForm] = useState(false)
   const [showReplies, setShowReplies] = useState(true)
   const [localVotes, setLocalVotes] = useState(
-    comment.votes.reduce((sum, v) => sum + v.value, 0)
+    comment._count.votes
   )
-  const [userHasVoted, setUserHasVoted] = useState(
-    comment.votes.some(v => v.userId === currentUserId)
-  )
+  const [userHasVoted, setUserHasVoted] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const isAuthor = currentUserId === comment.authorId

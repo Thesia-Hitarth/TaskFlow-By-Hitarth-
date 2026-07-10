@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { taskflowContent } from "@/lib/taskflow-content";
-import { getUserTimezone, getLocalDateString } from "@/lib/utils/timezone";
+import { getUserTimezone, getLocalDateString, getLocalHours } from "@/lib/utils/timezone";
 
 export async function checkAndAwardBadges(
   userId: string,
@@ -83,13 +83,10 @@ export async function checkAndAwardBadges(
     : Promise.resolve(null);
 
   const nightProgressPromise = !owned.has("night-owl")
-    ? prisma.$queryRaw<{ count: bigint }[]>`
-        SELECT COUNT(*)::bigint as count
-        FROM "UserProgress"
-        WHERE "userId" = ${userId}
-          AND "status" = 'done'
-          AND EXTRACT(HOUR FROM "updatedAt" AT TIME ZONE ${timezone}) BETWEEN 0 AND 5
-      `
+    ? prisma.userProgress.findMany({
+        where: { userId, status: "done" },
+        select: { updatedAt: true },
+      })
     : Promise.resolve(null);
 
   // Resolve all promises concurrently
@@ -156,10 +153,10 @@ export async function checkAndAwardBadges(
 
   // 8. 🦉 Night Owl: completed 10 nodes between 12 AM and 5 AM local time
   if (progressRecords !== null) {
-    let nightCompletions = 0;
-    if (progressRecords && progressRecords[0]) {
-      nightCompletions = Number(progressRecords[0].count);
-    }
+    const nightCompletions = (progressRecords as { updatedAt: Date }[]).filter((r) => {
+      const hour = getLocalHours(r.updatedAt, timezone);
+      return hour >= 0 && hour <= 5;
+    }).length;
     if (nightCompletions >= 10) {
       await tryAward("night-owl");
     }
