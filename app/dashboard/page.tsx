@@ -43,69 +43,108 @@ export default async function DashboardPage() {
     where: { userId },
   });
   if (activityCount === 0) {
-    syncPastActivities(userId).catch((err) => {
-      console.error("Failed to sync past activities in background:", err);
-    });
+    try {
+      const { after } = await import("next/server");
+      after(async () => {
+        await syncPastActivities(userId).catch((err) => {
+          console.error("Failed to sync past activities in after():", err);
+        });
+      });
+    } catch {
+      syncPastActivities(userId).catch((err) => {
+        console.error("Failed to sync past activities in background fallback:", err);
+      });
+    }
   }
 
-  const [records, user, activeBuddies] = await prisma.$transaction([
-    prisma.userProgress.findMany({
-      where: { userId },
-      take: 1000,
-      select: { taskflowSlug: true, nodeId: true, status: true },
-    }),
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        name: true,
-        email: true,
-        username: true,
-        streakDays: true,
-        longestStreak: true,
-        activities: {
-          where: {
-            date: {
-              gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
-            }
+  let records: { taskflowSlug: string; nodeId: string; status: any }[] = [];
+  let user: {
+    name: string | null;
+    email: string | null;
+    username: string | null;
+    streakDays: number;
+    longestStreak: number;
+    activities: { date: string; count: number }[];
+    badges: any[];
+  } | null = null;
+  let activeBuddies: any[] = [];
+
+  try {
+    const [fetchedRecords, fetchedUser, fetchedBuddies] = await prisma.$transaction([
+      prisma.userProgress.findMany({
+        where: { userId },
+        take: 1000,
+        select: { taskflowSlug: true, nodeId: true, status: true },
+      }),
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          name: true,
+          email: true,
+          username: true,
+          streakDays: true,
+          longestStreak: true,
+          activities: {
+            where: {
+              date: {
+                gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
+              }
+            },
+            orderBy: { date: "asc" },
           },
-          orderBy: { date: "asc" },
-        },
-        badges: {
-          include: { badge: true },
-          orderBy: { awardedAt: "desc" },
-        },
-      },
-    }),
-    prisma.studyBuddyConnection.findMany({
-      where: {
-        status: "active",
-        OR: [
-          { userId1: userId },
-          { userId2: userId },
-        ],
-      },
-      include: {
-        user1: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            image: true,
-            streakDays: true,
+          badges: {
+            include: { badge: true },
+            orderBy: { awardedAt: "desc" },
           },
         },
-        user2: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            image: true,
-            streakDays: true,
+      }),
+      prisma.studyBuddyConnection.findMany({
+        where: {
+          status: "active",
+          OR: [
+            { userId1: userId },
+            { userId2: userId },
+          ],
+        },
+        include: {
+          user1: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              image: true,
+              streakDays: true,
+            },
+          },
+          user2: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              image: true,
+              streakDays: true,
+            },
           },
         },
-      },
-    }),
-  ]);
+      }),
+    ]);
+    records = fetchedRecords;
+    user = fetchedUser;
+    activeBuddies = fetchedBuddies;
+  } catch (error) {
+    console.error("Dashboard database transaction failed:", error);
+    records = [];
+    user = {
+      name: session.user.name ?? null,
+      email: session.user.email ?? null,
+      username: session.user.username ?? null,
+      streakDays: 0,
+      longestStreak: 0,
+      activities: [],
+      badges: [],
+    };
+    activeBuddies = [];
+  }
 
   const buddiesList = activeBuddies.map(conn => {
     const buddyUser = conn.userId1 === userId ? conn.user2 : conn.user1;

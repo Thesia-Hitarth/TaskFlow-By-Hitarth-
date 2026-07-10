@@ -8,11 +8,11 @@ export function verifyCronRequest(request: Request): boolean {
   const host = request.headers.get("host") ?? "";
   const isLocalDev = isDev && (host.startsWith("localhost") || host.startsWith("127.0.0.1"));
 
-  if (isLocalDev) {
-    return true;
+  if (!cronSecret) {
+    return isLocalDev;
   }
 
-  if (!cronSecret || !authHeader) {
+  if (!authHeader) {
     return false;
   }
 

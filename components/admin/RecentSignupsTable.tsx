@@ -33,7 +33,6 @@ export function RecentSignupsTable({ users }: { users: UserItem[] }) {
                     alt={user.name || "avatar"}
                     width={24}
                     height={24}
-                    unoptimized={true}
                     className="w-6 h-6 rounded-full border border-border"
                   />
                 )}

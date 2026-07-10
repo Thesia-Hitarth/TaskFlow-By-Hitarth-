@@ -75,7 +75,7 @@ function ShowcaseCard({ project }: { project: ShowcaseProjectWithMeta }) {
           href={`/showcase/${project.id}`}
           className="aspect-video bg-border flex items-center justify-center text-4xl relative overflow-hidden select-none block"
         >
-          {project.thumbnailUrl ? (
+          {project.thumbnailUrl && isSafeHttpUrl(project.thumbnailUrl) ? (
             <Image
               src={project.thumbnailUrl}
               alt={project.title}

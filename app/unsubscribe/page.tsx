@@ -23,15 +23,15 @@ export default async function UnsubscribePage({
   let email: string | null = null;
   if (token) {
     email = verifyToken(token, "unsubscribe");
-  } else if (resolvedSearchParams.email) {
-    const session = await auth();
-    if (session?.user?.email && session.user.email.toLowerCase() === resolvedSearchParams.email.trim().toLowerCase()) {
-      email = resolvedSearchParams.email;
-    }
   } else {
     const session = await auth();
-    if (session?.user?.email) {
-      email = session.user.email;
+    const sessionEmail = session?.user?.email;
+    if (resolvedSearchParams.email) {
+      if (sessionEmail && sessionEmail.toLowerCase() === resolvedSearchParams.email.trim().toLowerCase()) {
+        email = resolvedSearchParams.email;
+      }
+    } else if (sessionEmail) {
+      email = sessionEmail;
     }
   }
 

@@ -57,6 +57,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
+  if (JSON.stringify(body).length > 2048) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
+
   const { slug, nodeId, status } = body;
 
   if (!slug || !nodeId || !status) {
@@ -224,9 +228,13 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Unknown slug" }, { status: 400 });
   }
 
-  await prisma.userProgress.deleteMany({
-    where: { userId: session.user.id, taskflowSlug: slug },
-  });
-
-  return NextResponse.json({ ok: true });
+  try {
+    await prisma.userProgress.deleteMany({
+      where: { userId: session.user.id, taskflowSlug: slug },
+    });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Failed to delete user progress:", error);
+    return NextResponse.json({ error: "Database error. Failed to reset progress." }, { status: 500 });
+  }
 }

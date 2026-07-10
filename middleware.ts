@@ -23,7 +23,7 @@ export default auth((req: AuthRequest) => {
   // Protect routes — redirect to sign-in if not authenticated
   const isProtectedPath =
     pathname.startsWith("/dashboard") ||
-    pathname === "/showcase/submit" ||
+    pathname.startsWith("/showcase/submit") ||
     pathname.startsWith("/admin");
 
   if (isProtectedPath && !isLoggedIn) {
@@ -62,9 +62,21 @@ export default auth((req: AuthRequest) => {
     },
   });
 
+  const isPlayground = pathname.startsWith("/playground");
+  const scriptSrc = [
+    "'self'",
+    `'nonce-${nonce}'`,
+    "'sha256-n46vPwSWuMC0W703pBofImv82Z26xo4LXymv0E9caPk='",
+    isPlayground ? "'unsafe-eval'" : "",
+    "https://cdnjs.cloudflare.com",
+    "https://cdn.jsdelivr.net",
+    "https://va.vercel-scripts.com",
+    "https://vitals.vercel-insights.com"
+  ].filter(Boolean).join(" ");
+
   const cspHeader = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'sha256-n46vPwSWuMC0W703pBofImv82Z26xo4LXymv0E9caPk=' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vitals.vercel-insights.com`,
+    `script-src ${scriptSrc}`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
     "font-src 'self' data: https://fonts.gstatic.com",
     "img-src 'self' data: blob: https:",

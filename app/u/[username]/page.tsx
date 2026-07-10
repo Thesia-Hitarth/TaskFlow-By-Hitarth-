@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { taskflowContent } from "@/lib/taskflow-content"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import { ProgressRing } from "@/components/ui/ProgressRing"
@@ -9,6 +10,7 @@ import Footer from "@/components/Footer"
 import { formatTimeAgo } from "@/lib/utils"
 import Link from "next/link"
 import { UserAvatar } from "@/components/ui/UserAvatar"
+import { isSafeHttpUrl } from "@/lib/utils/url"
 
 interface ProfilePageProps {
   params: Promise<{ username: string }>
@@ -44,10 +46,6 @@ async function getUserByUsername(username: string) {
         orderBy: { date: "asc" },
         select: { date: true, count: true },
       },
-      progress: {
-        where: { status: "done" },
-        select: { taskflowSlug: true },
-      },
       comments: {
         where: { isHidden: false, parentId: null },
         orderBy: { createdAt: "desc" },
@@ -82,12 +80,17 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
   const user = await getUserByUsername(username)
   if (!user) notFound()
 
-  // Calculate completed nodes per path
-  const doneCount = user.progress.length
-  const roadmapCounts = user.progress.reduce<Record<string, number>>((acc, p) => {
-    acc[p.taskflowSlug] = (acc[p.taskflowSlug] ?? 0) + 1
-    return acc
-  }, {})
+  // Calculate completed nodes per path using efficient database grouping
+  const progressGroups = await prisma.userProgress.groupBy({
+    by: ["taskflowSlug"],
+    where: { userId: user.id, status: "done" },
+    _count: { nodeId: true },
+  })
+
+  const doneCount = progressGroups.reduce((acc, p) => acc + p._count.nodeId, 0)
+  const roadmapCounts = Object.fromEntries(
+    progressGroups.map((p) => [p.taskflowSlug, p._count.nodeId])
+  )
 
   return (
     <>
@@ -134,25 +137,28 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
           <h2 className="text-xl font-bold text-text-primary mb-5 tracking-tight">Learning Paths</h2>
           {Object.keys(roadmapCounts).length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {Object.entries(roadmapCounts).map(([roadmapId, done]) => (
-                <div
-                  key={roadmapId}
-                  className="bg-card border border-border rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:border-accent/30 transition-all"
-                >
-                  <ProgressRing
-                    percent={Math.min(100, Math.round((done / 31) * 100))}
-                    size={52}
-                    strokeWidth={5}
-                    showLabel={true}
-                  />
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-text-primary capitalize truncate">
-                      {roadmapId.replace(/-/g, " ")}
-                    </p>
-                    <p className="text-xs text-text-secondary mt-0.5 font-medium">{done} topics completed</p>
+              {Object.entries(roadmapCounts).map(([roadmapId, done]) => {
+                const totalNodes = taskflowContent[roadmapId]?.nodes.filter((n) => n.kind === "subtopic").length ?? 1;
+                return (
+                  <div
+                    key={roadmapId}
+                    className="bg-card border border-border rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:border-accent/30 transition-all"
+                  >
+                    <ProgressRing
+                      percent={Math.min(100, Math.round((done / (totalNodes || 1)) * 100))}
+                      size={52}
+                      strokeWidth={5}
+                      showLabel={true}
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-text-primary capitalize truncate">
+                        {roadmapId.replace(/-/g, " ")}
+                      </p>
+                      <p className="text-xs text-text-secondary mt-0.5 font-medium">{done} topics completed</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="p-6 text-center border border-border border-dashed rounded-2xl bg-card/20">
@@ -191,7 +197,7 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                   className="group block bg-card border border-border rounded-2xl overflow-hidden hover:shadow-md hover:border-accent/30 transition-all select-none"
                 >
                   <div className="aspect-video bg-border flex items-center justify-center text-2xl relative overflow-hidden">
-                    {project.thumbnailUrl ? (
+                    {project.thumbnailUrl && isSafeHttpUrl(project.thumbnailUrl) ? (
                       <Image
                         src={project.thumbnailUrl}
                         alt={project.title}

@@ -82,13 +82,16 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 6. Retry failed emails (attempts < 3)
+    // 6. Retry failed emails (attempts < 3) or send stuck pending emails (older than 10 minutes)
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
     const failedEmails = await prisma.emailQueue.findMany({
       where: {
-        status: "failed",
-        attempts: { lt: 3 },
+        OR: [
+          { status: "failed", attempts: { lt: 3 } },
+          { status: "pending", createdAt: { lt: tenMinutesAgo } },
+        ],
       },
-      take: 20, // process in small batches to avoid timeouts
+      take: 30, // process in small batches to avoid timeouts
     });
 
     if (failedEmails.length > 0) {

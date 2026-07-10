@@ -32,6 +32,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
+  if (JSON.stringify(body).length > 8192) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
+
   const { slug, progress } = body;
 
   if (!slug || typeof slug !== "string") {

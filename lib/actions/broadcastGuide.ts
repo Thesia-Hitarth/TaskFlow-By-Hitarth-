@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { guides } from "@/lib/guides-data";
 import { buildNewGuideEmailPayload } from "@/lib/email/templates/newGuide";
 import { isAdmin } from "@/lib/admin/auth";
+import crypto from "crypto";
 
 import { Prisma } from "@prisma/client";
 
@@ -23,7 +24,7 @@ export async function broadcastNewGuideAction(guideSlug: string) {
     const parsedReadTime = parseInt(guide.readingTime, 10);
     const readTimeNum = isNaN(parsedReadTime) ? 5 : parsedReadTime;
 
-    const emailsToQueue: { to: string; subject: string; html: string; text: string }[] = [];
+    const emailsToQueue: { id: string; to: string; subject: string; html: string; text: string }[] = [];
     let cursor: string | undefined = undefined;
     let hasMore = true;
 
@@ -69,6 +70,7 @@ export async function broadcastNewGuideAction(guideSlug: string) {
             }
           );
           emailsToQueue.push({
+            id: crypto.randomUUID(),
             to: payload.to,
             subject: payload.subject,
             html: payload.html,
@@ -86,14 +88,16 @@ export async function broadcastNewGuideAction(guideSlug: string) {
     if (emailsToQueue.length > 0) {
       await prisma.emailQueue.createMany({
         data: emailsToQueue.map((e) => ({
-          ...e,
+          id: e.id,
+          to: e.to,
+          subject: e.subject,
+          html: e.html,
+          text: e.text,
           status: "pending",
           attempts: 0,
         })),
         skipDuplicates: true,
       });
-
-      const subject = `New guide: ${guide.title}`;
 
       try {
         const { after } = await import("next/server");
@@ -101,7 +105,7 @@ export async function broadcastNewGuideAction(guideSlug: string) {
           const SEND_BATCH_SIZE = 10;
           for (let k = 0; k < emailsToQueue.length; k += SEND_BATCH_SIZE) {
             const batch = emailsToQueue.slice(k, k + SEND_BATCH_SIZE);
-            await sendAndUpdateBatch(batch, subject);
+            await sendAndUpdateBatch(batch);
             if (emailsToQueue.length > SEND_BATCH_SIZE) {
               await new Promise((r) => setTimeout(r, 200));
             }
@@ -112,7 +116,7 @@ export async function broadcastNewGuideAction(guideSlug: string) {
           const SEND_BATCH_SIZE = 10;
           for (let k = 0; k < emailsToQueue.length; k += SEND_BATCH_SIZE) {
             const batch = emailsToQueue.slice(k, k + SEND_BATCH_SIZE);
-            await sendAndUpdateBatch(batch, subject);
+            await sendAndUpdateBatch(batch);
           }
         };
         runFallback().catch((err) => {
@@ -129,8 +133,7 @@ export async function broadcastNewGuideAction(guideSlug: string) {
 }
 
 async function sendAndUpdateBatch(
-  batch: { to: string; subject: string; html: string; text: string }[],
-  subject: string
+  batch: { id: string; to: string; subject: string; html: string; text: string }[]
 ) {
   const { sendEmail } = await import("@/lib/email/send");
   const results = await Promise.allSettled(
@@ -144,26 +147,25 @@ async function sendAndUpdateBatch(
     )
   );
 
-  const succeededEmails: string[] = [];
-  const failedEmails: { to: string; error: string }[] = [];
+  const succeededIds: string[] = [];
+  const failedEmails: { id: string; error: string }[] = [];
 
   results.forEach((res, idx) => {
     const email = batch[idx];
     if (res.status === "fulfilled") {
-      succeededEmails.push(email.to);
+      succeededIds.push(email.id);
     } else {
       failedEmails.push({
-        to: email.to,
+        id: email.id,
         error: res.reason instanceof Error ? res.reason.message : String(res.reason),
       });
     }
   });
 
-  if (succeededEmails.length > 0) {
+  if (succeededIds.length > 0) {
     await prisma.emailQueue.updateMany({
       where: {
-        to: { in: succeededEmails },
-        subject,
+        id: { in: succeededIds },
         status: "pending",
       },
       data: {
@@ -175,10 +177,9 @@ async function sendAndUpdateBatch(
   }
 
   for (const fail of failedEmails) {
-    await prisma.emailQueue.updateMany({
+    await prisma.emailQueue.update({
       where: {
-        to: fail.to,
-        subject,
+        id: fail.id,
         status: "pending",
       },
       data: {
