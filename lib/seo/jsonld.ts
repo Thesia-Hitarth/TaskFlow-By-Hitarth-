@@ -7,6 +7,7 @@ export function roadmapJsonLd(roadmap: { title: string; description: string; slu
     "name": `${roadmap.title} Developer Roadmap`,
     "description": roadmap.description || `Step by step guide to becoming a ${roadmap.title} developer.`,
     "url": `${SITE_URL}/${roadmap.slug}`,
+    "image": `${SITE_URL}/icon.png`,
     "provider": {
       "@type": "Organization",
       "name": "TaskFlow",
@@ -26,25 +27,31 @@ export function guideJsonLd(guide: {
   slug: string;
   publishedAt: string;
   updatedAt?: string;
+  author?: string;
+  coverImage?: string;
 }) {
+  const authorName = guide.author || "TaskFlow";
+  const authorType = guide.author ? "Person" : "Organization";
+
   return {
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": guide.title,
     "description": guide.description,
     "url": `${SITE_URL}/guides/${guide.slug}`,
+    "image": guide.coverImage ? `${SITE_URL}${guide.coverImage}` : `${SITE_URL}/icon.png`,
     "datePublished": guide.publishedAt,
     "dateModified": guide.updatedAt || guide.publishedAt,
     "author": {
-      "@type": "Organization",
-      "name": "TaskFlow",
+      "@type": authorType,
+      "name": authorName,
     },
     "publisher": {
       "@type": "Organization",
       "name": "TaskFlow",
       "logo": {
         "@type": "ImageObject",
-        "url": `${SITE_URL}/favicon.ico`,
+        "url": `${SITE_URL}/icon.png`,
       },
     },
   };

@@ -163,6 +163,24 @@ export const bestPractices: BestPracticeCard[] = [
         explanation: "Public or private git histories are scanned by bots. Always load credentials from environment variables.",
         doExample: "const dbUrl = process.env.DATABASE_URL;",
         dontExample: "const dbUrl = 'postgresql://postgres:secretpassword@localhost:5432/db';",
+      },
+      {
+        rule: "Validate and sanitize all client inputs on the server",
+        explanation: "Never trust client-side validation alone. Define strict schemas for all API payloads and query parameters using schemas (e.g., Zod) and validate them before processing.",
+        doExample: "import { z } from 'zod';\n\nconst userSchema = z.object({\n  email: z.string().email(),\n  username: z.string().min(3).max(20),\n});\n\nexport async function POST(req: Request) {\n  const body = await req.json();\n  const cleanData = userSchema.parse(body);\n}",
+        dontExample: "export async function POST(req: Request) {\n  const { email, username } = await req.json();\n  // Directly inserting unchecked data into queries or functions\n  const user = await db.user.create({ data: { email, username } });\n}",
+      },
+      {
+        rule: "Enforce secure session cookie attributes (HttpOnly, Secure, SameSite)",
+        explanation: "Prevent session tokens from being read by client-side scripts via HttpOnly, ensure they are sent only over HTTPS using Secure, and mitigate CSRF attacks using SameSite.",
+        doExample: "// Server setting headers\nres.setHeader('Set-Cookie', [\n  'session_id=token123; Path=/; HttpOnly; Secure; SameSite=Lax'\n]);",
+        dontExample: "// In client-side code\ndocument.cookie = 'session_id=token123; path=/;';\n// Insecure: accessible to scripts, sent over HTTP, vulnerable to CSRF",
+      },
+      {
+        rule: "Use parameterized queries or ORMs to prevent SQL Injection",
+        explanation: "Directly interpolating user input into raw database query strings allows attackers to manipulate queries. Always use ORM parameterization or prepared statements.",
+        doExample: "const user = await prisma.user.findUnique({\n  where: { email: inputEmail }\n});",
+        dontExample: "const user = await prisma.$queryRawUnsafe(\n  `SELECT * FROM User WHERE email = '${inputEmail}'`\n);",
       }
     ],
   },

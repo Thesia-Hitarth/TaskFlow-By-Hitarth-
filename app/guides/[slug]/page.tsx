@@ -121,6 +121,9 @@ export default async function GuidePage({ params }: PageProps) {
               description: frontmatter.description,
               slug,
               publishedAt: frontmatter.publishedAt,
+              updatedAt: frontmatter.updatedAt,
+              author: frontmatter.author,
+              coverImage: frontmatter.coverImage,
             })
           ),
         }}
