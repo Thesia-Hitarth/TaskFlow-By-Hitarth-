@@ -33,10 +33,6 @@ interface GenerateResponseParams {
 
 export async function generateAIResponse(params: GenerateResponseParams): Promise<string> {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new AIServiceError("GEMINI_API_KEY is not configured.");
-    }
-
     const ai = getAIClient();
     const response = await ai.models.generateContent({
       model: AI_MODEL,

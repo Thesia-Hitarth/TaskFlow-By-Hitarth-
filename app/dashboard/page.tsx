@@ -8,12 +8,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import type { NodeStatus } from "@prisma/client";
-
-export const metadata: Metadata = {
-  title: "Dashboard — TaskFlow",
-  description: "Track your progress, view earned badges, and manage your learning paths.",
-  robots: { index: false, follow: false },
-};
 import {
   GraduationCap,
   Trophy,
@@ -31,6 +25,12 @@ import { ActivityHeatmap } from "@/components/dashboard/ActivityHeatmap";
 import { syncPastActivities } from "@/lib/streak/updateStreak";
 import { PostLoginSync } from "@/components/dashboard/PostLoginSync";
 import { UserAvatar } from "@/components/ui/UserAvatar";
+
+export const metadata: Metadata = {
+  title: "Dashboard — TaskFlow",
+  description: "Track your progress, view earned badges, and manage your learning paths.",
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -161,6 +161,9 @@ export default async function DashboardPage() {
       }),
     ]);
     records = fetchedRecords;
+    if (records.length === 1000) {
+      console.warn(`[Dashboard] userProgress result truncated at 1000 records for userId: ${userId}`);
+    }
     user = fetchedUser;
     activeBuddies = fetchedBuddies;
   } catch (error) {

@@ -1,18 +1,12 @@
 import { subscribeEmailAction } from "@/lib/actions/subscribe";
 import { limitSubscribe } from "@/lib/ai/rateLimit";
-import { isValidIP } from "@/lib/utils/ip";
+import { getClientIP } from "@/lib/utils/ip";
 import { isValidOrigin } from "@/lib/auth/verifyOrigin";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: Request) {
-  let ip = req.headers.get("x-real-ip")
-    || req.headers.get("x-forwarded-for")?.split(",")[0].trim()
-    || "127.0.0.1";
-
-  if (!isValidIP(ip)) {
-    ip = "unknown";
-  }
+  const ip = getClientIP(req);
 
   const { success } = await limitSubscribe(ip);
   if (!success) {

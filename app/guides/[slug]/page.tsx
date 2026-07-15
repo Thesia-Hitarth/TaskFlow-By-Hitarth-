@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: PageProps) {
   const siteUrl = SITE_URL;
 
   return {
-    title: `${guide.frontmatter.title} — task-flow-by-hitarth`,
+    title: guide.frontmatter.title,
     description: guide.frontmatter.description,
     alternates: {
       canonical: `${siteUrl}/guides/${slug}`,
@@ -77,22 +77,46 @@ export default async function GuidePage({ params }: PageProps) {
   const session = await auth();
   if (session?.user?.id) {
     try {
-      await prisma.guideView.upsert({
-        where: {
-          userId_guideSlug: {
+      const { after } = await import("next/server");
+      after(async () => {
+        try {
+          await prisma.guideView.upsert({
+            where: {
+              userId_guideSlug: {
+                userId: session.user.id,
+                guideSlug: slug,
+              },
+            },
+            create: {
+              userId: session.user.id,
+              guideSlug: slug,
+            },
+            update: {},
+          });
+          await checkAndAwardBadges(session.user.id, "guides");
+        } catch (e) {
+          console.error("Failed to log guide view inside after():", e);
+        }
+      });
+    } catch {
+      prisma.guideView
+        .upsert({
+          where: {
+            userId_guideSlug: {
+              userId: session.user.id,
+              guideSlug: slug,
+            },
+          },
+          create: {
             userId: session.user.id,
             guideSlug: slug,
           },
-        },
-        create: {
-          userId: session.user.id,
-          guideSlug: slug,
-        },
-        update: {},
-      });
-      await checkAndAwardBadges(session.user.id, "guides");
-    } catch (e) {
-      console.error("Failed to log guide view:", e);
+          update: {},
+        })
+        .then(() => checkAndAwardBadges(session!.user!.id!, "guides"))
+        .catch((e) => {
+          console.error("Failed to log guide view in fallback:", e);
+        });
     }
   }
   const initialComments = await getComments({ guideTarget: slug });

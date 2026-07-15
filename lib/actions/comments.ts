@@ -249,7 +249,12 @@ export async function voteComment(commentId: string) {
       revalidatePath(`/${roadmapId}`)
     }
     if (comment.guideTarget) {
-      revalidatePath(`/guides/${comment.guideTarget}`)
+      if (comment.guideTarget.startsWith("best-practice-")) {
+        const slug = comment.guideTarget.replace("best-practice-", "")
+        revalidatePath(`/best-practices/${slug}`)
+      } else {
+        revalidatePath(`/guides/${comment.guideTarget}`)
+      }
     }
 
     return { success: true }

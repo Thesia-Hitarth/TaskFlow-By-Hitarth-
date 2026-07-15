@@ -53,7 +53,7 @@ export async function setCachedResponse(
     await prisma.aICache.upsert({
       where: { cacheKey },
       create: { cacheKey, response },
-      update: { response, hitCount: { increment: 1 } },
+      update: { response },
     });
   } catch (err) {
     console.error("[Cache Set Error]", err);

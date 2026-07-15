@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { sendWeeklyDigestEmail } from "@/lib/email/templates/weeklyDigest";
+import { taskflowContent } from "@/lib/taskflow-content";
 
 import { verifyCronRequest } from "@/lib/auth/verifyCronRequest";
 
@@ -83,16 +84,20 @@ export async function GET(request: NextRequest) {
               currentStreak: user.streakDays,
               totalCompleted: countMap[user.id] ?? 0,
             },
-            recentCompletions: user.progress.map((p) => ({
-              nodeLabel: p.nodeId
-                .split("-")
-                .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(" "),
-              roadmapTitle: p.taskflowSlug
-                .split("-")
-                .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(" "),
-            })),
+            recentCompletions: user.progress.map((p) => {
+              const flow = taskflowContent[p.taskflowSlug];
+              const node = flow?.nodes.find((n) => n.id === p.nodeId);
+              return {
+                nodeLabel: node?.label ?? p.nodeId
+                  .split("-")
+                  .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(" "),
+                roadmapTitle: flow?.title ?? p.taskflowSlug
+                  .split("-")
+                  .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(" "),
+              };
+            }),
           })
         )
       );

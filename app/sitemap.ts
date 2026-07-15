@@ -38,6 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/playground`, changeFrequency: "monthly" as const, priority: 0.4 },
     { url: `${siteUrl}/path-finder`, changeFrequency: "monthly" as const, priority: 0.5 },
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly" as const, priority: 0.3 },
+    { url: `${siteUrl}/terms`, changeFrequency: "yearly" as const, priority: 0.3 },
     ...taskflowUrls,
     ...guideUrls,
     ...bestPracticeUrls,

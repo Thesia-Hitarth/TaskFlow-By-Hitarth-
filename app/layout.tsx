@@ -78,7 +78,7 @@ export default async function RootLayout({
                   }
                   var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
                   if (tz) {
-                    document.cookie = "user-timezone=" + encodeURIComponent(tz) + "; path=/; max-age=31536000; SameSite=Lax";
+                    document.cookie = "user-timezone=" + encodeURIComponent(tz) + "; path=/; max-age=31536000; SameSite=Lax" + (location.protocol === "https:" ? "; Secure" : "");
                   }
                 } catch (e) {}
               })();

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendStreakWarningEmail } from "@/lib/email/templates/streakWarning";
+import { taskflowContent } from "@/lib/taskflow-content";
 
 import { verifyCronRequest } from "@/lib/auth/verifyCronRequest";
 
@@ -51,7 +52,8 @@ export async function GET(request: NextRequest) {
         let roadmapTitle = "Frontend";
         if (user.progress.length > 0) {
           roadmapId = user.progress[0].taskflowSlug;
-          roadmapTitle = roadmapId
+          const flow = taskflowContent[roadmapId];
+          roadmapTitle = flow?.title ?? roadmapId
             .split("-")
             .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
             .join(" ");
