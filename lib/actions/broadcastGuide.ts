@@ -20,12 +20,21 @@ export async function broadcastNewGuideAction(guideSlug: string) {
     return { error: "Guide not found." };
   }
 
-  // BUG-L7: Deduplication guard — prevent double-broadcast if admin clicks twice
+  // Deduplication guard — prevent double-broadcast if admin clicks twice
   const dedupSubject = `New Guide: ${guide.title}`;
-  const alreadyQueued = await prisma.emailQueue.findFirst({
-    where: { subject: dedupSubject, status: { in: ["pending", "sent"] } },
-    select: { id: true },
+  const alreadyQueued = await prisma.$transaction(async (tx) => {
+    const isPostgres =
+      process.env.DATABASE_URL?.startsWith("postgres:") ||
+      process.env.DATABASE_URL?.startsWith("postgresql:");
+    if (isPostgres) {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`broadcast:${dedupSubject}`}))`;
+    }
+    return tx.emailQueue.findFirst({
+      where: { subject: dedupSubject, status: { in: ["pending", "sent"] } },
+      select: { id: true },
+    });
   });
+
   if (alreadyQueued) {
     return { error: "This guide has already been broadcast. Check the email queue." };
   }

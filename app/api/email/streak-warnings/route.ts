@@ -10,17 +10,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Two days ago string in YYYY-MM-DD
   const twoDaysAgo = new Date();
   twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
   const targetDateStr = twoDaysAgo.toISOString().split("T")[0];
+
+  const threeDaysAgo = new Date();
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  const prevDateStr = threeDaysAgo.toISOString().split("T")[0];
 
   const usersToWarn = await prisma.user.findMany({
     where: {
       email: { not: null },
       emailUnsubscribed: false,
       streakDays: { gt: 0 },
-      lastActivityDate: targetDateStr,
+      lastActivityDate: { in: [targetDateStr, prevDateStr] },
     },
     include: {
       progress: {

@@ -21,36 +21,51 @@ export default function ProgressSync() {
 
     async function sync() {
       try {
+        const slugsToSync = Object.keys(taskflowContent).filter((slug) => {
+          const raw = localStorage.getItem(`taskflow-progress:${slug}`);
+          if (!raw) return false;
+          try {
+            const progress = JSON.parse(raw);
+            return Object.keys(progress).length > 0;
+          } catch {
+            return false;
+          }
+        });
+
+        if (slugsToSync.length === 0) {
+          localStorage.setItem(SYNCED_FLAG, "true");
+          return;
+        }
+
         let allSucceeded = true;
         let lastFailedSlug: string | null = null;
 
-        for (const slug of Object.keys(taskflowContent)) {
-          const raw = localStorage.getItem(`taskflow-progress:${slug}`);
-          if (!raw) continue;
+        await Promise.all(
+          slugsToSync.map(async (slug) => {
+            const raw = localStorage.getItem(`taskflow-progress:${slug}`);
+            if (!raw) return;
+            try {
+              const progress = JSON.parse(raw);
+              const res = await fetch("/api/progress/sync", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ slug, progress }),
+              });
 
-          try {
-            const progress = JSON.parse(raw);
-            if (Object.keys(progress).length === 0) continue;
-
-            const res = await fetch("/api/progress/sync", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ slug, progress }),
-            });
-
-            if (res.ok) {
-              localStorage.removeItem(`taskflow-progress:${slug}`);
-            } else {
+              if (res.ok) {
+                localStorage.removeItem(`taskflow-progress:${slug}`);
+              } else {
+                allSucceeded = false;
+                lastFailedSlug = slug;
+                console.error(`Sync failed for ${slug}: ${res.status}`);
+              }
+            } catch (e) {
               allSucceeded = false;
               lastFailedSlug = slug;
-              console.error(`Sync failed for ${slug}: ${res.status}`);
+              console.error(`Failed to sync taskflow progress for ${slug}:`, e);
             }
-          } catch (e) {
-            allSucceeded = false;
-            lastFailedSlug = slug;
-            console.error(`Failed to sync taskflow progress for ${slug}:`, e);
-          }
-        }
+          })
+        );
 
         if (allSucceeded) {
           localStorage.setItem(SYNCED_FLAG, "true");

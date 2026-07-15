@@ -95,9 +95,9 @@ function getPreviousDay(dateStr: string): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-export async function syncPastActivities(userId: string): Promise<void> {
+export async function syncPastActivities(userId: string, timezoneOverride?: string): Promise<void> {
   try {
-    const timezone = "UTC";
+    const timezone = timezoneOverride || (await getUserTimezone());
 
     const oneYearAgo = new Date();
     oneYearAgo.setDate(oneYearAgo.getDate() - 365);

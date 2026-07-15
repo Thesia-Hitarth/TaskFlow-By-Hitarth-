@@ -26,13 +26,17 @@ const RecommendationSchema = z.object({
 })
 
 function signId(id: string): string {
-  const secret = process.env.AUTH_SECRET || "fallback_secret";
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) {
+    throw new Error("AUTH_SECRET environment variable is missing.");
+  }
   const hmac = createHmac("sha256", secret).update(id).digest("hex");
   return `${id}.${hmac}`;
 }
 
 function verifySignedId(signed: string): string | null {
-  const secret = process.env.AUTH_SECRET || "fallback_secret";
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) return null;
   const parts = signed.split(".");
   if (parts.length !== 2) return null;
   const [id, signature] = parts;

@@ -28,17 +28,23 @@ export const prisma = client.$extends({
         } catch (error: unknown) {
           const err = error as { message?: string; code?: string };
           // Check for connection termination signatures
-          const isConnectionError =
-            err.message?.includes("closed the connection") ||
-            err.message?.includes("connection") ||
-            err.message?.includes("socket") ||
+          const isNetworkError =
             err.code === "P1017" || // Server closed connection
             err.code === "P1001" || // Cannot reach DB
             err.code === "P2024";   // Connection timeout
 
+          const isConnectionError =
+            err.message?.includes("closed the connection") ||
+            err.message?.includes("connection") ||
+            err.message?.includes("socket");
+
           const isReadOperation = operation.startsWith("find") || ["count", "aggregate", "groupBy"].includes(operation);
 
-          if (isConnectionError && isReadOperation && attempt < maxRetries) {
+          // Retrying reads is safe for any socket/connection issue.
+          // Retrying writes is only safe for network-level connection establishment failures (before any query execution).
+          const shouldRetry = (isConnectionError && isReadOperation) || isNetworkError;
+
+          if (shouldRetry && attempt < maxRetries) {
             console.warn(
               `[Prisma] Connection lost on ${model || "system"}.${operation}. Retrying in ${delay}ms... (Attempt ${attempt + 1}/${maxRetries})`
             );
